@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api", "TWCore.Diagnostics.Api\TWCore.Diagnostics.Api.csproj", "{19DDD6F2-31FF-4EA6-A325-9282CA16E432}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api", "src\TWCore.Diagnostics.Api\TWCore.Diagnostics.Api.csproj", "{19DDD6F2-31FF-4EA6-A325-9282CA16E432}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api.Models", "TWCore.Diagnostics.Api.Models\TWCore.Diagnostics.Api.Models.csproj", "{699CCCE5-B0B8-47BD-8B78-7975B92BF0C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api.Models", "src\TWCore.Diagnostics.Api.Models\TWCore.Diagnostics.Api.Models.csproj", "{699CCCE5-B0B8-47BD-8B78-7975B92BF0C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
