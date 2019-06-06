@@ -1,0 +1,313 @@
+2019-03-11 00:00:32.132 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a6eacdca-0026-480e-b408-d4054bb60d49/Week/84  
+2019-03-11 00:00:32.132 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/11df0dd2-96a2-4623-8653-8f88e3eb3b5f/Week/84  
+2019-03-11 00:00:32.132 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/2a83ba1c-6fd7-40e6-9c95-768c4c9a91d0/Week/84  
+2019-03-11 00:00:32.132 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/6ffc66ec-d97e-49a2-9f46-cc8e943b820c/Week/84  
+2019-03-11 00:00:32.133 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/7b79ddab-df09-453e-913b-c0a55e479553/Week/84  
+2019-03-11 00:00:32.136    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.137 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/6057131a-3f74-499e-bc95-e255524d7bca/Week/84  
+2019-03-11 00:00:32.140    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.149    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.154    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.161    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.165    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:00:32.842 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 710.2212ms 200 application/json; charset=utf-8
+2019-03-11 00:00:33.366 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1234.2674ms 200 application/json; charset=utf-8
+2019-03-11 00:00:33.371 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1237.3452ms 200 application/json; charset=utf-8
+2019-03-11 00:00:33.372 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1239.8531ms 200 application/json; charset=utf-8
+2019-03-11 00:00:33.374 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1241.4757ms 200 application/json; charset=utf-8
+2019-03-11 00:00:33.375 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1238.646ms 200 application/json; charset=utf-8
+2019-03-11 00:00:41.096  InfoBasic: 35 - [START] Processing LogItems List Message
+2019-03-11 00:00:41.241  InfoBasic: 35 - [END: Total Time = 145,0311ms] Processing LogItems List Message
+2019-03-11 00:00:43.198  InfoBasic: Setting the Compaction on the Large Object Heap for next garbage collection...
+2019-03-11 00:01:32.138 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/11df0dd2-96a2-4623-8653-8f88e3eb3b5f/Week/84  
+2019-03-11 00:01:32.138 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a6eacdca-0026-480e-b408-d4054bb60d49/Week/84  
+2019-03-11 00:01:32.138 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/2a83ba1c-6fd7-40e6-9c95-768c4c9a91d0/Week/84  
+2019-03-11 00:01:32.138 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/6ffc66ec-d97e-49a2-9f46-cc8e943b820c/Week/84  
+2019-03-11 00:01:32.140 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/6057131a-3f74-499e-bc95-e255524d7bca/Week/84  
+2019-03-11 00:01:32.140 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/7b79ddab-df09-453e-913b-c0a55e479553/Week/84  
+2019-03-11 00:01:32.142    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:32.155    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:32.159    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:32.162    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:32.168    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:32.174    Warning: AspNetCore - <CorsService> [11] The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time. Configure the policy by listing individual origins if credentials needs to be supported.
+2019-03-11 00:01:33.359 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1219.3461ms 200 application/json; charset=utf-8
+2019-03-11 00:01:33.367 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1229.6032ms 200 application/json; charset=utf-8
+2019-03-11 00:01:33.386 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1248.3044ms 200 application/json; charset=utf-8
+2019-03-11 00:01:33.392 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1252.9538ms 200 application/json; charset=utf-8
+2019-03-11 00:01:33.424 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1286.8726ms 200 application/json; charset=utf-8
+2019-03-11 00:01:33.459 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1321.2637ms 200 application/json; charset=utf-8
+
+
+
+
+
+-.
+2019-03-11 00:07:04.534  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:04.535  InfoBasic:  Service Name: TWCore.Diagnostics.Api                       Environment Name: DEV                                  
+2019-03-11 00:07:04.535  InfoBasic:  Application Name: TWCore.Diagnostics.Api                   Application Display: TWCore Diagnostics Tools          
+2019-03-11 00:07:04.535  InfoBasic:  Machine Name: TONYPC                                       TWCore Version: 2.1.181.0 [O]                          
+2019-03-11 00:07:04.536  InfoBasic:  Discovery Services: True [ReceiveThread = True]
+2019-03-11 00:07:04.536  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:04.536  InfoBasic:  Settings for this app:
+2019-03-11 00:07:04.536  InfoBasic:  ─────────────────────
+2019-03-11 00:07:04.539  InfoBasic: 	 » AssemblyResolverManager.Paths = ./assemblies, C:\AGSW_GIT\dlls
+2019-03-11 00:07:04.539  InfoBasic: 	 » Bot.DataFolder = ./botdata
+2019-03-11 00:07:04.539  InfoBasic: 	 » Bot.DefaultEnvironment = Docker
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.DebugMode = false
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Console.Enabled = true
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Console.LogLevel = 1023
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.File.Enabled = true
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.File.LogLevel = 255
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.File.Path = ./logs/TWCore.Diagnostics.Api.txt
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Html.Enabled = true
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Html.LogLevel = 255
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Html.Path = ./logs/TWCore.Diagnostics.Api.htm
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Messages.Enabled = true
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Log.Storage.Messages.LogLevel = 131
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Services.Queue.ConfigFile = ./settings/queues.redis.xml
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Services.Queue.ServerName = TWCore.Diagnostics.Api
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.File.Enabled = false
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.File.Format = TWCore.Diagnostics.Api [STATUS]-{yyyy}-{MM}-{dd}_{HH}-{mm}
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.File.Path = ./status
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.File.Triggers.Periodic.Enabled = false
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.File.Triggers.Periodic.TimeInMinutes = 60
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.Http.Enabled = true
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.Http.Port = 28905
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Status.Transport.Messages.Enabled = false
+2019-03-11 00:07:04.539  InfoBasic: 	 » Core.Trace.BasePath = ./traces
+2019-03-11 00:07:04.540  InfoBasic: 	 » Core.Trace.Compressor = TWCore.Compression.DeflateCompressor, TWCore
+2019-03-11 00:07:04.540  InfoBasic: 	 » Core.Trace.Serializer = TWCore.Serialization.NSerializer.NBinarySerializer, TWCore.Serialization.NSerializer
+2019-03-11 00:07:04.540  InfoBasic: 	 » Core.Trace.Storage.File.Enabled = true
+2019-03-11 00:07:04.540  InfoBasic: 	 » Core.Trace.Storage.Messages.Enabled = true
+2019-03-11 00:07:04.540  InfoBasic: 	 » Core.Trace.UseAbsolutePath = false
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.ForceBinaryOnApp = 
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.ForceJsonOnApp = Agsw.Travel.Api;
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.ForceXmlOnApp = 
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.StoreTracesToDisk = true
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.TracesFolderPath = ./tracesdata
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.WriteInBinary = false
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.WriteInJson = false
+2019-03-11 00:07:04.540  InfoBasic: 	 » Diagnostics.WriteInXml = true
+2019-03-11 00:07:04.540  InfoBasic: 	 » RavenDb.Database = Diagnostics
+2019-03-11 00:07:04.540  InfoBasic: 	 » RavenDb.Urls = http://10.10.1.52:8080
+2019-03-11 00:07:04.540  InfoBasic: 	 » WebService.Urls = http://*:55999
+2019-03-11 00:07:04.543  InfoBasic: 
+2019-03-11 00:07:04.543  InfoBasic:  Available Console Commands:
+2019-03-11 00:07:04.543  InfoBasic:  ──────────────────────────
+2019-03-11 00:07:04.543  InfoBasic: 	 » ESC = Stop the service.
+2019-03-11 00:07:04.544  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:04.548  InfoBasic: <ServiceList> Starting: TWCore.Services.WebService
+2019-03-11 00:07:04.549  InfoBasic: <SimpleServiceAsync> Starting service
+2019-03-11 00:07:05.456  InfoBasic: <RavenHelper> Creating RavenDB document store
+2019-03-11 00:07:05.481  InfoBasic: <RavenHelper> Creating RavenDB indexes
+
+
+
+
+
+-.
+2019-03-11 00:07:51.785  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:51.787  InfoBasic:  Service Name: TWCore.Diagnostics.Api                       Environment Name: DEV                                  
+2019-03-11 00:07:51.787  InfoBasic:  Application Name: TWCore.Diagnostics.Api                   Application Display: TWCore Diagnostics Tools          
+2019-03-11 00:07:51.787  InfoBasic:  Machine Name: TONYPC                                       TWCore Version: 2.1.181.0 [O]                          
+2019-03-11 00:07:51.788  InfoBasic:  Discovery Services: True [ReceiveThread = True]
+2019-03-11 00:07:51.788  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:51.788  InfoBasic:  Settings for this app:
+2019-03-11 00:07:51.788  InfoBasic:  ─────────────────────
+2019-03-11 00:07:51.790  InfoBasic: 	 » AssemblyResolverManager.Paths = ./assemblies, C:\AGSW_GIT\dlls
+2019-03-11 00:07:51.790  InfoBasic: 	 » Bot.DataFolder = ./botdata
+2019-03-11 00:07:51.790  InfoBasic: 	 » Bot.DefaultEnvironment = Docker
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.DebugMode = false
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Console.Enabled = true
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Console.LogLevel = 1023
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.File.Enabled = true
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.File.LogLevel = 255
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.File.Path = ./logs/TWCore.Diagnostics.Api.txt
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Html.Enabled = true
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Html.LogLevel = 255
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Html.Path = ./logs/TWCore.Diagnostics.Api.htm
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Messages.Enabled = true
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Log.Storage.Messages.LogLevel = 131
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Services.Queue.ConfigFile = ./settings/queues.redis.xml
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Services.Queue.ServerName = TWCore.Diagnostics.Api
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Status.Transport.File.Enabled = false
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Status.Transport.File.Format = TWCore.Diagnostics.Api [STATUS]-{yyyy}-{MM}-{dd}_{HH}-{mm}
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Status.Transport.File.Path = ./status
+2019-03-11 00:07:51.790  InfoBasic: 	 » Core.Status.Transport.File.Triggers.Periodic.Enabled = false
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Status.Transport.File.Triggers.Periodic.TimeInMinutes = 60
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Status.Transport.Http.Enabled = true
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Status.Transport.Http.Port = 28905
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Status.Transport.Messages.Enabled = false
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.BasePath = ./traces
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.Compressor = TWCore.Compression.DeflateCompressor, TWCore
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.Serializer = TWCore.Serialization.NSerializer.NBinarySerializer, TWCore.Serialization.NSerializer
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.Storage.File.Enabled = true
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.Storage.Messages.Enabled = true
+2019-03-11 00:07:51.791  InfoBasic: 	 » Core.Trace.UseAbsolutePath = false
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.ForceBinaryOnApp = 
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.ForceJsonOnApp = Agsw.Travel.Api;
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.ForceXmlOnApp = 
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.StoreTracesToDisk = true
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.TracesFolderPath = ./tracesdata
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.WriteInBinary = false
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.WriteInJson = false
+2019-03-11 00:07:51.791  InfoBasic: 	 » Diagnostics.WriteInXml = true
+2019-03-11 00:07:51.791  InfoBasic: 	 » RavenDb.Database = Diagnostics
+2019-03-11 00:07:51.791  InfoBasic: 	 » RavenDb.Urls = http://10.10.1.52:8080
+2019-03-11 00:07:51.791  InfoBasic: 	 » WebService.Urls = http://*:55999
+2019-03-11 00:07:51.793  InfoBasic: 
+2019-03-11 00:07:51.793  InfoBasic:  Available Console Commands:
+2019-03-11 00:07:51.793  InfoBasic:  ──────────────────────────
+2019-03-11 00:07:51.793  InfoBasic: 	 » ESC = Stop the service.
+2019-03-11 00:07:51.797  InfoBasic: ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+2019-03-11 00:07:51.799  InfoBasic: <ServiceList> Starting: TWCore.Services.WebService
+2019-03-11 00:07:51.799  InfoBasic: <SimpleServiceAsync> Starting service
+2019-03-11 00:07:52.718  InfoBasic: <RavenHelper> Creating RavenDB document store
+2019-03-11 00:07:52.741  InfoBasic: <RavenHelper> Creating RavenDB indexes
+2019-03-11 00:07:55.979  InfoBasic: <WebService> WebService Hosting environment: Production
+2019-03-11 00:07:55.980  InfoBasic: <WebService> WebService Content root path: C:\Github\TWCore2\tools\TWCore.Diagnostics.Api
+2019-03-11 00:07:55.980  InfoBasic: <WebService> WebService Web root path: C:\Github\TWCore2\tools\TWCore.Diagnostics.Api\wwwroot
+2019-03-11 00:07:55.980  InfoBasic: <WebService> WebService is Listening on: http://[::]:55999
+2019-03-11 00:07:55.980  InfoBasic: <SimpleServiceAsync> Service started
+2019-03-11 00:07:55.980  InfoBasic: <ServiceList> Starting: TWCore.Diagnostics.Api.DiagnosticRawMessagingServiceAsync
+2019-03-11 00:07:55.982  InfoBasic: <RawMessagingServiceAsync> Starting messaging service
+2019-03-11 00:07:55.983  InfoBasic: <DefaultFactories> Setting the Large Object Heap Compact timeout every 1 minutes.
+2019-03-11 00:07:55.985  InfoBasic: <CoreServicesExtensions> Loading queues configuration: ./settings/queues.redis.xml
+2019-03-11 00:07:56.061  InfoBasic: <MQueueRawServerBase> Configuring server mode for TWCore.Diagnostics.Api with ResponseServer = False
+2019-03-11 00:07:56.063  InfoBasic: <MQueueRawServerBase> Adding queue server listeners for TWCore.Diagnostics.Api, Environment: DEV
+2019-03-11 00:07:56.082  InfoBasic: <MQueueRawServerBase> Starting queue server listeners for TWCore.Diagnostics.Api
+2019-03-11 00:07:56.083  InfoBasic: <MQueueRawServerBase> Starting queue server listener. Route: 127.0.0.1, Name: DIAGNOSTICS_RQ
+2019-03-11 00:07:56.272  InfoBasic: <RawMessagingServiceAsync> Messaging service started.
+2019-03-11 00:07:56.273  InfoBasic: <ServiceList> Starting: TWCore.Diagnostics.Api.DiagnosticBotService
+2019-03-11 00:07:56.274  InfoBasic: <BotService> Starting Bot service...
+2019-03-11 00:07:58.086  InfoBasic: <RequestState`1> Connected.
+2019-03-11 00:07:58.508  InfoBasic: <DiagnosticBotService> Loading bot config...
+2019-03-11 00:07:58.526  InfoBasic: <DiagnosticBotService> Bot config loaded.
+2019-03-11 00:07:58.526  InfoBasic: <BotService> Bot service has started.
+2019-03-11 00:07:58.890 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/  
+2019-03-11 00:07:58.988 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/styles.js  
+2019-03-11 00:07:58.988 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 99.0744ms 200 text/html
+2019-03-11 00:07:59.006 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 18.2515ms 200 application/javascript
+2019-03-11 00:07:59.465 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-diagnostics-diagnostics-module.js  
+2019-03-11 00:07:59.474 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 9.1019ms 200 application/javascript
+2019-03-11 00:07:59.941 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query  
+2019-03-11 00:08:00.096 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 154.5786ms 200 application/json; charset=utf-8
+2019-03-11 00:08:08.445 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/  
+2019-03-11 00:08:08.453 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 8.7835ms 200 text/html
+2019-03-11 00:08:08.465 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/runtime.js  
+2019-03-11 00:08:08.466 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/polyfills.js  
+2019-03-11 00:08:08.469 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/styles.js  
+2019-03-11 00:08:08.470 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 4.8341ms 200 application/javascript
+2019-03-11 00:08:08.479 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/scripts.js  
+2019-03-11 00:08:08.484 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/vendor.js  
+2019-03-11 00:08:08.488 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/main.js  
+2019-03-11 00:08:08.498 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 10.4504ms 200 application/javascript
+2019-03-11 00:08:08.499 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 20.3996ms 200 application/javascript
+2019-03-11 00:08:08.500 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 34.1251ms 200 application/javascript
+2019-03-11 00:08:08.505 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 36.4034ms 200 application/javascript
+2019-03-11 00:08:08.529 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 45.211ms 200 application/javascript
+2019-03-11 00:08:09.108 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-diagnosti~bf33a4f6.js  
+2019-03-11 00:08:09.108 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-base-base-module~views-diagnostics-diagnostics-module.js  
+2019-03-11 00:08:09.108 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-widgets-widgets-module.js  
+2019-03-11 00:08:09.108 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-diagnostics-diagnostics-module.js  
+2019-03-11 00:08:09.109 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/views-diagnostics-diagnostics-module~views-notifications-notifications-module.js  
+2019-03-11 00:08:09.124 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 16.2367ms 200 application/javascript
+2019-03-11 00:08:09.125 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 16.2111ms 200 application/javascript
+2019-03-11 00:08:09.126 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 17.642ms 200 application/javascript
+2019-03-11 00:08:09.128 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 19.9005ms 200 application/javascript
+2019-03-11 00:08:09.130 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 21.8353ms 200 application/javascript
+2019-03-11 00:08:09.594 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query  
+2019-03-11 00:08:09.597 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/counters  
+2019-03-11 00:08:09.599 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/assets/img/brand/diagnostics.svg  
+2019-03-11 00:08:09.608 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 7.8171ms 200 image/svg+xml
+2019-03-11 00:08:09.615 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/Simple-Line-Icons.woff2?v=2.4.0  
+2019-03-11 00:08:09.618 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 3.4427ms 200 font/woff2
+2019-03-11 00:08:09.636 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 41.9967ms 200 application/json; charset=utf-8
+2019-03-11 00:08:09.665 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/assets/img/favicon.png  
+2019-03-11 00:08:09.672 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 6.557ms 200 text/html
+2019-03-11 00:08:09.876 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 279.0497ms 200 application/json; charset=utf-8
+2019-03-11 00:08:10.040 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/fontawesome-webfont.woff2?v=4.7.0  
+2019-03-11 00:08:10.050 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 9.3449ms 200 font/woff2
+2019-03-11 00:08:18.138 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:19.241 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:08:19.889 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/c331c726-f08c-4251-9e71-9e5c428ebe35/Week/84  
+2019-03-11 00:08:20.509      Error: AspNetCore - <Kestrel> [13] Connection id "0HLL5LKUDKBA7", Request id "0HLL5LKUDKBA7:00000005": An unhandled exception was thrown by the application.
+Exceptions:
+	Type: System.NullReferenceException
+	Message: Object reference not set to an instance of an object.
+	Stack:    at TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbQueryHandler.GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, Int32 samples) in C:\Github\TWCore2\tools\TWCore.Diagnostics.Api\MessageHandlers\RavenDb\RavenDbQueryHandler.cs:line 681
+   at lambda_method(Closure , Object )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutorAwaitable.Awaiter.GetResult()
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Session.SessionMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Session.SessionMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+
+
+2019-03-11 00:08:20.513 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1272.6842ms 500 
+2019-03-11 00:08:20.515 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:08:20.524 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 634.7196ms 200 application/json; charset=utf-8
+2019-03-11 00:08:20.559 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 2421.201ms 200 application/json; charset=utf-8
+2019-03-11 00:08:20.561 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:20.585 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/e50d3b7c-9c23-45a1-925f-62b38dbddba7/Week/84  
+2019-03-11 00:08:20.585 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/c331c726-f08c-4251-9e71-9e5c428ebe35/Week/84  
+2019-03-11 00:08:20.884 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 323.7064ms 200 application/json; charset=utf-8
+2019-03-11 00:08:20.886 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:20.935 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 349.6265ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.062 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 547.3001ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.064 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:08:21.376 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 790.371ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.416 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 529.946ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.418 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:21.674 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 610.2501ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.724 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 305.9242ms 200 application/json; charset=utf-8
+2019-03-11 00:08:21.792  InfoBasic: 01 - [START] Processing LogItems List Message
+2019-03-11 00:08:21.976  InfoBasic: 01 - [END: Total Time = 204,1793ms] Processing LogItems List Message
+2019-03-11 00:08:23.485 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:08:23.485 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/e50d3b7c-9c23-45a1-925f-62b38dbddba7/Week/84  
+2019-03-11 00:08:23.485 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/b6ff732d-086f-463e-a127-f90d4eeefc0d/Week/84  
+2019-03-11 00:08:23.486 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/c331c726-f08c-4251-9e71-9e5c428ebe35/Week/84  
+2019-03-11 00:08:23.486 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:24.249 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 763.7416ms 200 application/json; charset=utf-8
+2019-03-11 00:08:24.252 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 767.0605ms 200 application/json; charset=utf-8
+2019-03-11 00:08:24.276 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 790.4812ms 200 application/json; charset=utf-8
+2019-03-11 00:08:24.312 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 826.5934ms 200 application/json; charset=utf-8
+2019-03-11 00:08:24.320 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 835.0423ms 200 application/json; charset=utf-8
+2019-03-11 00:08:24.801 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:08:24.801 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/e50d3b7c-9c23-45a1-925f-62b38dbddba7/Week/84  
+2019-03-11 00:08:24.801 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:08:24.802 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/573be1cb-cec3-4915-a98c-6bbc7e1545b8/Week/84  
+2019-03-11 00:08:24.802 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/c331c726-f08c-4251-9e71-9e5c428ebe35/Week/84  
+2019-03-11 00:08:24.803 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/b6ff732d-086f-463e-a127-f90d4eeefc0d/Week/84  
+2019-03-11 00:08:26.364 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1562.9803ms 200 application/json; charset=utf-8
+2019-03-11 00:08:26.382 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1579.1048ms 200 application/json; charset=utf-8
+2019-03-11 00:08:26.384 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1582.6158ms 200 application/json; charset=utf-8
+2019-03-11 00:08:26.438 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1636.9441ms 200 application/json; charset=utf-8
+2019-03-11 00:08:26.570 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 1768.4763ms 200 application/json; charset=utf-8
+2019-03-11 00:08:26.843 InfoMedium: AspNetCore - <WebHost> [2] Request finished in 2041.6989ms 200 application/json; charset=utf-8
+2019-03-11 00:08:55.993  InfoBasic: Setting the Compaction on the Large Object Heap for next garbage collection...
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/a9948bac-1db2-4fda-b41d-fbece3fba93d/Week/84  
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/c331c726-f08c-4251-9e71-9e5c428ebe35/Week/84  
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/9d3ea9d0-743d-4ac5-919f-c8bb6b4f96cf/Week/84  
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/e50d3b7c-9c23-45a1-925f-62b38dbddba7/Week/84  
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/573be1cb-cec3-4915-a98c-6bbc7e1545b8/Week/84  
+2019-03-11 00:09:24.804 InfoMedium: AspNetCore - <WebHost> [1] Request starting HTTP/1.1 GET http://localhost:55999/api/query/Docker/lastcountervalues/b6ff732d-086f-463e-a127-f90d4eeefc0d/Week/84  
