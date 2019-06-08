@@ -362,15 +362,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var logsSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var logQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_Search>()
+                var logQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_Search2>()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate)
                     .OpenSubclause()
                     .Search(x => x.Group, searchTerm)
                     .Search(x => x.Code, searchTerm)
-                    .Search(x => x.Type, searchTerm)
                     .Search(x => x.Group, "*" + searchTerm + "*")
-                    .Search(x => x.Message, "*" + searchTerm + "*")
                     .CloseSubclause()
                     .OrderBy(x => x.Timestamp);
                 return await logQuery.Take(1000).ToListAsync().ConfigureAwait(false);
@@ -378,15 +376,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 
             var tracesSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var traceQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_Search>()
+                var traceQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_Search2>()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate)
                     .OpenSubclause()
                     .Search(x => x.Group, searchTerm)
-                    .Search(x => x.Tags, searchTerm)
                     .Search(x => x.Name, searchTerm)
                     .Search(x => x.Group, "*" + searchTerm + "*")
-                    .Search(x => x.Tags, "*" + searchTerm + "*")
                     .Search(x => x.Name, "*" + searchTerm + "*")
                     .CloseSubclause()
                     .OrderBy(x => x.Timestamp);
