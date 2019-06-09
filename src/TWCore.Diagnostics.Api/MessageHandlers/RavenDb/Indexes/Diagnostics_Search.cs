@@ -30,9 +30,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             public string Environment { get; set; }
             public DateTime Timestamp { get; set; }
             public string Group { get; set; }
-            public string Code { get; set; }
-            public string Name {get; set; }
-            public string MetaValue { get; set; }
+            public string SearchTerm { get; set; }
         }
 
         public Diagnostics_Search()
@@ -43,9 +41,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                                             Environment = log.Environment, 
                                             Timestamp = log.Timestamp, 
                                             Group = log.Group, 
-                                            Code = log.Code,
-                                            Name = (string)null,
-                                            MetaValue = (string)null,
+                                            SearchTerm = log.Message
                                         });
 
             AddMap<NodeTraceItem>(traces => from trace in traces 
@@ -54,29 +50,23 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                                                 Environment = trace.Environment, 
                                                 Timestamp = trace.Timestamp, 
                                                 Group = trace.Group, 
-                                                Code = (string)null, 
-                                                Name = trace.Name, 
-                                                MetaValue = (string)null,
+                                                SearchTerm = trace.Name
                                             });
+
             AddMap<GroupMetadata>(metadata => from meta in metadata 
                                               from itemValue in meta.Items
-                                              where itemValue.Value != null && itemValue.Value.Length > 3
                                               select new 
                                               {
                                                   Environment = (string) null,
                                                   Timestamp = meta.Timestamp,
                                                   Group = meta.GroupName,
-                                                  Code = (string)null, 
-                                                  Name = (string)null,
-                                                  MetaValue = itemValue.Value
+                                                  SearchTerm = itemValue.Key + "=" + itemValue.Value
                                               });
 
             Index(x => x.Environment, FieldIndexing.Exact);
             Index(x => x.Timestamp, FieldIndexing.Default);
             Index(x => x.Group, FieldIndexing.Search);
-            Index(x => x.Code, FieldIndexing.Exact);
-            Index(x => x.Name, FieldIndexing.Search);
-            Index(x => x.MetaValue, FieldIndexing.Search);
+            Index(x => x.SearchTerm, FieldIndexing.Search);
         }
     }
 }
