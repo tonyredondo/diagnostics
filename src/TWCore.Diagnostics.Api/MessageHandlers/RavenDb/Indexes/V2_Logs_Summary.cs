@@ -42,6 +42,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
         {
             Map = logs =>
                 from item in logs
+                where item.Environment != null
                 group item by new { item.Environment, item.Application, item.Timestamp.Date } into g
                 select new
                 {
@@ -69,6 +70,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                         Count = x.Sum(y => y.Count)
                     })
                 };
+
+            Index(item => item.Environment, FieldIndexing.Exact);
+            Index(item => item.Application, FieldIndexing.Exact);
+            Index(item => item.Date, FieldIndexing.Default);
         }
     }
 }

@@ -26,9 +26,9 @@ namespace TWCore.Diagnostics.Api.Models.Log
     public class LogSummary
     {
         [DataMember]
-        public ApplicationsLevels[] Applications { get; set; }
+        public List<ApplicationsLevels> Applications { get; set; }
         [DataMember]
-        public LogLevelTimes[] Levels { get; set; }
+        public List<LogLevelTimes> Levels { get; set; }
     }
 
 
@@ -39,7 +39,7 @@ namespace TWCore.Diagnostics.Api.Models.Log
         [XmlAttribute, DataMember]
         public string Application { get; set; }
         [DataMember]
-        public LogLevelQuantity[] Levels { get; set; }
+        public List<LogLevelQuantity> Levels { get; set; }
     }
     [DataContract]
     public class LogLevelQuantity
@@ -60,7 +60,7 @@ namespace TWCore.Diagnostics.Api.Models.Log
         [XmlAttribute, DataMember]
         public int Count { get; set; }
         [DataMember]
-        public TimeCount[] Series { get; set; }
+        public List<TimeCount> Series { get; set; }
     }
     [DataContract]
     public class TimeCount

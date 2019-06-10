@@ -59,7 +59,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<V2_Environments_Availables.Result, V2_Environments_Availables>().Select(x => x.Environment).ToListAsync();
+                var query = from item in session.Query<V2_Environments_Availables.Result, V2_Environments_Availables>()
+                            select item.Environment;
+                return query.ToListAsync();
             });
         }
         /// <summary>
@@ -76,36 +78,67 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                 return session.Query<V2_Logs_Summary.Result, V2_Logs_Summary>()
                               .Where(x => x.Environment == environment)
                               .Where(x => x.Date >= fromDate && x.Date <= toDate)
-                              .OrderBy(x => x.Application)
                               .ToListAsync();
             }).ConfigureAwait(false);
 
-            var apps = values.GroupBy(x => x.Application).Select(x => new ApplicationsLevels
-            {
-                Application = x.Key,
-                Levels = x.SelectMany(y => y.Levels).GroupBy(y => y.Name).Select(ix => new LogLevelQuantity
-                {
-                    Name = ix.Key,
-                    Count = ix.Sum(i => i.Count)
-                }).OrderBy(y => y.Name).ToArray()
-            }).ToArray();
+            var dctApplicationLevels = new Dictionary<string, ApplicationsLevels>();
+            var dctLogLevels = new Dictionary<LogLevel, LogLevelTimes>();
 
-            var levels = values.SelectMany(col => col.Levels, (result, level) => new
+            foreach(var value in values)
             {
-                Name = level.Name,
-                Count = level.Count,
-                Date = result.Date
-            }).GroupBy(x => x.Name).Select(x => new LogLevelTimes
-            {
-                Name = x.Key,
-                Count = x.Sum(i => i.Count),
-                Series = x.GroupBy(i => i.Date).Select(i => new TimeCount
+                if (!dctApplicationLevels.TryGetValue(value.Application, out var application))
                 {
-                    Date = i.Key,
-                    Count = i.Sum(k => k.Count)
-                }).ToArray()
-            }).OrderBy(x => x.Name).ToArray();
+                    application = new ApplicationsLevels
+                    {
+                        Application = value.Application,
+                        Levels = new List<LogLevelQuantity>()
+                    };
+                    dctApplicationLevels[value.Application] = application;
+                }
 
+                foreach(var level in value.Levels)
+                {
+                    var appLevel = application.Levels.FirstOrDefault(al => al.Name == level.Name);
+                    if (appLevel == null)
+                    {
+                        appLevel = new LogLevelQuantity
+                        {
+                            Name = level.Name,
+                        };
+                        application.Levels.Add(appLevel);
+                    }
+                    appLevel.Count += level.Count;
+
+                    if (!dctLogLevels.TryGetValue(level.Name, out var levelTimes))
+                    {
+                        levelTimes = new LogLevelTimes
+                        {
+                            Name = level.Name,
+                            Series = new List<TimeCount>()
+                        };
+                        dctLogLevels[level.Name] = levelTimes;
+                    }
+
+                    levelTimes.Count += level.Count;
+                    var levelSeries = levelTimes.Series.FirstOrDefault(ls => ls.Date == value.Date);
+                    if (levelSeries == null)
+                    {
+                        levelSeries = new TimeCount
+                        {
+                            Date = value.Date
+                        };
+                        levelTimes.Series.Add(levelSeries);
+                        levelTimes.Series.Sort((a, b) => a.Date.CompareTo(b.Date));
+                    }
+                    levelSeries.Count += level.Count;
+                }
+                application.Levels.Sort((a, b) => a.Name.CompareTo(b.Name));
+            }
+
+            var apps = dctApplicationLevels.Values.ToList();
+            var levels = dctLogLevels.Values.ToList();
+            apps.Sort((a, b) => a.Application.CompareTo(b.Application));
+            levels.Sort((a, b) => a.Name.CompareTo(b.Name));
             return new LogSummary
             {
                 Applications = apps,
