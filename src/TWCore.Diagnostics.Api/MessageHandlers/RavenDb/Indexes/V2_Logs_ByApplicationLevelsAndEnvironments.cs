@@ -25,6 +25,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
         public V2_Logs_ByApplicationLevelsAndEnvironments()
         {
             Map = logs => from log in logs
+                          where log.Environment != null
+                          orderby log.Timestamp descending
                           select new
                           {
                               Environment = log.Environment,
@@ -32,6 +34,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                               Timestamp = log.Timestamp,
                               Level = log.Level,
                           };
+            Index(i => i.Environment, FieldIndexing.Exact);
+            Index(i => i.Application, FieldIndexing.Exact);
+            Index(i => i.Timestamp, FieldIndexing.Default);
+            Index(i => i.Level, FieldIndexing.Exact);
         }
     }
 }
