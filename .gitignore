@@ -120,3 +120,5 @@ cachedViews/*
 *.userprefs
 /tools/TWCore.Object.Api/assemblies
 /test/TWCore.Tests.Benchmark/BenchmarkDotNet.Artifacts/results
+/src/TWCore.Diagnostics.Api/logs
+/src/TWCore.Diagnostics.Api/traces
