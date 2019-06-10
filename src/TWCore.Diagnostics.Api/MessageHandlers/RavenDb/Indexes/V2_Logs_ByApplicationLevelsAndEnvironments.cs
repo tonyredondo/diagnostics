@@ -16,20 +16,22 @@ limitations under the License.
 
 using System.Linq;
 using Raven.Client.Documents.Indexes;
-using TWCore.Diagnostics.Log;
+using TWCore.Diagnostics.Api.Models.Log;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Metadata_ByGroup : AbstractIndexCreationTask<GroupMetadata>
+    public class V2_Logs_ByApplicationLevelsAndEnvironments : AbstractIndexCreationTask<NodeLogItem>
     {
-        public Metadata_ByGroup()
+        public V2_Logs_ByApplicationLevelsAndEnvironments()
         {
-            Map = gMetas => from meta in gMetas
-                            select new
-                            {
-                                GroupName = meta.GroupName,
-                                Timestamp = meta.Timestamp,
-                            };
+            Map = logs => from log in logs
+                          select new
+                          {
+                              Environment = log.Environment,
+                              Application = log.Application,
+                              Timestamp = log.Timestamp,
+                              Level = log.Level,
+                          };
         }
     }
 }

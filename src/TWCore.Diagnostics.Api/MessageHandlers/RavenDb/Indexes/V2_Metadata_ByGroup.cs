@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright 2015-2018 Daniel Adrian Redondo Suarez
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,24 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-using System;
 using System.Linq;
 using Raven.Client.Documents.Indexes;
-using TWCore.Diagnostics.Api.Models.Log;
+using TWCore.Diagnostics.Log;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Environments_Availables : AbstractMultiMapIndexCreationTask<Environments_Availables.Result>
+    public class V2_Metadata_ByGroup : AbstractIndexCreationTask<GroupMetadata>
     {
-        public class Result
+        public V2_Metadata_ByGroup()
         {
-            public string Environment { get; set; }
-        }
-        
-        public Environments_Availables()
-        {
-            AddMap<NodeLogItem>(docs => docs.Where(i => i.Environment != null).Select(i => new { i.Environment }));
-            Reduce = results => results.GroupBy(i => i.Environment).Select(i => new {Environment = i.Key});
+            Map = gMetas => from meta in gMetas
+                            select new
+                            {
+                                meta.GroupName,
+                            };
+            Index(m => m.GroupName, FieldIndexing.Exact);
         }
     }
 }

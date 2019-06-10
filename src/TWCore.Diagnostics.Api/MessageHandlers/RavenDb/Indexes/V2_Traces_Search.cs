@@ -14,23 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using System;
 using System.Linq;
 using Raven.Client.Documents.Indexes;
 using TWCore.Diagnostics.Api.Models.Trace;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Traces_ByGroupId : AbstractIndexCreationTask<NodeTraceItem>
+
+    public class V2_Traces_Search : AbstractIndexCreationTask<NodeTraceItem>
     {
-        public Traces_ByGroupId()
+        public V2_Traces_Search()
         {
             Map = traces => from trace in traces
-                            select new
-                            {
-                                Environment = trace.Environment,
-                                Group = trace.Group,
-                                Timestamp = trace.Timestamp
-                            };
+                          select new
+                          {
+                              Environment = trace.Environment,
+                              Timestamp = trace.Timestamp,
+                              Name = trace.Name,
+                              Group = trace.Group,
+                              //Tags = trace.Tags,
+                              //Application = trace.Application,
+                              //Machine = trace.Machine
+                          };
+
+            Index(x => x.Group, FieldIndexing.Search);
+            Index(x => x.Name, FieldIndexing.Search);
+            //Index(x => x.Tags, FieldIndexing.Search);
         }
     }
 }

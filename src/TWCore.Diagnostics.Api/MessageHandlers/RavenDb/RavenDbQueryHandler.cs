@@ -59,7 +59,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<Environments_Availables.Result, Environments_Availables>().Select(x => x.Environment).ToListAsync();
+                return session.Query<V2_Environments_Availables.Result, V2_Environments_Availables>().Select(x => x.Environment).ToListAsync();
             });
         }
         /// <summary>
@@ -73,7 +73,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var values = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<Logs_Summary.Result, Logs_Summary>()
+                return session.Query<V2_Logs_Summary.Result, V2_Logs_Summary>()
                               .Where(x => x.Environment == environment)
                               .Where(x => x.Date >= fromDate && x.Date <= toDate)
                               .OrderBy(x => x.Application)
@@ -127,7 +127,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_ByApplicationLevelsAndEnvironments>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, V2_Logs_ByApplicationLevelsAndEnvironments>();
                 var query = documentQuery
                         .Statistics(out var stats)
                         .WhereEquals(x => x.Environment, environment)
@@ -165,7 +165,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var res = await session.Advanced.AsyncDocumentQuery<Traces_List.Result, Traces_List>()
+                var res = await session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
                         .Statistics(out var stats)
                         .WhereEquals(x => x.Environment, environment)
                         .WhereBetween(x => x.Start, fromDate, toDate)
@@ -199,7 +199,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var value = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_ByGroupId>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, V2_Traces_ByGroup>();
                 var query = documentQuery
                     .WhereEquals(x => x.Environment, environment)
                     .WhereEquals(x => x.Group, groupName)
@@ -362,7 +362,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var logsSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var logQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_Search2>()
+                var logQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, V2_Logs_Search>()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate)
                     .OpenSubclause()
@@ -376,7 +376,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 
             var tracesSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var traceQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_Search2>()
+                var traceQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, V2_Traces_Search>()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate)
                     .OpenSubclause()
@@ -412,7 +412,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Advanced.AsyncDocumentQuery<GroupMetadata, Metadata_ByGroup>()
+                return await session.Advanced.AsyncDocumentQuery<GroupMetadata, V2_Metadata_ByGroup>()
                     .WhereEquals(x => x.GroupName, groupName)
                     .OrderByDescending(x => x.Timestamp)
                     .ToListAsync().ConfigureAwait(false);
@@ -503,7 +503,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Query<NodeCountersItem, Counters_CounterSelection>()
+                return await session.Query<NodeCountersItem, V2_Counters_CounterSelection>()
                     .Where(x => x.Environment == environment)
                     .OrderBy(x => x.Category)
                     .ThenBy(x => x.Name)
@@ -560,7 +560,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Query<NodeCountersValue, Counters_ValueSelection>()
+                return await session.Query<NodeCountersValue, V2_Counters_ValueSelection>()
                     .Where(x => x.CountersId == counterId)
                     .Where(x => x.Timestamp >= fromDate && x.Timestamp <= toDate)
                     .OrderByDescending(x => x.Timestamp)
@@ -637,7 +637,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             #region Get Values
             var counterValuesTask = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var query = session.Query<NodeCountersValue, Counters_ValueSelection>()
+                var query = session.Query<NodeCountersValue, V2_Counters_ValueSelection>()
                     .Where(x => x.CountersId == counterId)
                     .Where(x => x.Timestamp >= fromDate && x.Timestamp <= toDate)
                     .OrderByDescending(x => x.Timestamp)

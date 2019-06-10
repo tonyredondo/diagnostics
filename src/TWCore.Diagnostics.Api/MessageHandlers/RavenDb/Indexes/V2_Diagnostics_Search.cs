@@ -23,7 +23,7 @@ using TWCore.Diagnostics.Api.Models.Trace;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Diagnostics_Search : AbstractMultiMapIndexCreationTask<Diagnostics_Search.Result>
+    public class V2_Diagnostics_Search : AbstractMultiMapIndexCreationTask<V2_Diagnostics_Search.Result>
     {
         public class Result
         {
@@ -33,7 +33,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             public string SearchTerm { get; set; }
         }
 
-        public Diagnostics_Search()
+        public V2_Diagnostics_Search()
         {
             AddMap<NodeLogItem>(logs => from log in logs 
                                         select new 

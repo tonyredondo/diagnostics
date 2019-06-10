@@ -22,7 +22,7 @@ using TWCore.Diagnostics.Log;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Logs_Summary : AbstractIndexCreationTask<NodeLogItem, Logs_Summary.Result>
+    public class V2_Logs_Summary : AbstractIndexCreationTask<NodeLogItem, V2_Logs_Summary.Result>
     {
         public class Result
         {
@@ -38,7 +38,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             }
         }
         
-        public Logs_Summary()
+        public V2_Logs_Summary()
         {
             Map = logs =>
                 from item in logs

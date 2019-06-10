@@ -382,7 +382,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 
                     await RavenHelper.ExecuteAsync(async session =>
                     {
-                        cEntity = await session.Advanced.AsyncDocumentQuery<NodeCountersItem, Counters_CounterSelection>()
+                        cEntity = await session.Advanced.AsyncDocumentQuery<NodeCountersItem, V2_Counters_CounterSelection>()
                             .WhereEquals(item => item.Environment, counter.Environment)
                             .WhereEquals(item => item.Application, counter.Application)
                             .WhereEquals(item => item.Category, counter.Category)

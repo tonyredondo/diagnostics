@@ -20,9 +20,9 @@ using TWCore.Diagnostics.Api.Models.Counters;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Counters_ValueSelection : AbstractIndexCreationTask<NodeCountersValue>
+    public class V2_Counters_ValueSelection : AbstractIndexCreationTask<NodeCountersValue>
     {
-        public Counters_ValueSelection()
+        public V2_Counters_ValueSelection()
         {
             Map = counters => from counter in counters
                               select new

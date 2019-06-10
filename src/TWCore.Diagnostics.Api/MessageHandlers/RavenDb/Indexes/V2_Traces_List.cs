@@ -21,7 +21,7 @@ using TWCore.Diagnostics.Api.Models.Trace;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Traces_List : AbstractIndexCreationTask<NodeTraceItem, Traces_List.Result>
+    public class V2_Traces_List : AbstractIndexCreationTask<NodeTraceItem, V2_Traces_List.Result>
     {
         public class Result
         {
@@ -33,7 +33,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             public bool HasError { get; set; }
         }
 
-        public Traces_List()
+        public V2_Traces_List()
         {
             Map = traces => from trace in traces
                             select new

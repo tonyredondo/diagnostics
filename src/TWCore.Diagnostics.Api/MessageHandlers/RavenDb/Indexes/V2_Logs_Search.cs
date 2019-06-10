@@ -21,10 +21,9 @@ using TWCore.Diagnostics.Api.Models.Log;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-
-    public class Logs_Search2 : AbstractIndexCreationTask<NodeLogItem>
+    public class V2_Logs_Search : AbstractIndexCreationTask<NodeLogItem>
     {
-        public Logs_Search2()
+        public V2_Logs_Search()
         {
             Map = logs => from log in logs
                           select new

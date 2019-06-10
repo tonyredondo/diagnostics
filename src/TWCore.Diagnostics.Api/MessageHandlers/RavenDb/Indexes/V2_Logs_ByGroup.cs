@@ -20,18 +20,16 @@ using TWCore.Diagnostics.Api.Models.Log;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class Logs_ByApplicationLevelsAndEnvironments : AbstractIndexCreationTask<NodeLogItem>
+    public class V2_Logs_ByGroup : AbstractIndexCreationTask<NodeLogItem>
     {
-        public Logs_ByApplicationLevelsAndEnvironments()
+        public V2_Logs_ByGroup()
         {
             Map = logs => from log in logs
                           select new
                           {
-                              Environment = log.Environment,
-                              Application = log.Application,
-                              Timestamp = log.Timestamp,
-                              Level = log.Level,
+                              log.Group
                           };
+            Index(x => x.Group, FieldIndexing.Exact);
         }
     }
 }
