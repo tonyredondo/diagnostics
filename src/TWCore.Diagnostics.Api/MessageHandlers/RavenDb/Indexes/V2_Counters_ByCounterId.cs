@@ -16,22 +16,20 @@ limitations under the License.
 
 using System.Linq;
 using Raven.Client.Documents.Indexes;
-using TWCore.Diagnostics.Log;
+using TWCore.Diagnostics.Api.Models.Counters;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class V2_Metadata_ByGroup : AbstractIndexCreationTask<GroupMetadata>
+    public class V2_Counters_ByCounterId : AbstractIndexCreationTask<NodeCountersItem>
     {
-        public V2_Metadata_ByGroup()
+        public V2_Counters_ByCounterId()
         {
-            Map = gMetas => from meta in gMetas
-                            select new
-                            {
-                                meta.GroupName,
-                                meta.Timestamp
-                            };
-            Index(m => m.GroupName, FieldIndexing.Exact);
-            Index(m => m.Timestamp, FieldIndexing.Default);
+            Map = counters => from counter in counters
+                              select new
+                              {
+                                  counter.CountersId
+                              };
+            Index(i => i.CountersId, FieldIndexing.Exact);
         }
     }
 }

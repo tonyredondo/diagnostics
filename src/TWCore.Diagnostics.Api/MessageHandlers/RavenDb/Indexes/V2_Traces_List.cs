@@ -36,6 +36,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
         public V2_Traces_List()
         {
             Map = traces => from trace in traces
+                            orderby trace.Timestamp descending
                             select new
                             {
                                 Environment = trace.Environment,
@@ -46,6 +47,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                                 HasError = trace.Tags.Contains("Status: Error")
                             };
             Reduce = results => from item in results
+                                orderby item.Start descending
                                 group item by new { item.Group, item.Environment } into g
                                 select new
                                 {
@@ -56,6 +58,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                                     End = g.Max(i => i.End),
                                     HasError = g.Any(i => i.HasError)
                                 };
+
+            Index(i => i.Environment, FieldIndexing.Exact);
+            Index(i => i.Start, FieldIndexing.Default);
         }
     }
 }

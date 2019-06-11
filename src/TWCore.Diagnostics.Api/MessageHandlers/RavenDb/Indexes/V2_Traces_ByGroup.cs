@@ -25,11 +25,15 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
         public V2_Traces_ByGroup()
         {
             Map = traces => from trace in traces
+                            where trace.Environment != null
                             select new
                             {
+                                trace.Environment,
                                 trace.Group,
+                                trace.Timestamp
                             };
 
+            Index(t => t.Environment, FieldIndexing.Exact);
             Index(t => t.Group, FieldIndexing.Exact);
         }
     }

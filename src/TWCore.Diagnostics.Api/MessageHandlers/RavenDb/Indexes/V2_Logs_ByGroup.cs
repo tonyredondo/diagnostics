@@ -27,8 +27,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             Map = logs => from log in logs
                           select new
                           {
+                              log.Environment,
                               log.Group
                           };
+            Index(x => x.Environment, FieldIndexing.Exact);
             Index(x => x.Group, FieldIndexing.Exact);
         }
     }

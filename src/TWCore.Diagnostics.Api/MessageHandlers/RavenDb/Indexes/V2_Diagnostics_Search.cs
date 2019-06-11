@@ -30,38 +30,43 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
             public string Environment { get; set; }
             public DateTime Timestamp { get; set; }
             public string Group { get; set; }
-            public string SearchTerm { get; set; }
+            public string[] SearchTerm { get; set; }
         }
 
         public V2_Diagnostics_Search()
         {
             AddMap<NodeLogItem>(logs => from log in logs 
-                                        select new 
+                                        select new Result
                                         { 
                                             Environment = log.Environment, 
                                             Timestamp = log.Timestamp, 
                                             Group = log.Group, 
-                                            SearchTerm = log.Message
+                                            SearchTerm = new string[] { log.Message }
                                         });
 
             AddMap<NodeTraceItem>(traces => from trace in traces 
-                                            select new 
+                                            select new Result
                                             { 
                                                 Environment = trace.Environment, 
                                                 Timestamp = trace.Timestamp, 
                                                 Group = trace.Group, 
-                                                SearchTerm = trace.Name
+                                                SearchTerm = new string[] { trace.Name, trace.Tags }
                                             });
 
-            AddMap<GroupMetadata>(metadata => from meta in metadata 
-                                              from itemValue in meta.Items
-                                              select new 
+            AddMap<GroupMetadata>(metadata => from meta in metadata
+                                              where meta.Items != null
+                                              select new Result
                                               {
-                                                  Environment = (string) null,
+                                                  Environment = (string)null,
                                                   Timestamp = meta.Timestamp,
                                                   Group = meta.GroupName,
-                                                  SearchTerm = itemValue.Key + "=" + itemValue.Value
+                                                  SearchTerm = meta.Items.Select(i => i.Value).ToArray()
                                               });
+
+            Store(x => x.Environment, FieldStorage.Yes);
+            Store(x => x.Timestamp, FieldStorage.Yes);
+            Store(x => x.Group, FieldStorage.Yes);
+            Store(x => x.SearchTerm, FieldStorage.Yes);
 
             Index(x => x.Environment, FieldIndexing.Exact);
             Index(x => x.Timestamp, FieldIndexing.Default);

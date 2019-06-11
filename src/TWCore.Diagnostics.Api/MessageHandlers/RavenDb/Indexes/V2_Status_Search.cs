@@ -16,22 +16,29 @@ limitations under the License.
 
 using System.Linq;
 using Raven.Client.Documents.Indexes;
-using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Status;
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
 {
-    public class V2_Counters_ValueSelection : AbstractIndexCreationTask<NodeCountersValue>
+    public class V2_Status_Search : AbstractIndexCreationTask<NodeStatusItem>
     {
-        public V2_Counters_ValueSelection()
+        public V2_Status_Search()
         {
-            Map = counters => from counter in counters
+            Map = statuses => from status in statuses
+                              where status.Environment != null
+                              orderby status.Timestamp descending
                               select new
                               {
-                                  CountersId = counter.CountersId,
-                                  Timestamp = counter.Timestamp
+                                  status.Environment,
+                                  status.Timestamp,
+                                  status.Machine,
+                                  status.Application
                               };
-            Index(i => i.CountersId, FieldIndexing.Exact);
+
+            Index(i => i.Environment, FieldIndexing.Exact);
             Index(i => i.Timestamp, FieldIndexing.Default);
+            Index(i => i.Machine, FieldIndexing.Exact);
+            Index(i => i.Application, FieldIndexing.Exact);
         }
     }
 }

@@ -32,6 +32,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes
                                   Category = counter.Category,
                                   Name = counter.Name
                               };
+            Index(i => i.Environment, FieldIndexing.Exact);
         }
     }
 }
