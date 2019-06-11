@@ -60,6 +60,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             return RavenHelper.ExecuteAndReturnAsync(session =>
             {
                 var query = from item in session.Query<V2_Environments_Availables.Result, V2_Environments_Availables>()
+                            .OrderBy(i => i.Environment)
                             select item.Environment;
                 return query.ToListAsync();
             });
