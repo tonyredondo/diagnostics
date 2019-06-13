@@ -15,6 +15,8 @@ limitations under the License.
  */
 
 using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.BulkInsert;
@@ -59,24 +61,50 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             var value = _documentStoreLazy.Value;
         }
 
-        public static async Task ExecuteAsync(Func<IAsyncDocumentSession, Task> sessionFunc)
+        public static async Task ExecuteAsync(Func<IAsyncDocumentSession, Task> sessionFunc, [CallerMemberName]string memberName = null)
         {
+            TimeSpan tmSession, tmQuery;
+            var sw = Stopwatch.StartNew();
             using (var session = _documentStoreLazy.Value.OpenAsyncSession())
+            {
+                tmSession = sw.Elapsed;
                 await sessionFunc(session).ConfigureAwait(false);
+                tmQuery = sw.Elapsed;
+            }
+            Core.Log.Stats(memberName + " - Database Time: Session: {0:0.000}ms, Query: {1:0.000}ms, Total: {2:0.000}ms",
+                tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds - tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds);
         }
 
-		public static async Task<T> ExecuteAndReturnAsync<T>(Func<IAsyncDocumentSession, Task<T>> sessionFunc)
+        public static async Task<T> ExecuteAndReturnAsync<T>(Func<IAsyncDocumentSession, Task<T>> sessionFunc, [CallerMemberName]string memberName = null)
 		{
-		    using (var session = _documentStoreLazy.Value.OpenAsyncSession())
-		        return await sessionFunc(session).ConfigureAwait(false);
+            TimeSpan tmSession, tmQuery;
+            T res;
+            var sw = Stopwatch.StartNew();
+            using (var session = _documentStoreLazy.Value.OpenAsyncSession())
+            {
+                tmSession = sw.Elapsed;
+                res = await sessionFunc(session).ConfigureAwait(false);
+                tmQuery = sw.Elapsed;
+            }
+            Core.Log.Stats(memberName + " - Database Time: Session: {0:0.000}ms, Query: {1:0.000}ms, Total: {2:0.000}ms", 
+                tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds - tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds);
+            return res;
 		}
 
-        public static async Task BulkInsertAsync(Func<BulkInsertOperation, Task> bulkInsertOperation)
+        public static async Task BulkInsertAsync(Func<BulkInsertOperation, Task> bulkInsertOperation, [CallerMemberName]string memberName = null)
         {
+            TimeSpan tmSession, tmQuery;
+            var sw = Stopwatch.StartNew();
             using (var bulkInsert = _documentStoreLazy.Value.BulkInsert())
+            {
+                tmSession = sw.Elapsed;
                 await bulkInsertOperation(bulkInsert).ConfigureAwait(false);
+                tmQuery = sw.Elapsed;
+            }
+            Core.Log.Stats(memberName + " - Database Time: Session: {0:0.000}ms, Query: {1:0.000}ms, Total: {2:0.000}ms",
+                tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds - tmSession.TotalMilliseconds, tmQuery.TotalMilliseconds);
         }
-        
+
         public class RavenDbSettings : SettingsBase
         {
             [SettingsArray(",")]
