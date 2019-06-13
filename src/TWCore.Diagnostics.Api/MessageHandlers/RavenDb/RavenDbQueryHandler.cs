@@ -77,6 +77,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             var values = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
                 return session.Advanced.AsyncDocumentQuery<V2_Logs_Summary.Result, V2_Logs_Summary>()
+                              .NoTracking()
                               .WhereEquals(x => x.Environment, environment, true)
                               .WhereBetween(x => x.Date, fromDate, toDate)
                               .ToListAsync();
@@ -85,7 +86,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             var dctApplicationLevels = new Dictionary<string, ApplicationsLevels>();
             var dctLogLevels = new Dictionary<LogLevel, LogLevelTimes>();
 
-            foreach(var value in values)
+            foreach (var value in values)
             {
                 if (!dctApplicationLevels.TryGetValue(value.Application, out var application))
                 {
@@ -97,7 +98,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                     dctApplicationLevels[value.Application] = application;
                 }
 
-                foreach(var level in value.Levels)
+                foreach (var level in value.Levels)
                 {
                     var appLevel = application.Levels.FirstOrDefault(al => al.Name == level.Name);
                     if (appLevel == null)
@@ -164,18 +165,20 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                 var documentQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, V2_Logs_ByApplicationLevelsAndEnvironments>();
                 var query = documentQuery
                         .Statistics(out var stats)
-                        .WhereEquals(x => x.Environment, environment)
-                        .WhereEquals(x => x.Application, application)
+                        .NoTracking()
+                        .WhereEquals(x => x.Environment, environment, true)
+                        .WhereEquals(x => x.Application, application, true)
                         .WhereBetween(x => x.Timestamp, fromDate, toDate);
 
                 if (level.HasValue)
-                    query = query.WhereEquals(x => x.Level, level.Value);
+                    query = query.WhereEquals(x => x.Level, level.Value, true);
 
                 query = query.OrderByDescending(x => x.Timestamp);
                 query = query.Skip(page * pageSize).Take(pageSize);
 
                 var data = await query.ToListAsync().ConfigureAwait(false);
 
+                Core.Log.InfoBasic($"Duration: {stats.DurationInMs}, SkippedResults: {stats.SkippedResults}, ResultSize: {stats.ResultSize}, TotalResults: {stats.TotalResults}, Index: {stats.IndexName}");
                 return new PagedList<NodeLogItem>
                 {
                     PageNumber = page,
@@ -201,6 +204,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             {
                 var res = await session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
                         .Statistics(out var stats)
+                        .NoTracking()
                         .WhereEquals(x => x.Environment, environment)
                         .WhereBetween(x => x.Start, fromDate, toDate)
                         .OrderByDescending(x => x.Start)
@@ -235,6 +239,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             {
                 var documentQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, V2_Traces_ByGroup>();
                 var query = documentQuery
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereEquals(x => x.Group, groupName)
                     .OrderBy(x => x.Timestamp);
@@ -398,6 +403,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             {
                 var query = session.Advanced.AsyncDocumentQuery<SearchGroupResult, V2_Diagnostics_Search>()
                     //.WhereEquals("Environment", environment)
+                    .NoTracking()
                     .WhereBetween("Timestamp", fromDate, toDate)
                     .OpenSubclause()
                     .Search("Group", searchTerm)
@@ -454,6 +460,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
                 return await session.Advanced.AsyncDocumentQuery<GroupMetadata, V2_Metadata_ByGroup>()
+                    .NoTracking()
                     .WhereEquals(x => x.GroupName, groupName)
                     .OrderByDescending(x => x.Timestamp)
                     .ToListAsync().ConfigureAwait(false);
@@ -478,6 +485,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                 var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem, V2_Status_Search>();
                 var query = documentQuery
                     .Statistics(out var stats)
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate);
 
@@ -514,6 +522,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             {
                 var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem, V2_Status_Search>();
                 var query = documentQuery
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment);
 
                 if (!string.IsNullOrWhiteSpace(machine))
@@ -724,7 +733,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                     cValues = counterValues.Where(item => item.Timestamp >= currentItem.Timestamp && item.Timestamp < tDate);
                 }
                 double res = 0;
-                switch(counterData.Type)
+                switch (counterData.Type)
                 {
                     case Counters.CounterType.Average:
                         res = cValues.Any() ? cValues.Average(item => (double)Convert.ChangeType(item.Value, TypeCode.Double)) : 0;
