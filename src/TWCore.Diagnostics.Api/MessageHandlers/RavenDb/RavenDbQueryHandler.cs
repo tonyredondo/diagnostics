@@ -76,9 +76,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var values = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<V2_Logs_Summary.Result, V2_Logs_Summary>()
-                              .Where(x => x.Environment == environment)
-                              .Where(x => x.Date >= fromDate && x.Date <= toDate)
+                return session.Advanced.AsyncDocumentQuery<V2_Logs_Summary.Result, V2_Logs_Summary>()
+                              .WhereEquals(x => x.Environment, environment, true)
+                              .WhereBetween(x => x.Date, fromDate, toDate)
                               .ToListAsync();
             }).ConfigureAwait(false);
 

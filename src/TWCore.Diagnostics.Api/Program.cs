@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Services;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -30,6 +31,7 @@ namespace TWCore.Diagnostics.Api
                 new DiagnosticRawMessagingServiceAsync(),
                 new DiagnosticBotService()
                 ), args);
+            RavenHelper.CloseDocumentStore();
         }
     }
 }
