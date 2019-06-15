@@ -30,7 +30,7 @@ using TWCore.Diagnostics.Counters;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace TWCore.Diagnostics.Api
+namespace TWCore.Diagnostics.Api.MessageHandlers
 {
 	public class DbHandlers : IDiagnosticHandler
 	{

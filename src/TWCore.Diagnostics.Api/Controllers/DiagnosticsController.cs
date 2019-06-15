@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using TWCore.Collections;
+using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Trace.Storages;
 using TWCore.Security;

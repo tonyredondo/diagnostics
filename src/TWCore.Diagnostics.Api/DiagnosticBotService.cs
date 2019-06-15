@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TWCore.Bot;
 using TWCore.Bot.Slack;
+using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Counters;
 using TWCore.Serialization;
 using TWCore.Services;

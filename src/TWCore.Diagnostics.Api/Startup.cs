@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Web;
 using Microsoft.OpenApi.Models;
 // ReSharper disable ClassNeverInstantiated.Global
