@@ -67,21 +67,28 @@ namespace TWCore.Diagnostics.Api
                 {
                     var item = enumerator.Current.Document;
                     Console.WriteLine("Writing: " + (index++));
-                    pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
+                    try
                     {
-                        LogId = item.LogId,
-                        Environment = item.Environment,
-                        Machine = item.Machine,
-                        Application = item.Application,
-                        Assembly = item.Assembly,
-                        Type = item.Type,
-                        Code = item.Code,
-                        Group = item.Group,
-                        Level = item.Level,
-                        Timestamp = item.Timestamp,
-                        Message = item.Message,
-                        Exception = item.Exception
-                    }).WaitAndResults();
+                        await pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
+                        {
+                            LogId = item.LogId,
+                            Environment = item.Environment,
+                            Machine = item.Machine,
+                            Application = item.Application,
+                            Assembly = item.Assembly,
+                            Type = item.Type,
+                            Code = item.Code,
+                            Group = item.Group,
+                            Level = item.Level,
+                            Timestamp = item.Timestamp,
+                            Message = item.Message,
+                            Exception = item.Exception
+                        }).ConfigureAwait(false);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
 
             }).WaitAsync();
