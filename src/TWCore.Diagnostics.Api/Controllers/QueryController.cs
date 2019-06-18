@@ -9,6 +9,7 @@ using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using TWCore.Collections;
+using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
 using TWCore.Diagnostics.Api.Models.Log;

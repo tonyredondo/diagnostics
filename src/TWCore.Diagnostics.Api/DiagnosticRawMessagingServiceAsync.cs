@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TWCore.Bot;
+using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Status;
