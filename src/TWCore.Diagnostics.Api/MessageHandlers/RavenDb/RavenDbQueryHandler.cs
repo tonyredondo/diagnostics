@@ -51,6 +51,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             RavenHelper.Init();
         }
+
         /// <summary>
         /// Gets the environments
         /// </summary>

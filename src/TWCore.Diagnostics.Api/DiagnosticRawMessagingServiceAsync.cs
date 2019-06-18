@@ -17,10 +17,14 @@ limitations under the License.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using TWCore.Bot;
 using TWCore.Diagnostics.Api.MessageHandlers;
+using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
+using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
+using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Status;
@@ -51,6 +55,57 @@ namespace TWCore.Diagnostics.Api
             base.OnInit(args);
 
             DbHandlers.Instance.Messages.Init();
+
+            var pDal = new PostgresDal();
+
+            RavenHelper.ExecuteAsync(async session =>
+            {
+                var query = session.Advanced.AsyncDocumentQuery<NodeLogItem>();
+                var index = 0;
+                var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
+                while (await enumerator.MoveNextAsync().ConfigureAwait(false))
+                {
+                    var item = enumerator.Current.Document;
+                    Console.WriteLine("Writing: " + (index++));
+                    pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
+                    {
+                        LogId = item.LogId,
+                        Environment = item.Environment,
+                        Machine = item.Machine,
+                        Application = item.Application,
+                        Assembly = item.Assembly,
+                        Type = item.Type,
+                        Code = item.Code,
+                        Group = item.Group,
+                        Level = item.Level,
+                        Timestamp = item.Timestamp,
+                        Message = item.Message,
+                        Exception = item.Exception
+                    }).WaitAndResults();
+                }
+
+            }).WaitAsync();
+
+            //var insTask = pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
+            //{
+            //    LogId = Guid.NewGuid(),
+            //    Environment = Core.EnvironmentName,
+            //    Machine = Core.MachineName,
+            //    Application = Core.ApplicationName,
+            //    Assembly = typeof(DiagnosticRawMessagingServiceAsync).Assembly.FullName,
+            //    Type = typeof(DiagnosticRawMessagingServiceAsync).FullName,
+            //    Code = "B24",
+            //    Group = "My new Group",
+            //    Level = LogLevel.InfoDetail,
+            //    Timestamp = Core.Now,
+            //    Message = "This is my important message",
+            //    Exception = new SerializableException(new Exception("Ex example"))
+            //});
+
+            //insTask.WaitAsync();
+
+            var getLogsTask = pDal.GetAllLogsAsync();
+            var results = getLogsTask.WaitAndResults();
 
             var processTimerTimeSpan = TimeSpan.FromSeconds(Settings.ProcessTimerInSeconds);
             _processTimer = new Timer(ProcessItems, null, processTimerTimeSpan, processTimerTimeSpan);
