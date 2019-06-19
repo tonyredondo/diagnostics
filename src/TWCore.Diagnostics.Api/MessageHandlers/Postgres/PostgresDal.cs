@@ -16,9 +16,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return PostgresHelper.ExecuteNonQueryAsync(query, logItem.ToDictionary());
         }
 
-        public Task<Dictionary<string, List<object>>> GetAllLogsAsync()
+        public Task<PostgresHelper.DbResult> GetAllLogsAsync()
         {
-            return PostgresHelper.ExecuteReaderAsync("SELECT * FROM logs");
+            return PostgresHelper.ExecuteReaderAsync("SELECT * FROM logs LIMIT 500");
         }
     }
 }

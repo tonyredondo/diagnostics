@@ -64,28 +64,39 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         public static Task<object> ExecuteScalarAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
             => ExecuteScalarAsync(command => FillCommand(command, commandText, parameters), cancellationToken);
 
-        public static async Task<Dictionary<string, List<object>>> ExecuteReaderAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
+        public static async Task<DbResult> ExecuteReaderAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
         {
-            var columnValues = new Dictionary<string, List<object>>();
+            var dbResult = new DbResult();
             await ExecuteReaderAsync(command => FillCommand(command, commandText, parameters), async (reader, token) =>
             {
                 var columns = new string[reader.FieldCount];
+                var dictioPattern = new Dictionary<string, object>();
                 for (var i = 0; i < columns.Length; i++)
                 {
-                    columns[i] = reader.GetName(i);
-                    columnValues[columns[i]] = new List<object>();
+                    var cName = reader.GetName(i);
+                    columns[i] = cName;
+                    dictioPattern[cName] = null;
                 }
 
                 while (await reader.ReadAsync().ConfigureAwait(false))
                 {
-                    for(var i = 0; i < columns.Length; i++)
-                        columnValues[columns[i]].Add(reader.GetValue(i));
+                    var row = new DbRow(dictioPattern);
+                    for (var i = 0; i < columns.Length; i++)
+                        row[columns[i]] = reader.GetValue(i);
+                    dbResult.Add(row);
                 }
-
             }, cancellationToken).ConfigureAwait(false);
-            return columnValues;
+            return dbResult;
         }
 
+        public class DbResult : List<DbRow>
+        {
+        }
+
+        public class DbRow : Dictionary<string, object>
+        {
+            public DbRow(IDictionary<string, object> dictio) : base(dictio) {}
+        }
 
         private static void FillCommand(NpgsqlCommand command, string commandText, IDictionary<string, object> parameters)
         {
@@ -108,7 +119,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
-        public class PostgresSettings : SettingsBase
+        private class PostgresSettings : SettingsBase
         {
             public string ConnectionString { get; set; }
         }
