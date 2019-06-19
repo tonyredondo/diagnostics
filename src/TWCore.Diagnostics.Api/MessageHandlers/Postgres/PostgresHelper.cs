@@ -67,48 +67,63 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         public static async Task<DbResult> ExecuteReaderAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
         {
             var dbResult = new DbResult();
-            await ExecuteReaderAsync(command => FillCommand(command, commandText, parameters), async (reader, token) =>
+            using (var connection = new NpgsqlConnection(Settings.ConnectionString))
             {
-                var columns = new string[reader.FieldCount];
-                var dictioPattern = new Dictionary<string, object>();
-                var totalCountIdx = -1;
-                for (var i = 0; i < columns.Length; i++)
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                using (var command = connection.CreateCommand())
                 {
-                    var cName = reader.GetName(i);
-                    if (cName == "_query_totalcount")
+                    FillCommand(command, commandText, parameters);
+                    var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    
+                    var columns = new string[reader.FieldCount];
+                    var totalCountIdx = -1;
+                    var totalCount = 0;
+
+                    for (var i = 0; i < columns.Length; i++)
                     {
-                        totalCountIdx = i;
+                        var cName = reader.GetName(i);
+                        if (cName == "_query_totalcount")
+                            totalCountIdx = i;
+                        else
+                            columns[i] = cName;
+                    }
+
+                    if (totalCountIdx == -1)
+                    {
+                        while (await reader.ReadAsync().ConfigureAwait(false))
+                        {
+                            var values = new object[columns.Length];
+                            reader.GetValues(values);
+                            dbResult.Add(new DbRow(columns, values));
+                        }
                     }
                     else
                     {
-                        columns[i] = cName;
-                        dictioPattern[cName] = null;
-                    }
-                }
-
-                var totalCount = 0;
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    var row = new DbRow(dictioPattern);
-                    for (var i = 0; i < columns.Length; i++)
-                    {
-                        if (totalCountIdx == i)
+                        while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            if (totalCount == 0)
-                                totalCount = reader.GetInt32(i);
-                        }
-                        else
-                        {
-                            row[columns[i]] = reader.GetValue(i);
+                            var row = new DbRow(columns);
+                            for (var i = 0; i < columns.Length; i++)
+                            {
+                                if (totalCountIdx == i)
+                                {
+                                    if (totalCount == 0)
+                                        totalCount = reader.GetInt32(i);
+                                }
+                                else
+                                {
+                                    row[i] = reader.GetValue(i);
+                                }
+                            }
+                            dbResult.Add(row);
                         }
                     }
-                    dbResult.Add(row);
-                }
-                if (totalCount == 0)
-                    totalCount = dbResult.Count;
 
-                dbResult.TotalCount = totalCount;
-            }, cancellationToken).ConfigureAwait(false);
+                    if (totalCount == 0)
+                        totalCount = dbResult.Count;
+
+                    dbResult.TotalCount = totalCount;
+                }
+            }
             return dbResult;
         }
 
@@ -117,9 +132,51 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             public int TotalCount { get; set; }
         }
 
-        public class DbRow : Dictionary<string, object>
+        public readonly struct DbRow
         {
-            public DbRow(IDictionary<string, object> dictio) : base(dictio) {}
+            private readonly string[] _headers;
+            private readonly object[] _values;
+
+            public DbRow(string[] headers)
+            {
+                _headers = headers;
+                _values = new object[_headers.Length];
+            }
+
+            public DbRow(string[] header, object[] values)
+            {
+                _headers = header;
+                _values = values;
+            }
+
+            public object this[int i]
+            {
+                get => _values[i];
+                set => _values[i] = value;
+            }
+
+            public object this[string key]
+            {
+                get
+                {
+                    for (var i = 0; i < _headers.Length; i++)
+                    {
+                        if (string.Equals(_headers[i], key, StringComparison.Ordinal))
+                            return _values[i];
+                    }
+                    throw new IndexOutOfRangeException();
+                }
+                set
+                {
+                    for (var i = 0; i < _headers.Length; i++)
+                    {
+                        if (!string.Equals(_headers[i], key, StringComparison.Ordinal)) continue;
+                        _values[i] = value;
+                        return;
+                    }
+                    throw new IndexOutOfRangeException();
+                }
+            }
         }
 
         private static void FillCommand(NpgsqlCommand command, string commandText, IDictionary<string, object> parameters)
