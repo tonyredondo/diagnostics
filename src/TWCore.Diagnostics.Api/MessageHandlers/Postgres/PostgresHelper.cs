@@ -71,26 +71,50 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 var columns = new string[reader.FieldCount];
                 var dictioPattern = new Dictionary<string, object>();
+                var totalCountIdx = -1;
                 for (var i = 0; i < columns.Length; i++)
                 {
                     var cName = reader.GetName(i);
-                    columns[i] = cName;
-                    dictioPattern[cName] = null;
+                    if (cName == "_query_totalcount")
+                    {
+                        totalCountIdx = i;
+                    }
+                    else
+                    {
+                        columns[i] = cName;
+                        dictioPattern[cName] = null;
+                    }
                 }
 
+                var totalCount = 0;
                 while (await reader.ReadAsync().ConfigureAwait(false))
                 {
                     var row = new DbRow(dictioPattern);
                     for (var i = 0; i < columns.Length; i++)
-                        row[columns[i]] = reader.GetValue(i);
+                    {
+                        if (totalCountIdx == i)
+                        {
+                            if (totalCount == 0)
+                                totalCount = reader.GetInt32(i);
+                        }
+                        else
+                        {
+                            row[columns[i]] = reader.GetValue(i);
+                        }
+                    }
                     dbResult.Add(row);
                 }
+                if (totalCount == 0)
+                    totalCount = dbResult.Count;
+
+                dbResult.TotalCount = totalCount;
             }, cancellationToken).ConfigureAwait(false);
             return dbResult;
         }
 
         public class DbResult : List<DbRow>
         {
+            public int TotalCount { get; set; }
         }
 
         public class DbRow : Dictionary<string, object>

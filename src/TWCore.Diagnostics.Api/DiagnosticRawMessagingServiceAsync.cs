@@ -58,6 +58,7 @@ namespace TWCore.Diagnostics.Api
 
             var pDal = new PostgresDal();
 
+            /*
             RavenHelper.ExecuteAsync(async session =>
             {
                 var query = session.Advanced.AsyncDocumentQuery<NodeLogItem>();
@@ -92,6 +93,7 @@ namespace TWCore.Diagnostics.Api
                 }
 
             }).WaitAsync();
+            */
 
             //var insTask = pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
             //{
@@ -111,8 +113,14 @@ namespace TWCore.Diagnostics.Api
 
             //insTask.WaitAsync();
 
-            var getLogsTask = pDal.GetAllLogsAsync();
-            var results = getLogsTask.WaitAndResults();
+            var fromDate = DateTime.Today.AddDays(-7);
+            var fromDate2 = DateTime.Today.AddMonths(-5);
+            var toDate = DateTime.Now;
+            var environments = pDal.GetAllEnvironments().WaitAndResults();
+            var levels = pDal.GetLogLevelsByEnvironment("Docker", fromDate, toDate).WaitAndResults();
+            var logs = pDal.GetLogsByApplication("Docker", "Agsw.Travel.Flights.Providers.Services.Travelfusion", LogLevel.Error, fromDate2, toDate, 1, 25).WaitAndResults();
+            var logsByGroup = pDal.GetLogsByGroup("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).WaitAndResults();
+            var logsSearch = pDal.SearchLogs("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).WaitAndResults();
 
             var processTimerTimeSpan = TimeSpan.FromSeconds(Settings.ProcessTimerInSeconds);
             _processTimer = new Timer(ProcessItems, null, processTimerTimeSpan, processTimerTimeSpan);
