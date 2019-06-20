@@ -25,6 +25,7 @@ using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Diagnostics.Api.Models.Log;
+using TWCore.Diagnostics.Api.Models.Trace;
 using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Status;
@@ -56,7 +57,11 @@ namespace TWCore.Diagnostics.Api
 
             DbHandlers.Instance.Messages.Init();
 
-            //ImportLogsAsync().WaitAsync();
+            //Imports.ImportLogsAsync().WaitAsync();
+            //Imports.ImportTracesAsync().WaitAsync();
+            //Imports.ImportMetadataAsync().WaitAsync();
+            //Imports.ImportCounterAsync().WaitAsync();
+            //Imports.ImportCounterValuesAsync().WaitAsync();
 
             var pDal = new PostgresDal();
 
@@ -71,71 +76,6 @@ namespace TWCore.Diagnostics.Api
 
             var processTimerTimeSpan = TimeSpan.FromSeconds(Settings.ProcessTimerInSeconds);
             _processTimer = new Timer(ProcessItems, null, processTimerTimeSpan, processTimerTimeSpan);
-        }
-
-        private static Task ImportLogsAsync()
-        {
-            return RavenHelper.ExecuteAsync(async session =>
-            {
-                var pDal = new PostgresDal();
-
-                var query = session.Advanced.AsyncDocumentQuery<NodeLogItem>();
-                var index = 0;
-                var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
-
-                var insertBuffer = new List<MessageHandlers.Postgres.Entities.EntLog>();
-                Console.WriteLine("Importing logs...");
-                while (await enumerator.MoveNextAsync().ConfigureAwait(false))
-                {
-                    var item = enumerator.Current.Document;
-                    index++;
-                    if (index % 1000 == 0)
-                        Console.WriteLine("Writing: " + index);
-
-                    insertBuffer.Add(new MessageHandlers.Postgres.Entities.EntLog
-                    {
-                        LogId = item.LogId,
-                        Environment = item.Environment,
-                        Machine = item.Machine,
-                        Application = item.Application,
-                        Assembly = item.Assembly,
-                        Type = item.Type,
-                        Code = item.Code,
-                        Group = item.Group,
-                        Level = item.Level,
-                        Timestamp = item.Timestamp,
-                        Message = item.Message,
-                        Exception = item.Exception
-                    });
-
-                    if (insertBuffer.Count == 500)
-                    {
-                        Console.WriteLine("Saving...");
-                        try
-                        {
-                            await pDal.InsertLogAsync(insertBuffer, true).ConfigureAwait(false);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                        }
-                        insertBuffer.Clear();
-                    }
-                }
-                if (insertBuffer.Count > 0)
-                {
-                    try
-                    {
-                        await pDal.InsertLogAsync(insertBuffer, true).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                    }
-                    insertBuffer.Clear();
-                }
-                Console.WriteLine("Total Items: " + index);
-            });
         }
 
         private void ProcessItems(object state)

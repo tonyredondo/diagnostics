@@ -15,13 +15,27 @@ limitations under the License.
  */
 
 // ReSharper disable UnusedMember.Global
+using System;
+
 namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
 {
     /// <summary>
     /// Metadata entity
     /// </summary>
-    public class EntMeta : DiagnosticsEntity
+    public class EntMeta
     {
+        /// <summary>
+        /// Environment
+        /// </summary>
+        public string Environment { get; set; }
+        /// <summary>
+        /// Timestamp
+        /// </summary>
+        public DateTime Timestamp { get; set; }
+        /// <summary>
+        /// Diagnostics group name
+        /// </summary>
+        public string Group { get; set; }
         /// <summary>
         /// Metadata Key
         /// </summary>

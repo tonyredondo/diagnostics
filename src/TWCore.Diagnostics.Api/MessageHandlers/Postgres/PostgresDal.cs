@@ -16,8 +16,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         private static readonly CultureInfo CultureFormat = CultureInfo.GetCultureInfo("en-US");
         private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Properties = new ConcurrentDictionary<Type, PropertyInfo[]>();
 
+        #region Inserts
         public Task<int> InsertLogAsync(params EntLog[] logItems)
             => InsertLogAsync((IEnumerable<EntLog>)logItems);
+        public Task<int> InsertTraceAsync(params EntTrace[] traceItems)
+           => InsertTraceAsync((IEnumerable<EntTrace>)traceItems);
+        public Task<int> InsertMetadataAsync(params EntMeta[] metaItems)
+           => InsertMetadataAsync((IEnumerable<EntMeta>)metaItems);
 
         public async Task<int> InsertLogAsync(IEnumerable<EntLog> logItems, bool ignoreConflict = false)
         {
@@ -42,6 +47,96 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 throw new Exception("Error on Query: \n" + query, ex);
             }
         }
+        public async Task<int> InsertTraceAsync(IEnumerable<EntTrace> traceItems, bool ignoreConflict = false)
+        {
+            const string ValuesPattern = "SELECT @TraceId, @Environment, @Machine, @Application, @Timestamp, @Tags, @Group, @Name, @Formats ";
+
+            var query = "INSERT INTO traces (trace_id, environment, machine, application, timestamp, tags, \"group\", name, formats) \n";
+            var lstValues = new List<string>();
+            foreach (var item in traceItems)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+            if (ignoreConflict)
+                query += "ON CONFLICT (trace_id) DO NOTHING;";
+
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
+        public async Task<int> InsertMetadataAsync(IEnumerable<EntMeta> metaItems)
+        {
+            const string ValuesPattern = "SELECT @Group, @Environment, @Timestamp, @Key, @Value ";
+
+            var query = "INSERT INTO metadata (\"group\", environment, timestamp, key, value)  \n";
+            var lstValues = new List<string>();
+            foreach (var item in metaItems)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
+        public async Task<int> InsertCounterAsync(IEnumerable<EntCounter> counterItems, bool ignoreConflict = false)
+        {
+            const string ValuesPattern = "SELECT @CounterId, @Environment, @Application, @Category, @Name, @Type, @Level, @Kind, @Unit, @TypeOfValue ";
+
+            var query = "INSERT INTO counters (counter_id, environment, application, category, name, type, level, kind, unit, typeofvalue) \n";
+            var lstValues = new List<string>();
+            foreach (var item in counterItems)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+            if (ignoreConflict)
+                query += "ON CONFLICT (counter_id) DO NOTHING;";
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
+        public async Task<int> InsertCounterValueAsync(IEnumerable<EntCounterValue> counterValueItems, bool ignoreConflict = false)
+        {
+            const string ValuesPattern = "SELECT @CounterId, @Timestamp, @Value ";
+
+            var query = "INSERT INTO counters_values (counter_id, timestamp, value) \n";
+            var lstValues = new List<string>();
+            foreach (var item in counterValueItems)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+            if (ignoreConflict)
+                query += "ON CONFLICT (counter_id, timestamp) DO NOTHING;";
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
+
+
         private static string ReplaceInPattern(string pattern, object item)
         {
             const string NullDateTime = "null::timestamp";
@@ -94,6 +189,14 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 {
                     value = (int)value;
                 }
+                else if (value is string[] strArray)
+                {
+                    value = "ARRAY [" + string.Join(", ", strArray.Select(i => "'" + i.Replace("'", "''") + "'")) + "]";
+                }
+                else if (value is int[] intArray)
+                {
+                    value = "ARRAY [" + string.Join(", ", intArray.Select(i => i.ToString(CultureFormat))) + "]";
+                }
                 else if (value is IConvertible convValue)
                 {
                     value = convValue.ToString(CultureFormat);
@@ -102,7 +205,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
             return pattern;
         }
-
+        #endregion
 
         public Task<PostgresHelper.DbResult> GetAllEnvironments()
         {
