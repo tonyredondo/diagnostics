@@ -56,7 +56,7 @@ namespace TWCore.Diagnostics.Api
 
             DbHandlers.Instance.Messages.Init();
 
-            ImportLogsAsync().WaitAsync();
+            //ImportLogsAsync().WaitAsync();
 
             var pDal = new PostgresDal();
 
