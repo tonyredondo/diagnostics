@@ -40,7 +40,7 @@
       <Item Key="RavenDb.Urls" Value="http://10.10.1.52:8080" />
       <!--<Item Key="RavenDb.Urls" Value="http://93.189.37.106:8080" />-->
 
-      <Item Key="Postgres.ConnectionString" Value="Host=rotopia.xyz;Port=5432;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;" />
+      <Item Key="Postgres.ConnectionString" Value="Host=rotopia.xyz;Port=5432;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;Timeout=300;CommandTimeout=300;KeepAlive=300" />
 
       <Item Key="Bot.DefaultEnvironment" Value="Docker" />
       <Item Key="Bot.DataFolder" Value="./botdata" />

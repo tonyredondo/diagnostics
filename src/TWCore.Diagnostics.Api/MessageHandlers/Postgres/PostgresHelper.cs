@@ -23,7 +23,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             using (var connection = new NpgsqlConnection(Settings.ConnectionString))
             {
-                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     prepareCommand(command);
@@ -35,7 +35,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             using (var connection = new NpgsqlConnection(Settings.ConnectionString))
             {
-                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     prepareCommand(command);
@@ -47,7 +47,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             using (var connection = new NpgsqlConnection(Settings.ConnectionString))
             {
-                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     prepareCommand(command);

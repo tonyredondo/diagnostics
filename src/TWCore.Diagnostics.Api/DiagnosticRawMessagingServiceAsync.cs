@@ -58,42 +58,69 @@ namespace TWCore.Diagnostics.Api
 
             var pDal = new PostgresDal();
 
-            /*
             RavenHelper.ExecuteAsync(async session =>
             {
                 var query = session.Advanced.AsyncDocumentQuery<NodeLogItem>();
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
+
+                var insertBuffer = new List<MessageHandlers.Postgres.Entities.EntLog>();
+                var insertTask = Task.FromResult(0);
+                Console.WriteLine("Importing logs...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
                     var item = enumerator.Current.Document;
-                    Console.WriteLine("Writing: " + (index++));
+                    index++;
+                    if (index % 1000 == 0)
+                        Console.WriteLine("Writing: " + index);
+
+                    insertBuffer.Add(new MessageHandlers.Postgres.Entities.EntLog
+                    {
+                        LogId = item.LogId,
+                        Environment = item.Environment,
+                        Machine = item.Machine,
+                        Application = item.Application,
+                        Assembly = item.Assembly,
+                        Type = item.Type,
+                        Code = item.Code,
+                        Group = item.Group,
+                        Level = item.Level,
+                        Timestamp = item.Timestamp,
+                        Message = item.Message,
+                        Exception = item.Exception
+                    });
+
+                    if (insertBuffer.Count == 1000)
+                    {
+                        int inserts = 0;
+                        try
+                        {
+                            inserts = await insertTask.ConfigureAwait(false);
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
+
+                        insertTask = pDal.InsertLogAsync(insertBuffer);
+                        insertBuffer.Clear();
+                    }
+                }
+                if (insertBuffer.Count > 0)
+                {
                     try
                     {
-                        await pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
-                        {
-                            LogId = item.LogId,
-                            Environment = item.Environment,
-                            Machine = item.Machine,
-                            Application = item.Application,
-                            Assembly = item.Assembly,
-                            Type = item.Type,
-                            Code = item.Code,
-                            Group = item.Group,
-                            Level = item.Level,
-                            Timestamp = item.Timestamp,
-                            Message = item.Message,
-                            Exception = item.Exception
-                        }).ConfigureAwait(false);
+                        await insertTask.ConfigureAwait(false);
+                        await pDal.InsertLogAsync(insertBuffer);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                     }
+                    insertBuffer.Clear();
                 }
 
             }).WaitAsync();
-            */
 
             //var insTask = pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog
             //{
