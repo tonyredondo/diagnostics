@@ -90,7 +90,7 @@ namespace TWCore.Diagnostics.Api
                         Exception = item.Exception
                     });
 
-                    if (insertBuffer.Count == 1000)
+                    if (insertBuffer.Count == 500)
                     {
                         int inserts = 0;
                         try
