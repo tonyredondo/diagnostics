@@ -29,10 +29,6 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
         /// </summary>
         public Guid StatusId { get; set; }
         /// <summary>
-        /// Instance id
-        /// </summary>
-        public Guid InstanceId { get; set; }
-        /// <summary>
         /// Machine name
         /// </summary>
         public string Machine { get; set; }
@@ -47,7 +43,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
         /// <summary>
         /// Elapsed time
         /// </summary>
-        public int Elapsed { get; set; }
+        public double Elapsed { get; set; }
         /// <summary>
         /// Start time
         /// </summary>

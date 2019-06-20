@@ -15,6 +15,7 @@ limitations under the License.
  */
 
 using System;
+using TWCore.Diagnostics.Status;
 // ReSharper disable UnusedMember.Global
 
 namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
@@ -39,6 +40,6 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
         /// <summary>
         /// Type of value
         /// </summary>
-        public string Type { get; set; }
+        public StatusItemValueType Type { get; set; }
     }
 }

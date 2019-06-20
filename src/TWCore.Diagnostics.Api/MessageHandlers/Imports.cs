@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Diagnostics.Api.Models.Counters;
 using TWCore.Diagnostics.Api.Models.Log;
+using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
 using TWCore.Diagnostics.Log;
 
@@ -13,6 +15,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
 {
     public static class Imports
     {
+        private static readonly CultureInfo CultureFormat = CultureInfo.GetCultureInfo("en-US");
+
         public static Task ImportLogsAsync()
         {
             return RavenHelper.ExecuteAsync(async session =>
@@ -318,6 +322,110 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                         Core.Log.Write(ex);
                     }
                     insertBuffer.Clear();
+                }
+                Core.Log.InfoBasic("Total Items: " + index);
+            });
+        }
+
+
+        public static Task ImportStatusesAsync()
+        {
+            return RavenHelper.ExecuteAsync(async session =>
+            {
+                var pDal = new PostgresDal();
+
+                var query = session.Advanced.AsyncDocumentQuery<NodeStatusItem>();
+                var index = 0;
+                var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
+
+                var insertBuffer = new List<Postgres.Entities.EntStatus>();
+                var insertBuffer2 = new List<Postgres.Entities.EntStatusValue>();
+                Core.Log.InfoBasic("Importing statuses...");
+                while (await enumerator.MoveNextAsync().ConfigureAwait(false))
+                {
+                    var item = enumerator.Current.Document;
+                    index++;
+                    if (index % 10 == 0)
+                        Core.Log.InfoBasic("Writing: " + index);
+
+                    var status = new Postgres.Entities.EntStatus
+                    {
+                        Application = item.Application,
+                        ApplicationDisplay = item.ApplicationDisplayName,
+                        Date = item.Date,
+                        Elapsed = item.ElapsedMilliseconds,
+                        Environment = item.Environment,
+                        Machine = item.Machine,
+                        StartTime = item.StartTime,
+                        StatusId = item.InstanceId,
+                        Timestamp = item.Timestamp
+                    };
+                    insertBuffer.Add(status);
+
+                    if (item.Values != null)
+                    {
+                        foreach(var value in item.Values)
+                        {
+                            insertBuffer2.Add(new Postgres.Entities.EntStatusValue
+                            {
+                                StatusId = status.StatusId,
+                                Type = value.Type,
+                                Key = value.Key,
+                                Value = value.Value is IConvertible vConv ? vConv.ToString(CultureFormat) : value.Value?.ToString()
+                            });
+                        }
+                    }
+
+                    if (insertBuffer.Count >= 10 || insertBuffer2.Count >= 200)
+                    {
+                        Core.Log.InfoBasic("Saving...");
+                        try
+                        {
+                            await pDal.InsertStatusAsync(insertBuffer, true).ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Core.Log.Write(ex);
+                        }
+                        insertBuffer.Clear();
+                        foreach (var innerBuffer in insertBuffer2.Batch(500))
+                        {
+                            try
+                            {
+                                await pDal.InsertStatusValuesAsync(innerBuffer, true).ConfigureAwait(false);
+                            }
+                            catch (Exception ex)
+                            {
+                                Core.Log.Write(ex);
+                            }
+                        }
+                        insertBuffer2.Clear();
+                    }
+                }
+                if (insertBuffer.Count > 0 || insertBuffer2.Count > 0)
+                {
+                    Core.Log.InfoBasic("Saving...");
+                    try
+                    {
+                        await pDal.InsertStatusAsync(insertBuffer, true).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Core.Log.Write(ex);
+                    }
+                    insertBuffer.Clear();
+                    foreach (var innerBuffer in insertBuffer2.Batch(500))
+                    {
+                        try
+                        {
+                            await pDal.InsertStatusValuesAsync(innerBuffer, true).ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Core.Log.Write(ex);
+                        }
+                    }
+                    insertBuffer2.Clear();
                 }
                 Core.Log.InfoBasic("Total Items: " + index);
             });

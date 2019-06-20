@@ -62,6 +62,7 @@ namespace TWCore.Diagnostics.Api
             //Imports.ImportMetadataAsync().WaitAsync();
             //Imports.ImportCounterAsync().WaitAsync();
             //Imports.ImportCounterValuesAsync().WaitAsync();
+            //Imports.ImportStatusesAsync().WaitAsync();
 
             var pDal = new PostgresDal();
 

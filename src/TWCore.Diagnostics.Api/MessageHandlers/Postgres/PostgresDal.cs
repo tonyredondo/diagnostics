@@ -135,7 +135,50 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 throw new Exception("Error on Query: \n" + query, ex);
             }
         }
+        public async Task<int> InsertStatusAsync(IEnumerable<EntStatus> statusItem, bool ignoreConflict = false)
+        {
+            const string ValuesPattern = "SELECT @StatusId, @Environment, @Machine, @Application, @Timestamp, @ApplicationDisplay, @Elapsed, @StartTime, @Date ";
 
+            var query = "INSERT INTO status (status_id, environment, machine, application, timestamp, application_display, elapsed, start_time, date) \n";
+            var lstValues = new List<string>();
+            foreach (var item in statusItem)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+            if (ignoreConflict)
+                query += "ON CONFLICT (status_id) DO NOTHING;";
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
+        public async Task<int> InsertStatusValuesAsync(IEnumerable<EntStatusValue> statusValueItem, bool ignoreConflict = false)
+        {
+            const string ValuesPattern = "SELECT @StatusId, @Key, @Value, @Type ";
+
+            var query = "INSERT INTO status_values (status_id, key, value, type) \n";
+            var lstValues = new List<string>();
+            foreach (var item in statusValueItem)
+            {
+                lstValues.Add(ReplaceInPattern(ValuesPattern, item));
+            }
+            query += string.Join("UNION ALL \n", lstValues) + "\n";
+            if (ignoreConflict)
+                query += "ON CONFLICT (status_id, key) DO NOTHING;";
+            try
+            {
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error on Query: \n" + query, ex);
+            }
+        }
 
         private static string ReplaceInPattern(string pattern, object item)
         {
