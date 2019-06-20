@@ -65,7 +65,6 @@ namespace TWCore.Diagnostics.Api
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
                 var insertBuffer = new List<MessageHandlers.Postgres.Entities.EntLog>();
-                var insertTask = Task.FromResult(0);
                 Console.WriteLine("Importing logs...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -95,14 +94,12 @@ namespace TWCore.Diagnostics.Api
                         int inserts = 0;
                         try
                         {
-                            inserts = await insertTask.ConfigureAwait(false);
+                            inserts = await pDal.InsertLogAsync(insertBuffer).ConfigureAwait(false);
                         }
                         catch(Exception ex)
                         {
                             Console.WriteLine(ex);
                         }
-
-                        insertTask = pDal.InsertLogAsync(insertBuffer);
                         insertBuffer.Clear();
                     }
                 }
@@ -110,8 +107,7 @@ namespace TWCore.Diagnostics.Api
                 {
                     try
                     {
-                        await insertTask.ConfigureAwait(false);
-                        await pDal.InsertLogAsync(insertBuffer);
+                        await pDal.InsertLogAsync(insertBuffer).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -119,7 +115,7 @@ namespace TWCore.Diagnostics.Api
                     }
                     insertBuffer.Clear();
                 }
-
+                Console.WriteLine("Total Items: " + index);
             }).WaitAsync();
 
             //var insTask = pDal.InsertLogAsync(new MessageHandlers.Postgres.Entities.EntLog

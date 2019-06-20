@@ -21,15 +21,28 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
         public static async Task<int> ExecuteNonQueryAsync(Action<NpgsqlCommand> prepareCommand, CancellationToken cancellationToken = default)
         {
+            var response = 0;
             using (var connection = new NpgsqlConnection(Settings.ConnectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     prepareCommand(command);
-                    return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    }
+                    catch(Exception ex)
+                    {
+                        Core.Log.Write(ex);
+                        connection.Close();
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        connection.Open();
+                        response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    }
                 }
             }
+            return response;
         }
         public static async Task<object> ExecuteScalarAsync(Action<NpgsqlCommand> prepareCommand, CancellationToken cancellationToken = default)
         {

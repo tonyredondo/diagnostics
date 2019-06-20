@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities;
 using TWCore.Diagnostics.Log;
@@ -11,7 +13,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 {
     public class PostgresDal
     {
-        private static CultureInfo CultureFormat = CultureInfo.GetCultureInfo("en-US");
+        private static readonly CultureInfo CultureFormat = CultureInfo.GetCultureInfo("en-US");
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Properties = new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         public Task<int> InsertLogAsync(params EntLog[] logItems)
             => InsertLogAsync((IEnumerable<EntLog>)logItems);
@@ -43,24 +46,31 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
         private static string ReplaceInPattern(string pattern, object item)
         {
-            var properties = item.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.GetProperty);
+            const string NullDateTime = "null::timestamp";
+            const string NullTimeSpan = "null::time";
+            const string NullGuid = "null::uuid";
+            const string NullSerializableException = "null::json";
+
+            var itemType = item.GetType();
+            var properties = Properties.GetOrAdd(itemType, type => type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty));
             foreach(var prop in properties)
             {
                 var key = "@" + prop.Name;
                 var value = prop.GetValue(item);
                 if (value is null)
                 {
-                    value = "null";
                     var propType = prop.PropertyType.GetUnderlyingType();
 
                     if (propType == typeof(DateTime))
-                        value += "::timestamp";
+                        value = NullDateTime;
                     else if (propType == typeof(TimeSpan))
-                        value += "::time";
+                        value = NullTimeSpan;
                     else if (propType == typeof(Guid))
-                        value += "::uuid";
+                        value = NullGuid;
                     else if (propType == typeof(SerializableException))
-                        value += "::json";
+                        value = NullSerializableException;
+                    else
+                        value = "null";
                 }
                 else if (value is DateTime dateValue)
                 {
