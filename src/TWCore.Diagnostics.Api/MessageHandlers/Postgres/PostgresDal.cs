@@ -19,25 +19,23 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         public Task<int> InsertLogAsync(params EntLog[] logItems)
             => InsertLogAsync((IEnumerable<EntLog>)logItems);
 
-        public async Task<int> InsertLogAsync(IEnumerable<EntLog> logItems)
+        public async Task<int> InsertLogAsync(IEnumerable<EntLog> logItems, bool ignoreConflict = false)
         {
             const string ValuesPattern = "SELECT @LogId, @Environment, @Machine, @Application, @Timestamp, @Assembly, @Type, @Group, @Code, @Level, @Message, @Exception ";
-            //const string ValuesPattern = "(@LogId, @Environment, @Machine, @Application, @Timestamp, @Assembly, @Type, @Group, @Code, @Level, @Message, @Exception)";
 
-            //var query = "INSERT INTO logs (log_id, environment, machine, application, timestamp, assembly, type, \"group\", code, level, message, exception) VALUES \n";
             var query = "INSERT INTO logs (log_id, environment, machine, application, timestamp, assembly, type, \"group\", code, level, message, exception) \n";
             var lstValues = new List<string>();
             foreach (var item in logItems)
             {
                 lstValues.Add(ReplaceInPattern(ValuesPattern, item));
             }
-            //query += string.Join(", \n", lstValues);
             query += string.Join("UNION ALL \n", lstValues) + "\n";
-            query += "ON CONFLICT (log_id) DO NOTHING;";
+            if (ignoreConflict)
+                query += "ON CONFLICT (log_id) DO NOTHING;";
 
             try
             {
-                return await PostgresHelper.ExecuteNonQueryAsync(query);
+                return await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
             }
             catch(Exception ex)
             {

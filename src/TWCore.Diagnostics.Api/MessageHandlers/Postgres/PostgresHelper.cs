@@ -36,7 +36,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     {
                         Core.Log.Write(ex);
                         connection.Close();
-                        await Task.Delay(1000).ConfigureAwait(false);
+                        await Task.Delay(5000).ConfigureAwait(false);
                         connection.Open();
                         response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     }
