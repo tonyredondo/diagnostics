@@ -49,7 +49,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         public void Init()
         {
-            RavenHelper.Init();
+            //RavenHelper.Init();
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 
                 var data = await query.ToListAsync().ConfigureAwait(false);
 
-                Core.Log.InfoBasic($"Duration: {stats.DurationInMs}, SkippedResults: {stats.SkippedResults}, ResultSize: {stats.ResultSize}, TotalResults: {stats.TotalResults}, Index: {stats.IndexName}");
+                Core.Log.InfoBasic($"Duration: {stats.DurationInMs}, SkippedResults: {stats.SkippedResults}, TotalResults: {stats.TotalResults}, Index: {stats.IndexName}");
                 return new PagedList<NodeLogItem>
                 {
                     PageNumber = page,

@@ -17,12 +17,14 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Properties = new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         #region Inserts
-        public Task<int> InsertLogAsync(params EntLog[] logItems)
-            => InsertLogAsync((IEnumerable<EntLog>)logItems);
-        public Task<int> InsertTraceAsync(params EntTrace[] traceItems)
-           => InsertTraceAsync((IEnumerable<EntTrace>)traceItems);
-        public Task<int> InsertMetadataAsync(params EntMeta[] metaItems)
-           => InsertMetadataAsync((IEnumerable<EntMeta>)metaItems);
+        public Task<int> InsertLogAsync(params EntLog[] logItems) => InsertLogAsync((IEnumerable<EntLog>)logItems);
+        public Task<int> InsertTraceAsync(params EntTrace[] traceItems) => InsertTraceAsync((IEnumerable<EntTrace>)traceItems);
+        public Task<int> InsertMetadataAsync(params EntMeta[] metaItems) => InsertMetadataAsync((IEnumerable<EntMeta>)metaItems);
+        public Task<int> InsertCounterAsync(params EntCounter[] counterItems) => InsertCounterAsync((IEnumerable<EntCounter>)counterItems);
+        public Task<int> InsertCounterValueAsync(params EntCounterValue[] counterValueItems) => InsertCounterValueAsync((IEnumerable<EntCounterValue>)counterValueItems);
+        public Task<int> InsertStatusAsync(params EntStatus[] statusItem) => InsertStatusAsync((IEnumerable<EntStatus>)statusItem);
+        public Task<int> InsertStatusValuesAsync(params EntStatusValue[] statusValueItem) => InsertStatusValuesAsync((IEnumerable<EntStatusValue>)statusValueItem);
+
 
         public async Task<int> InsertLogAsync(IEnumerable<EntLog> logItems, bool ignoreConflict = false)
         {
@@ -250,6 +252,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
         #endregion
 
+        #region Logs
         public Task<PostgresHelper.DbResult> GetAllEnvironments()
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetAllEnvironments.sql");
@@ -305,5 +308,84 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 ["@ToDate"] = toDate
             });
         }
+        #endregion
+
+        #region Traces
+
+        public Task<PostgresHelper.DbResult> GetTracesByEnvironment(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetTracesByEnvironment.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> GetTracesByGroupId(string environment, string group)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetTracesByGroupId.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Group"] = group,
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> GetTracesByTraceId(Guid traceId)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetTracesByTraceId.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@TraceId"] = traceId
+            });
+        }
+
+
+        #endregion
+
+        #region Metadata
+
+        public Task<PostgresHelper.DbResult> GetMetadataByGroup(string group)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetMetadataByGroup.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Group"] = group,
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> SearchMetadata(string search, DateTime fromDate, DateTime toDate)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchMetadata.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Search"] = search,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate
+            });
+        }
+
+        #endregion
+
+        #region Search
+
+        public Task<PostgresHelper.DbResult> Search(string environment, string search, DateTime fromDate, DateTime toDate, int limit)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchGroup.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Search"] = search,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Limit"] = limit
+            });
+        }
+
+        #endregion
     }
 }

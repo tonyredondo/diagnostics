@@ -4,5 +4,5 @@ select * from
      where
            environment = @Environment
        and timestamp between @FromDate and @ToDate
-     order by timestamp limit 2000000) as flogs
-where ("group" = @Search or message like concat('% ', @Search, ' %'))
+     order by timestamp) as flogs
+where ("group" like @Search || '%')

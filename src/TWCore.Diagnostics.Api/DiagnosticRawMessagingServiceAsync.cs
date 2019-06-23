@@ -55,7 +55,7 @@ namespace TWCore.Diagnostics.Api
             SerializerManager.SupressFileExtensionWarning = true;
             base.OnInit(args);
 
-            DbHandlers.Instance.Messages.Init();
+            //DbHandlers.Instance.Messages.Init();
 
             //Imports.ImportLogsAsync().WaitAsync();
             //Imports.ImportTracesAsync().WaitAsync();
@@ -64,19 +64,36 @@ namespace TWCore.Diagnostics.Api
             //Imports.ImportCounterValuesAsync().WaitAsync();
             //Imports.ImportStatusesAsync().WaitAsync();
 
-            var pDal = new PostgresDal();
-
-            var fromDate = DateTime.Today.AddDays(-7);
-            var fromDate2 = DateTime.Today.AddMonths(-5);
-            var toDate = DateTime.Now;
-            var environments = pDal.GetAllEnvironments().WaitAndResults();
-            var levels = pDal.GetLogLevelsByEnvironment("Docker", fromDate, toDate).WaitAndResults();
-            var logs = pDal.GetLogsByApplication("Docker", "Agsw.Travel.Flights.Providers.Services.Travelfusion", LogLevel.Error, fromDate2, toDate, 1, 25).WaitAndResults();
-            var logsByGroup = pDal.GetLogsByGroup("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).WaitAndResults();
-            var logsSearch = pDal.SearchLogs("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).WaitAndResults();
+            TestPostgresDalAsync().WaitAsync();
 
             var processTimerTimeSpan = TimeSpan.FromSeconds(Settings.ProcessTimerInSeconds);
             _processTimer = new Timer(ProcessItems, null, processTimerTimeSpan, processTimerTimeSpan);
+        }
+
+        private static async Task TestPostgresDalAsync()
+        {
+            var pDal = new PostgresDal();
+
+            var fromDate = DateTime.Today.AddDays(-7);
+            var fromDate2 = DateTime.Today.AddMonths(-6);
+            var toDate = DateTime.Now;
+
+            var environments = await pDal.GetAllEnvironments().ConfigureAwait(false);
+
+            var levels = await pDal.GetLogLevelsByEnvironment("Docker", fromDate, toDate).ConfigureAwait(false);
+            var logs = await pDal.GetLogsByApplication("Docker", "Agsw.Travel.Flights.Providers.Services.Travelfusion", LogLevel.Error, fromDate2, toDate, 1, 25).ConfigureAwait(false);
+            var logsByGroup = await pDal.GetLogsByGroup("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).ConfigureAwait(false);
+            var logsSearch = await pDal.SearchLogs("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).ConfigureAwait(false);
+
+            var tracesByEnv = await pDal.GetTracesByEnvironment("Docker", fromDate, toDate, 0, 50).ConfigureAwait(false);
+            var tracesByGroup = await pDal.GetTracesByGroupId("Docker", "a9e326bc-4357-46f6-9ec2-5367d8ad92cd").ConfigureAwait(false);
+            var trace = await pDal.GetTracesByTraceId(Guid.Parse("64f6aceb-263c-4864-9092-9cd6f4d569cd")).ConfigureAwait(false);
+
+            var metadataByGroup = await pDal.GetMetadataByGroup("a9e326bc-4357-46f6-9ec2-5367d8ad92cd").ConfigureAwait(false);
+            var metadataSearch = await pDal.SearchMetadata("93", fromDate2, toDate).ConfigureAwait(false);
+
+
+            var search = await pDal.Search("Docker", "a9e", fromDate2, toDate, 25).ConfigureAwait(false);
         }
 
         private void ProcessItems(object state)
