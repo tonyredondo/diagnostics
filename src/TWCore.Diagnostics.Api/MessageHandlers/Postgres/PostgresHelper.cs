@@ -194,6 +194,26 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     throw new IndexOutOfRangeException();
                 }
             }
+
+            public T Get<T>(string key)
+            {
+                for (var i = 0; i < _headers.Length; i++)
+                {
+                    if (string.Equals(_headers[i], key, StringComparison.Ordinal))
+                    {
+                        var res = _values[i];
+                        if (res == DBNull.Value) return default;
+                        return (T)res;
+                    }
+                }
+                throw new IndexOutOfRangeException();
+            }
+            public T Get<T>(int index)
+            {
+                var res = _values[index];
+                if (res == DBNull.Value) return default;
+                return (T)res;
+            }
         }
 
         private static void FillCommand(NpgsqlCommand command, string commandText, IDictionary<string, object> parameters)

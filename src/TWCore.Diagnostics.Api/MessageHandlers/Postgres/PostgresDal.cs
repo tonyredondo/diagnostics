@@ -284,7 +284,20 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 ["@PageSize"] = pageSize
             });
         }
-        
+        public Task<PostgresHelper.DbResult> GetLogsByApplication(string environment, string application, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetLogsByApplication2.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Application"] = application,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
+
         public Task<PostgresHelper.DbResult> GetLogsByGroup(string environment, string group, DateTime fromDate, DateTime toDate)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetLogsByGroup.sql");

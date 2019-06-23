@@ -44,7 +44,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             store.Initialize();
 
             Core.Log.InfoBasic("Creating RavenDB indexes");
-            IndexCreation.CreateIndexes(typeof(RavenHelper).Assembly, store);
+            //IndexCreation.CreateIndexes(typeof(RavenHelper).Assembly, store);
             
             return store;
         }

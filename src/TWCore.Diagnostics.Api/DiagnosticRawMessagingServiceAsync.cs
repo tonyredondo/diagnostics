@@ -55,7 +55,7 @@ namespace TWCore.Diagnostics.Api
             SerializerManager.SupressFileExtensionWarning = true;
             base.OnInit(args);
 
-            //DbHandlers.Instance.Messages.Init();
+            DbHandlers.Instance.Messages.Init();
 
             //Imports.ImportLogsAsync().WaitAsync();
             //Imports.ImportTracesAsync().WaitAsync();
@@ -64,7 +64,12 @@ namespace TWCore.Diagnostics.Api
             //Imports.ImportCounterValuesAsync().WaitAsync();
             //Imports.ImportStatusesAsync().WaitAsync();
 
-            TestPostgresDalAsync().WaitAsync();
+            //TestPostgresDalAsync().WaitAsync();
+
+            var qhandler = new PostgresQueryHandler();
+            //var r1 = qhandler.GetEnvironmentsAsync();
+            //_ = qhandler.GetLogsApplicationsLevelsByEnvironmentAsync("Docker", DateTime.Parse("2019-01-01"), DateTime.Parse("2019-06-23"));
+            //_ = qhandler.GetLogsByApplicationLevelsEnvironmentAsync("Docker", "TWCore.Diagnostics.Api", null, DateTime.Parse("2019-06-01"), DateTime.Parse("2019-06-23"), 0);
 
             var processTimerTimeSpan = TimeSpan.FromSeconds(Settings.ProcessTimerInSeconds);
             _processTimer = new Timer(ProcessItems, null, processTimerTimeSpan, processTimerTimeSpan);

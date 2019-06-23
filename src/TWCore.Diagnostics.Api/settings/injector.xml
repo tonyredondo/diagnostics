@@ -51,12 +51,13 @@
 
       <!-- IDiagnosticMessagesHandler -->
       <Interface Type="TWCore.Diagnostics.Api.Models.IDiagnosticMessagesHandler, TWCore.Diagnostics.Api.Models">
-        <Class Name="RavenDb" Type="TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbMessagesHandler, TWCore.Diagnostics.Api" />
+        <!--<Class Name="RavenDb" Type="TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbMessagesHandler, TWCore.Diagnostics.Api" />-->
       </Interface>
 
       <!-- IDiagnosticQueryHandler -->
       <Interface Type="TWCore.Diagnostics.Api.Models.IDiagnosticQueryHandler, TWCore.Diagnostics.Api.Models">
-        <Class Name="RavenDb" Type="TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbQueryHandler, TWCore.Diagnostics.Api" />
+        <!--<Class Name="RavenDb" Type="TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbQueryHandler, TWCore.Diagnostics.Api" />-->
+        <Class Name="Postgres" Type="TWCore.Diagnostics.Api.MessageHandlers.Postgres.PostgresQueryHandler, TWCore.Diagnostics.Api" />
       </Interface>
 
     </Interfaces>
