@@ -6,4 +6,8 @@ union distinct
 select distinct "group"
 from metadata where timestamp between @FromDate and @ToDate
 and (value like @Search || '%')
+union distinct
+select distinct "group"
+from traces where environment = @Environment and timestamp between @FromDate and @ToDate
+and ("group" like @Search || '%')
 limit @Limit;

@@ -33,6 +33,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 {
                     var item = enumerator.Current.Document;
                     index++;
+
                     if (index % 1000 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
