@@ -33,6 +33,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
         /// </summary>
         public Guid LogId { get; set; }
         /// <summary>
+        /// Date of the log
+        /// </summary>
+        public DateTime Date { get; set; }
+        /// <summary>
         /// Assembly name
         /// </summary>
         public string Assembly { get; set; }

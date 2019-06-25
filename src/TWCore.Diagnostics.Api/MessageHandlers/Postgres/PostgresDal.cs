@@ -28,9 +28,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
         public async Task<int> InsertLogAsync(IEnumerable<EntLog> logItems, bool ignoreConflict = false)
         {
-            const string ValuesPattern = "SELECT @LogId, @Environment, @Machine, @Application, @Timestamp, @Assembly, @Type, @Group, @Code, @Level, @Message, @Exception ";
+            const string ValuesPattern = "SELECT @LogId, @Environment, @Machine, @Application, @Timestamp, @Assembly, @Type, @Group, @Code, @Level, @Message, @Exception, @Date ";
 
-            var query = "INSERT INTO logs (log_id, environment, machine, application, timestamp, assembly, type, \"group\", code, level, message, exception) \n";
+            var query = "INSERT INTO logs (log_id, environment, machine, application, timestamp, assembly, type, \"group\", code, level, message, exception, date) \n";
             var lstValues = new List<string>();
             foreach (var item in logItems)
             {
@@ -74,9 +74,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
         public async Task<int> InsertMetadataAsync(IEnumerable<EntMeta> metaItems)
         {
-            const string ValuesPattern = "SELECT @Group, @Environment, @Timestamp, @Key, @Value ";
+            const string ValuesPattern = "SELECT @Group, @Environment, @Timestamp, @Key, @Value, @Date ";
 
-            var query = "INSERT INTO metadata (\"group\", environment, timestamp, key, value)  \n";
+            var query = "INSERT INTO metadata (\"group\", environment, timestamp, key, value, date)  \n";
             var lstValues = new List<string>();
             foreach (var item in metaItems)
             {

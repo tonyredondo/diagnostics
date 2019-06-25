@@ -62,7 +62,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 var valEnvironment = value.Get<string>("environment");
                 var valApplication = value.Get<string>("application");
-                var valTimestamp = value.Get<DateTime>("timestamp");
+                var valDate = value.Get<DateTime>("date");
                 var valLevel = value.Get<LogLevel>("level");
                 var valCount = (int)value.Get<long>("count");
 
@@ -100,12 +100,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 levelTimes.Count += valCount;
 
 
-                var levelSeries = levelTimes.Series.FirstOrDefault(ls => ls.Date == valTimestamp);
+                var levelSeries = levelTimes.Series.FirstOrDefault(ls => ls.Date == valDate);
                 if (levelSeries == null)
                 {
                     levelSeries = new TimeCount
                     {
-                        Date = valTimestamp
+                        Date = valDate
                     };
                     levelTimes.Series.Add(levelSeries);
                     levelTimes.Series.Sort((a, b) => a.Date.CompareTo(b.Date));

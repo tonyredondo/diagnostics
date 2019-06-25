@@ -3,6 +3,6 @@ SELECT *, (count(*) OVER()) as _query_totalcount
 from logs
 where environment = @Environment
   and application = @Application
-  and timestamp between @FromDate and @ToDate
+  and date between @FromDate and @ToDate
 order by timestamp desc
 limit @PageSize offset @Page * @PageSize;

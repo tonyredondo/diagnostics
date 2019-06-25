@@ -50,7 +50,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                         Level = item.Level,
                         Timestamp = item.Timestamp,
                         Message = item.Message,
-                        Exception = item.Exception
+                        Exception = item.Exception,
+                        Date = item.Timestamp.Date
                     });
 
                     if (insertBuffer.Count == 500)
@@ -173,6 +174,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                                 Environment = null,
                                 Group = item.GroupName,
                                 Timestamp = item.Timestamp,
+                                Date = item.Timestamp.Date,
                                 Key = kv.Key,
                                 Value = kv.Value
                             });

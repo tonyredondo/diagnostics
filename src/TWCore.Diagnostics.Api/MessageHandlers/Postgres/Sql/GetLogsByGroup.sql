@@ -2,6 +2,6 @@
 select * from logs
 where
       environment = @Environment
-  and timestamp between @FromDate and @ToDate
+  and date between @FromDate and @ToDate
   and "group" = @Group
 order by timestamp;

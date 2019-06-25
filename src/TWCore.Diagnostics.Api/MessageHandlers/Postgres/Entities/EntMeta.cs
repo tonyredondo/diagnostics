@@ -33,6 +33,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
         /// </summary>
         public DateTime Timestamp { get; set; }
         /// <summary>
+        /// Date
+        /// </summary>
+        public DateTime Date { get; set; }
+        /// <summary>
         /// Diagnostics group name
         /// </summary>
         public string Group { get; set; }
