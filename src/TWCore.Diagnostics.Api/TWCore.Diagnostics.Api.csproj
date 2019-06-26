@@ -72,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounters.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
@@ -81,11 +84,14 @@
     <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByApplication.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounters.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />

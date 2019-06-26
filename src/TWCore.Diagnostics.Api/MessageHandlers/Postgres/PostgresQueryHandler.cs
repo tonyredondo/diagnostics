@@ -17,6 +17,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TWCore.Collections;
 using TWCore.Compression;
@@ -25,6 +26,7 @@ using TWCore.Diagnostics.Api.Models.Counters;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
+using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Serialization;
 using TWCore.Serialization.NSerializer;
@@ -157,7 +159,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
             var data = new List<TraceResult>();
 
-            foreach(var row in results)
+            foreach (var row in results)
             {
                 var item = new TraceResult
                 {
@@ -183,7 +185,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var results = await Dal.GetTracesByGroupId(environment, groupName).ConfigureAwait(false);
             var data = new List<NodeTraceItem>();
-            foreach(var row in results)
+            foreach (var row in results)
             {
                 var item = GetTraceItem(row);
                 data.Add(item);
@@ -192,25 +194,100 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
 
 
-        public Task<SerializedObject> GetTraceObjectAsync(string id)
+        public async Task<SerializedObject> GetTraceObjectAsync(string id)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
+            NodeTraceItem traceItem = null;
+            if (results.Count > 0)
+                traceItem = GetTraceItem(results[0]);
+
+            if (traceItem == null) return null;
+
+            try
+            {
+                return await GetFromDisk(traceItem, ".nbin.gz").ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Core.Log.Write(ex);
+                throw;
+            }
+
+            #region Inner Methods
+            async Task<SerializedObject> GetFromDisk(NodeTraceItem nodeTraceItem, string extension)
+            {
+                var bytes = await TraceDiskStorage.GetAsync(nodeTraceItem, extension).ConfigureAwait(false);
+                if (bytes.IsGzip())
+                    return NBinarySerializer.Deserialize<SerializedObject>(bytes);
+                else
+                    return bytes.DeserializeFromNBinary<SerializedObject>();
+            }
+            #endregion
         }
 
+        /// <summary>
+        /// Gets the Trace object
+        /// </summary>
+        /// <returns>The trace object</returns>
+        /// <param name="id">Trace object id</param>
+        public async Task<string> GetTraceAsync(string id, string traceName)
+        {
+            var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
+            NodeTraceItem traceItem = null;
+            if (results.Count > 0)
+                traceItem = GetTraceItem(results[0]);
+
+            if (traceItem == null) return null;
+
+            var extension = traceName == "TraceXml" ? ".xml.gz" : traceName == "TraceJson" ? ".json.gz" : ".txt.gz";
+            try
+            {
+                return await GetFromDisk(traceItem, extension).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Core.Log.Write(ex);
+                throw;
+            }
+
+            #region Inner Methods
+            async Task<string> GetFromDisk(NodeTraceItem nodeTraceItem, string ext)
+            {
+                var bytes = await TraceDiskStorage.GetAsync(nodeTraceItem, ext).ConfigureAwait(false);
+                if (bytes.IsGzip())
+                {
+                    var desBytes = Compressor.Decompress(bytes);
+                    return Encoding.UTF8.GetString(desBytes.AsSpan());
+                }
+                else
+                {
+                    return Encoding.UTF8.GetString(bytes.AsSpan());
+                }
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// Gets the Trace object in xml
+        /// </summary>
+        /// <returns>The trace object</returns>
+        /// <param name="id">Trace object id</param>
         public Task<string> GetTraceXmlAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
+            => GetTraceAsync(id, "TraceXml");
+        /// <summary>
+        /// Gets the Trace object in json
+        /// </summary>
+        /// <returns>The trace object</returns>
+        /// <param name="id">Trace object id</param>
         public Task<string> GetTraceJsonAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
+            => GetTraceAsync(id, "TraceJson");
+        /// <summary>
+		/// Gets the Trace object in txt
+		/// </summary>
+		/// <returns>The trace object</returns>
+		/// <param name="id">Trace object id</param>
         public Task<string> GetTraceTxtAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
+            => GetTraceAsync(id, "TraceTxt");
 
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
@@ -218,12 +295,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var groups = results.Select(row => (string)row[0]).ToList();
             var data = new List<NodeInfo>();
 
-            foreach(var group in groups)
+            foreach (var group in groups)
             {
                 var logsResults = await Dal.GetLogsByGroup(environment, group, fromDate, toDate).ConfigureAwait(false);
                 var tracesResults = await Dal.GetTracesByGroupId(environment, group).ConfigureAwait(false);
 
-                foreach(var row in logsResults)
+                foreach (var row in logsResults)
                     data.Add(GetLogItem(row));
 
                 foreach (var row in tracesResults)
@@ -240,7 +317,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var results = await Dal.GetMetadataByGroup(groupName).ConfigureAwait(false);
             var dict = new Dictionary<string, KeyValue>();
-            foreach(var row in results)
+            foreach (var row in results)
             {
                 var valKey = row.Get<string>("key");
                 var valValue = row.Get<string>("value");
@@ -266,24 +343,162 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             throw new NotImplementedException();
         }
 
-        public Task<List<NodeCountersQueryItem>> GetCounters(string environment)
+        public async Task<List<NodeCountersQueryItem>> GetCounters(string environment)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetCounters(environment).ConfigureAwait(false);
+            var data = new List<NodeCountersQueryItem>();
+            foreach (var item in results)
+                data.Add(GetCounterItem(item));
+            return data;
         }
 
-        public Task<NodeCountersQueryItem> GetCounter(Guid counterId)
+        public async Task<NodeCountersQueryItem> GetCounter(Guid counterId)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetCounter(counterId).ConfigureAwait(false);
+            if (results.Count == 0) return null;
+            return GetCounterItem(results[0]);
         }
 
-        public Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
+        public async Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetCountersValues(counterId, fromDate, toDate).ConfigureAwait(false);
+            var counterValues = new List<NodeCountersQueryValue>();
+            foreach (var row in results)
+            {
+                var item = new NodeCountersQueryValue
+                {
+                    Id = row.Get<Guid>("counter_id").ToString(),
+                    Timestamp = row.Get<DateTime>("timestamp"),
+                    Value = row.Get<float>("value")
+                };
+                counterValues.Add(item);
+            }
+            return counterValues;
         }
 
-        public Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = null)
+        public async Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = null)
         {
-            throw new NotImplementedException();
+            var counterDataTask = GetCounter(counterId);
+            var toDate = Core.Now;
+            var fromDate = toDate;
+
+            #region Values Division
+            switch (valuesDivision)
+            {
+                case CounterValuesDivision.QuarterDay:
+                    fromDate = toDate.AddHours(-6);
+                    if (samples == 0) samples = 36;
+                    break;
+                case CounterValuesDivision.HalfDay:
+                    fromDate = toDate.AddHours(-12);
+                    if (samples == 0) samples = 48;
+                    break;
+                case CounterValuesDivision.Day:
+                    fromDate = toDate.AddDays(-1);
+                    if (samples == 0) samples = 48;
+                    break;
+                case CounterValuesDivision.Week:
+                    fromDate = toDate.AddDays(-7);
+                    if (samples == 0) samples = 84;
+                    break;
+                case CounterValuesDivision.Month:
+                    fromDate = toDate.AddMonths(-1);
+                    if (samples == 0) samples = 60;
+                    break;
+                case CounterValuesDivision.TwoMonths:
+                    fromDate = toDate.AddMonths(-2);
+                    if (samples == 0) samples = 60;
+                    break;
+                case CounterValuesDivision.QuarterYear:
+                    fromDate = toDate.AddMonths(-3);
+                    if (samples == 0) samples = 90;
+                    break;
+                case CounterValuesDivision.HalfYear:
+                    fromDate = toDate.AddMonths(-6);
+                    if (samples == 0) samples = 90;
+                    break;
+                case CounterValuesDivision.Year:
+                    fromDate = toDate.AddYears(-1);
+                    if (samples == 0) samples = 73;
+                    break;
+            }
+            #endregion
+
+            var timeInterval = toDate.Subtract(fromDate);
+            var minutes = (timeInterval.TotalMinutes / samples);
+            var lstValues = new List<NodeLastCountersValue>();
+
+            #region Get Values
+            var results = await Dal.GetCountersValues(counterId, fromDate, toDate).ConfigureAwait(false);
+            var counterValues = new List<NodeCountersQueryValue>();
+            foreach (var row in results)
+            {
+                var item = new NodeCountersQueryValue
+                {
+                    Id = row.Get<Guid>("counter_id").ToString(),
+                    Timestamp = row.Get<DateTime>("timestamp"),
+                    Value = row.Get<float>("value")
+                };
+                counterValues.Add(item);
+            }
+            #endregion
+
+            #region List Values
+            for (var i = 0; i < samples; i++)
+            {
+                if (i == 0)
+                    lstValues.Add(new NodeLastCountersValue { Timestamp = fromDate });
+                else
+                    lstValues.Add(new NodeLastCountersValue { Timestamp = lstValues[i - 1].Timestamp.AddMinutes(minutes) });
+            }
+            #endregion
+
+            var counterData = await counterDataTask.ConfigureAwait(false);
+
+            #region Fill Values
+            for (var i = 0; i < lstValues.Count; i++)
+            {
+                IEnumerable<NodeCountersQueryValue> cValues;
+                var currentItem = lstValues[i];
+                if (i == lstValues.Count - 1)
+                {
+                    cValues = counterValues.Where(item => item.Timestamp >= currentItem.Timestamp);
+                }
+                else
+                {
+                    var tDate = lstValues[i + 1].Timestamp;
+                    cValues = counterValues.Where(item => item.Timestamp >= currentItem.Timestamp && item.Timestamp < tDate);
+                }
+                double res = 0;
+                switch (counterData.Type)
+                {
+                    case Counters.CounterType.Average:
+                        res = cValues.Any() ? cValues.Average(item => (double)Convert.ChangeType(item.Value, TypeCode.Double)) : 0;
+                        break;
+                    case Counters.CounterType.Cumulative:
+                        res = cValues.Sum(item => (double)Convert.ChangeType(item.Value, TypeCode.Double));
+                        //if (i > 0)
+                        //    res += (double)lstValues[i - 1].Value;
+                        break;
+                    case Counters.CounterType.Current:
+                        res = cValues.Sum(item => (double)Convert.ChangeType(item.Value, TypeCode.Double));
+                        break;
+                }
+                currentItem.Timestamp = currentItem.Timestamp.TruncateTo(TimeSpan.FromMinutes(1));
+                currentItem.Value = res;
+            }
+            #endregion
+
+            #region Find LastDate
+            if (lastDate.HasValue)
+            {
+                var dateIndex = lstValues.FindLastIndex(item => item.Timestamp == lastDate.Value);
+                if (dateIndex > -1)
+                    return lstValues.Skip(dateIndex).ToList();
+            }
+            #endregion
+
+            return lstValues;
         }
 
 
@@ -325,6 +540,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 Tags = row.Get<string>("tags"),
                 Timestamp = row.Get<DateTime>("timestamp"),
                 TraceId = row.Get<Guid>("trace_id")
+            };
+        }
+
+        private static NodeCountersQueryItem GetCounterItem(PostgresHelper.DbRow row)
+        {
+            return new NodeCountersQueryItem
+            {
+                Application = row.Get<string>("application"),
+                Category = row.Get<string>("category"),
+                CountersId = row.Get<Guid>("counter_id"),
+                Name = row.Get<string>("name"),
+                TypeOfValue = row.Get<string>("typeofvalue"),
+                Kind = row.Get<CounterKind>("kind"),
+                Level = row.Get<CounterLevel>("level"),
+                Type = row.Get<CounterType>("type"),
+                Unit = row.Get<CounterUnit>("unit"),
             };
         }
 

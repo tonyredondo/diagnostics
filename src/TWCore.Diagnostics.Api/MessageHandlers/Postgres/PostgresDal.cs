@@ -400,5 +400,38 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
 
         #endregion
+
+        #region Counters
+
+        public Task<PostgresHelper.DbResult> GetCounters(string environment)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetCounters.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> GetCounter(Guid counterId)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetCounterById.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@CounterId"] = counterId
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> GetCountersValues(Guid counterId, DateTime fromDate, DateTime toDate)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetCountersValues.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@CounterId"] = counterId,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate
+            });
+        }
+
+        #endregion
     }
 }
