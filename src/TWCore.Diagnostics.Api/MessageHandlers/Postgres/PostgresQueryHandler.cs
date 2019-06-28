@@ -493,7 +493,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         public async Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = null)
         {
             var counterDataTask = GetCounter(counterId);
-            var toDate = Core.Now;
+            var toDate = Core.Now.AddDays(1).Date;
             var fromDate = toDate;
 
             #region Values Division
@@ -513,7 +513,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     break;
                 case CounterValuesDivision.Week:
                     fromDate = toDate.AddDays(-7);
-                    if (samples == 0) samples = 84;
+                    if (samples == 0) samples = 168;
                     break;
                 case CounterValuesDivision.Month:
                     fromDate = toDate.AddMonths(-1);
