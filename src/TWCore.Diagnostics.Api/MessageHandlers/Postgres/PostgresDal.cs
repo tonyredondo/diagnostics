@@ -433,5 +433,45 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
 
         #endregion
+
+        #region Statuses
+
+        public Task<PostgresHelper.DbResult> GetStatuses(string environment, string machine = null, string application = null)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetStatuses.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Machine"] = machine,
+                ["@Application"] = application
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> GetStatuses(string environment, string machine, string application, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetStatusesPaged.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Machine"] = machine,
+                ["@Application"] = application,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
+
+
+        public Task<PostgresHelper.DbResult> GetStatusesValues(Guid[] ids)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetStatusesValues.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Ids"] = ids
+            });
+        }
+
+        #endregion
     }
 }

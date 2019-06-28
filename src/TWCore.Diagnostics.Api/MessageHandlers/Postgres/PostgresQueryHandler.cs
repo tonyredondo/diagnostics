@@ -28,6 +28,7 @@ using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
 using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
+using TWCore.Diagnostics.Status;
 using TWCore.Serialization;
 using TWCore.Serialization.NSerializer;
 
@@ -333,14 +334,127 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return dict.Values.ToArray();
         }
 
-        public Task<PagedList<NodeStatusItem>> GetStatusesAsync(string environment, string machine, string application, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        public async Task<PagedList<NodeStatusItem>> GetStatusesAsync(string environment, string machine, string application, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetStatuses(environment, machine, application, fromDate, toDate, page, pageSize).ConfigureAwait(false);
+            var data = new List<NodeStatusItem>();
+            foreach (var item in results)
+            {
+                var sStatusId = item.Get<Guid>("status_id");
+                var sEnvironment = item.Get<string>("environment");
+                var sMachine = item.Get<string>("machine");
+                var sApplication = item.Get<string>("application");
+                var sTimestamp = item.Get<DateTime>("timestamp");
+                var sApplicationDisplay = item.Get<string>("application_display");
+                var sElapsed = item.Get<decimal>("elapsed");
+                var sStartTime = item.Get<DateTime>("start_time");
+                var sDate = item.Get<DateTime>("date");
+                var nodeStatus = new NodeStatusItem
+                {
+                    Application = sApplication,
+                    ApplicationDisplayName = sApplicationDisplay,
+                    Date = sDate,
+                    ElapsedMilliseconds = (double)sElapsed,
+                    Environment = sEnvironment,
+                    Id = sStatusId.ToString(),
+                    InstanceId = sStatusId,
+                    Machine = sMachine,
+                    StartTime = sStartTime,
+                    Timestamp = sTimestamp,
+                    Values = new List<NodeStatusItemValue>()
+                };
+                data.Add(nodeStatus);
+            }
+            var ids = data.Select(i => i.InstanceId).ToArray();
+            var valuesResults = await Dal.GetStatusesValues(ids).ConfigureAwait(false);
+
+            NodeStatusItem currentNode = null;
+            foreach (var item in valuesResults)
+            {
+                var sStatusId = item.Get<Guid>("status_id");
+                var sKey = item.Get<string>("key");
+                var sValue = item.Get<string>("value");
+                var sType = item.Get<StatusItemValueType>("type");
+
+                if (currentNode == null || currentNode.InstanceId != sStatusId)
+                    currentNode = data.First(i => i.InstanceId == sStatusId);
+
+                currentNode.Values.Add(new NodeStatusItemValue
+                {
+                    Key = sKey,
+                    Value = sValue,
+                    Type = sType
+                });
+            }
+
+            return new PagedList<NodeStatusItem>
+            {
+                Data = data,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalResults = results.TotalCount
+            };
         }
 
-        public Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application)
+        public async Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application)
         {
-            throw new NotImplementedException();
+            var results = await Dal.GetStatuses(environment, machine, application).ConfigureAwait(false);
+            var data = new List<NodeStatusItem>();
+            foreach(var item in results)
+            {
+                var sStatusId = item.Get<Guid>("status_id");
+                var sEnvironment = item.Get<string>("environment");
+                var sMachine = item.Get<string>("machine");
+                var sApplication = item.Get<string>("application");
+                var sTimestamp = item.Get<DateTime>("timestamp");
+                var sApplicationDisplay = item.Get<string>("application_display");
+                var sElapsed = item.Get<decimal>("elapsed");
+                var sStartTime = item.Get<DateTime>("start_time");
+                var sDate = item.Get<DateTime>("date");
+                var nodeStatus = new NodeStatusItem
+                {
+                    Application = sApplication,
+                    ApplicationDisplayName = sApplicationDisplay,
+                    Date = sDate,
+                    ElapsedMilliseconds = (double)sElapsed,
+                    Environment = sEnvironment,
+                    Id = sStatusId.ToString(),
+                    InstanceId = sStatusId,
+                    Machine = sMachine,
+                    StartTime = sStartTime,
+                    Timestamp = sTimestamp,
+                    Values = new List<NodeStatusItemValue>()
+                };
+                data.Add(nodeStatus);
+            }
+
+            var rData = data.GroupBy(i => new { i.Environment, i.Machine, i.Application })
+                .Select(i => i.First())
+                .ToList();
+
+            var ids = rData.Select(i => i.InstanceId).ToArray();
+            var valuesResults = await Dal.GetStatusesValues(ids).ConfigureAwait(false);
+
+            NodeStatusItem currentNode = null;
+            foreach(var item in valuesResults)
+            {
+                var sStatusId = item.Get<Guid>("status_id");
+                var sKey = item.Get<string>("key");
+                var sValue = item.Get<string>("value");
+                var sType = item.Get<StatusItemValueType>("type");
+
+                if (currentNode == null || currentNode.InstanceId != sStatusId)
+                    currentNode = rData.First(i => i.InstanceId == sStatusId);
+
+                currentNode.Values.Add(new NodeStatusItemValue
+                {
+                    Key = sKey,
+                    Value = sValue,
+                    Type = sType
+                });
+            }
+
+            return rData;
         }
 
         public async Task<List<NodeCountersQueryItem>> GetCounters(string environment)
