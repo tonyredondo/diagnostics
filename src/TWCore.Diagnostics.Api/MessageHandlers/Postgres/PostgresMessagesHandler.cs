@@ -374,7 +374,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                 Type = counter.Type,
                                 TypeOfValue = counter.TypeOfValue.Name
                             };
-                            await Dal.InsertCounterAsync(cEntity).ConfigureAwait(false);
+                            await Dal.InsertCounterAsync(new[] { cEntity }, true).ConfigureAwait(false);
                         }
 
                         if (counter is CounterItem<int> intCounter)
@@ -419,7 +419,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
                     }
 
-                    await Dal.InsertCounterValueAsync(lstCounters).ConfigureAwait(false);
+                    await Dal.InsertCounterValueAsync(lstCounters, true).ConfigureAwait(false);
                 }
                 catch(Exception ex)
                 {
