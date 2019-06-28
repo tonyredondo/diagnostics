@@ -26,7 +26,6 @@ using TWCore.Diagnostics.Api.Models.Counters;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
-using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Status;
 using TWCore.Serialization;
@@ -141,7 +140,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
             foreach (var row in results)
             {
-                var item = GetLogItem(row);
+                var item = PostgresBindings.GetLogItem(row);
                 data.Add(item);
             }
 
@@ -188,7 +187,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var data = new List<NodeTraceItem>();
             foreach (var row in results)
             {
-                var item = GetTraceItem(row);
+                var item = PostgresBindings.GetTraceItem(row);
                 data.Add(item);
             }
             return data;
@@ -200,7 +199,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
             NodeTraceItem traceItem = null;
             if (results.Count > 0)
-                traceItem = GetTraceItem(results[0]);
+                traceItem = PostgresBindings.GetTraceItem(results[0]);
 
             if (traceItem == null) return null;
 
@@ -236,7 +235,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
             NodeTraceItem traceItem = null;
             if (results.Count > 0)
-                traceItem = GetTraceItem(results[0]);
+                traceItem = PostgresBindings.GetTraceItem(results[0]);
 
             if (traceItem == null) return null;
 
@@ -302,10 +301,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 var tracesResults = await Dal.GetTracesByGroupId(environment, group).ConfigureAwait(false);
 
                 foreach (var row in logsResults)
-                    data.Add(GetLogItem(row));
+                    data.Add(PostgresBindings.GetLogItem(row));
 
                 foreach (var row in tracesResults)
-                    data.Add(GetTraceItem(row));
+                    data.Add(PostgresBindings.GetTraceItem(row));
             }
 
             return new SearchResults
@@ -462,7 +461,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var results = await Dal.GetCounters(environment).ConfigureAwait(false);
             var data = new List<NodeCountersQueryItem>();
             foreach (var item in results)
-                data.Add(GetCounterItem(item));
+                data.Add(PostgresBindings.GetCounterItem(item));
             return data;
         }
 
@@ -470,7 +469,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var results = await Dal.GetCounter(counterId).ConfigureAwait(false);
             if (results.Count == 0) return null;
-            return GetCounterItem(results[0]);
+            return PostgresBindings.GetCounterItem(results[0]);
         }
 
         public async Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
@@ -615,63 +614,6 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return lstValues;
         }
 
-
-
-        private static NodeLogItem GetLogItem(PostgresHelper.DbRow row)
-        {
-            var item = new NodeLogItem
-            {
-                Application = row.Get<string>("application"),
-                Assembly = row.Get<string>("assembly"),
-                Code = row.Get<string>("code"),
-                Environment = row.Get<string>("environment"),
-                Group = row.Get<string>("group"),
-                Id = row.Get<Guid>("log_id").ToString(),
-                Level = row.Get<LogLevel>("level"),
-                LogId = row.Get<Guid>("log_id"),
-                Machine = row.Get<string>("machine"),
-                Message = row.Get<string>("message"),
-                Timestamp = row.Get<DateTime>("timestamp"),
-                Type = row.Get<string>("type"),
-            };
-            var ex = row.Get<string>("exception");
-            if (ex != null)
-                item.Exception = ex.DeserializeFromJson<SerializableException>();
-            return item;
-        }
-
-        private static NodeTraceItem GetTraceItem(PostgresHelper.DbRow row)
-        {
-            return new NodeTraceItem
-            {
-                Application = row.Get<string>("application"),
-                Environment = row.Get<string>("environment"),
-                Formats = row.Get<string[]>("formats"),
-                Group = row.Get<string>("group"),
-                Id = row.Get<Guid>("trace_id").ToString(),
-                Machine = row.Get<string>("machine"),
-                Name = row.Get<string>("name"),
-                Tags = row.Get<string>("tags"),
-                Timestamp = row.Get<DateTime>("timestamp"),
-                TraceId = row.Get<Guid>("trace_id")
-            };
-        }
-
-        private static NodeCountersQueryItem GetCounterItem(PostgresHelper.DbRow row)
-        {
-            return new NodeCountersQueryItem
-            {
-                Application = row.Get<string>("application"),
-                Category = row.Get<string>("category"),
-                CountersId = row.Get<Guid>("counter_id"),
-                Name = row.Get<string>("name"),
-                TypeOfValue = row.Get<string>("typeofvalue"),
-                Kind = row.Get<CounterKind>("kind"),
-                Level = row.Get<CounterLevel>("level"),
-                Type = row.Get<CounterType>("type"),
-                Unit = row.Get<CounterUnit>("unit"),
-            };
-        }
 
     }
 }

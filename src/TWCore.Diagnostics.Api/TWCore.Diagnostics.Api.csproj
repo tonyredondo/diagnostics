@@ -71,12 +71,15 @@
     <Folder Include="traces\" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounter.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCounters.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatuses.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
@@ -88,6 +91,9 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounter.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatuses.sql" />

@@ -68,6 +68,6 @@ namespace TWCore.Diagnostics
         /// <summary>
         /// Process timer in seconds
         /// </summary>
-        public int ProcessTimerInSeconds { get; set; } = 10;
+        public int ProcessTimerInSeconds { get; set; } = 5;
     }
 }

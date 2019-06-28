@@ -6,7 +6,7 @@
     "AssemblyResolverManager.Paths": "./assemblies, C:\\AGSW_GIT\\dlls"
   },
   "Core": {
-    "environmentName": "DEV",
+    "environmentName": "REMOTE",
     "applicationName": "TWCore.Diagnostics.Api",
     "applicationDisplayName": "TWCore Diagnostics Tools",
     "settingsFile": "./settings/settings.xml",

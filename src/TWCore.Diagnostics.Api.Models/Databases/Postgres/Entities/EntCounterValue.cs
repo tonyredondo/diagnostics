@@ -17,24 +17,24 @@ limitations under the License.
 using System;
 // ReSharper disable UnusedMember.Global
 
-namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
     /// <summary>
-    /// Diagnostics entity extension of Application Entity
+    /// Counter value
     /// </summary>
-    public class DiagnosticsEntity : ApplicationEntity
+    public class EntCounterValue
     {
         /// <summary>
-        /// Machine name
+        /// Counter id
         /// </summary>
-        public string Machine { get; set; }
+        public Guid CounterId { get; set; }
         /// <summary>
-        /// Timestamp
+        /// Counter timestamp
         /// </summary>
         public DateTime Timestamp { get; set; }
         /// <summary>
-        /// Diagnostics group name
+        /// Counter value
         /// </summary>
-        public string Group { get; set; }
+        public double Value { get; set; }
     }
 }

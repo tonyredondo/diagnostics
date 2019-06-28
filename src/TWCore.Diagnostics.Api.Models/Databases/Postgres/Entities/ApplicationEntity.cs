@@ -15,7 +15,7 @@ limitations under the License.
  */
 
 // ReSharper disable UnusedMember.Global
-namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
     /// <summary>
     /// Application Entity

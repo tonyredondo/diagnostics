@@ -52,6 +52,7 @@
       <!-- IDiagnosticMessagesHandler -->
       <Interface Type="TWCore.Diagnostics.Api.Models.IDiagnosticMessagesHandler, TWCore.Diagnostics.Api.Models">
         <!--<Class Name="RavenDb" Type="TWCore.Diagnostics.Api.MessageHandlers.RavenDb.RavenDbMessagesHandler, TWCore.Diagnostics.Api" />-->
+        <Class Name="Postgres" Type="TWCore.Diagnostics.Api.MessageHandlers.Postgres.PostgresMessagesHandler, TWCore.Diagnostics.Api" />
       </Interface>
 
       <!-- IDiagnosticQueryHandler -->

@@ -14,39 +14,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-// ReSharper disable UnusedMember.Global
 using System;
+using TWCore.Diagnostics.Status;
+// ReSharper disable UnusedMember.Global
 
-namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
     /// <summary>
-    /// Metadata entity
+    /// Status value entity
     /// </summary>
-    public class EntMeta
+    public class EntStatusValue
     {
         /// <summary>
-        /// Environment
+        /// Status id
         /// </summary>
-        public string Environment { get; set; }
+        public Guid StatusId { get; set; }
         /// <summary>
-        /// Timestamp
-        /// </summary>
-        public DateTime Timestamp { get; set; }
-        /// <summary>
-        /// Date
-        /// </summary>
-        public DateTime Date { get; set; }
-        /// <summary>
-        /// Diagnostics group name
-        /// </summary>
-        public string Group { get; set; }
-        /// <summary>
-        /// Metadata Key
+        /// Key
         /// </summary>
         public string Key { get; set; }
         /// <summary>
-        /// Metadata Value
+        /// Value
         /// </summary>
         public string Value { get; set; }
+        /// <summary>
+        /// Type of value
+        /// </summary>
+        public StatusItemValueType Type { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities;
+using TWCore.Diagnostics.Api.Models.Database.Postgres.Entities;
 using TWCore.Diagnostics.Log;
 using TWCore.Serialization;
 
@@ -421,6 +421,18 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
+        public Task<PostgresHelper.DbResult> GetCounter(string environment, string application, string category, string name)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetCounter.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Application"] = application,
+                ["@Category"] = category,
+                ["@Name"] = name
+            });
+        }
+
         public Task<PostgresHelper.DbResult> GetCountersValues(Guid counterId, DateTime fromDate, DateTime toDate)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetCountersValues.sql");
@@ -435,6 +447,24 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         #endregion
 
         #region Statuses
+
+        public Task<PostgresHelper.DbResult> GetStatus(Guid statusId)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetStatusById.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@@StatusId"] = statusId,
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> DeleteStatus(Guid statusId)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.DeleteStatus.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@StatusId"] = statusId,
+            });
+        }
 
         public Task<PostgresHelper.DbResult> GetStatuses(string environment, string machine = null, string application = null)
         {

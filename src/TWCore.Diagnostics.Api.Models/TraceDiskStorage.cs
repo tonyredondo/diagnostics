@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using TWCore.Diagnostics.Api.Models.Database.Postgres.Entities;
 using TWCore.Diagnostics.Api.Models.Trace;
 
 namespace TWCore.Diagnostics
@@ -60,7 +61,81 @@ namespace TWCore.Diagnostics
             }
         }
 
+        /// <summary>
+        /// Store trace data to disk
+        /// </summary>
+        /// <param name="traceItem">Trace item</param>
+        /// <param name="traceData">Trace data</param>
+        /// <param name="extension">Trace extension</param>
+        public static async Task StoreAsync(EntTrace traceItem, Stream traceData, string extension)
+        {
+            var filePath = GetTracePath(traceItem, extension, true);
+            using (var fStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                await traceData.CopyToAsync(fStream).ConfigureAwait(false);
+            Core.Log.InfoBasic("The TraceData '{0}' was stored", filePath);
+        }
+        /// <summary>
+        /// Get trace data from disk
+        /// </summary>
+        /// <param name="traceItem">Trace item</param>
+        /// <param name="extension">Trace extension</param>
+        /// <returns>Trace data</returns>
+        public static async Task<MultiArray<byte>> GetAsync(EntTrace traceItem, string extension)
+        {
+            var filePath = GetTracePath(traceItem, extension, false);
+            using (var fStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                var data = await fStream.ReadAllBytesAsync().ConfigureAwait(false);
+                Core.Log.InfoBasic("The TraceData '{0}' was loaded", filePath);
+                return data;
+            }
+        }
+
+
         private static string GetTracePath(NodeTraceItem traceItem, string extension, bool createIfNotExists)
+        {
+            if (Settings.TracesFolderPath == null)
+                throw new Exception("The TraceFolderPath diagnostics settings is not set.");
+            if (Settings.TracesFolderPath == string.Empty)
+                Settings.TracesFolderPath = Environment.CurrentDirectory;
+            if (traceItem == null)
+                throw new Exception("The TraceItem is null");
+
+            var folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group);
+            folderPath = folderPath.RemovePathInvalidChars();
+
+            if (!Directory.Exists(folderPath))
+            {
+                if (createIfNotExists)
+                    Directory.CreateDirectory(folderPath);
+                else
+                    throw new Exception($"Trace data folder '{folderPath}' doesn't exist.");
+            }
+            var idValue = string.Empty;
+            if (traceItem.TraceId != Guid.Empty)
+                idValue = $"[{traceItem.TraceId.ToString()}]";
+            else
+                idValue = $"[{traceItem.Timestamp.TimeOfDay.ToString()}]";
+
+            var fileName = traceItem.Name + idValue + extension.ToLowerInvariant();
+            fileName = fileName.RemoveFileNameInvalidChars();
+            var filePath = Path.Combine(folderPath, fileName);
+
+            if (!createIfNotExists)
+            {
+                if (!File.Exists(filePath))
+                {
+                    fileName = traceItem.Name + extension.ToLowerInvariant();
+                    fileName = fileName.RemoveFileNameInvalidChars();
+                    filePath = Path.Combine(folderPath, fileName);
+                    return filePath;
+                }
+            }
+
+            return filePath;
+        }
+
+        private static string GetTracePath(EntTrace traceItem, string extension, bool createIfNotExists)
         {
             if (Settings.TracesFolderPath == null)
                 throw new Exception("The TraceFolderPath diagnostics settings is not set.");

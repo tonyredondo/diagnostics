@@ -66,7 +66,7 @@ namespace TWCore.Diagnostics.Api
 
             //TestPostgresDalAsync().WaitAsync();
 
-            var qhandler = new PostgresQueryHandler();
+            //var qhandler = new PostgresQueryHandler();
             //var r1 = qhandler.GetEnvironmentsAsync();
             //_ = qhandler.GetLogsApplicationsLevelsByEnvironmentAsync("Docker", DateTime.Parse("2019-01-01"), DateTime.Parse("2019-06-23"));
             //_ = qhandler.GetLogsByApplicationLevelsEnvironmentAsync("Docker", "TWCore.Diagnostics.Api", null, DateTime.Parse("2019-06-01"), DateTime.Parse("2019-06-23"), 0);

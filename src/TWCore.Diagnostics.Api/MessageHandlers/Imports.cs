@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Database.Postgres.Entities;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -27,7 +28,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntLog>();
+                var insertBuffer = new List<EntLog>();
                 Core.Log.InfoBasic("Importing logs...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -37,7 +38,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     if (index % 1000 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
-                    insertBuffer.Add(new Postgres.Entities.EntLog
+                    insertBuffer.Add(new EntLog
                     {
                         LogId = item.LogId,
                         Environment = item.Environment,
@@ -94,7 +95,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntTrace>();
+                var insertBuffer = new List<EntTrace>();
                 Core.Log.InfoBasic("Importing traces...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -103,7 +104,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     if (index % 1000 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
-                    insertBuffer.Add(new Postgres.Entities.EntTrace
+                    insertBuffer.Add(new EntTrace
                     {
                         TraceId = item.TraceId,
                         Environment = item.Environment,
@@ -156,7 +157,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntMeta>();
+                var insertBuffer = new List<EntMeta>();
                 Core.Log.InfoBasic("Importing metadata...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -169,7 +170,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     {
                         foreach (var kv in item.Items)
                         {
-                            insertBuffer.Add(new Postgres.Entities.EntMeta
+                            insertBuffer.Add(new EntMeta
                             {
                                 Environment = null,
                                 Group = item.GroupName,
@@ -221,7 +222,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntCounter>();
+                var insertBuffer = new List<EntCounter>();
                 Core.Log.InfoBasic("Importing counters...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -230,7 +231,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     if (index % 1000 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
-                    insertBuffer.Add(new Postgres.Entities.EntCounter
+                    insertBuffer.Add(new EntCounter
                     {
                         CounterId = item.CountersId,
                         Environment = item.Environment,
@@ -284,7 +285,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntCounterValue>();
+                var insertBuffer = new List<EntCounterValue>();
                 Core.Log.InfoBasic("Importing counters values...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -293,7 +294,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     if (index % 1000 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
-                    insertBuffer.Add(new Postgres.Entities.EntCounterValue
+                    insertBuffer.Add(new EntCounterValue
                     {
                         CounterId = item.CountersId,
                         Timestamp = item.Timestamp,
@@ -341,8 +342,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 var index = 0;
                 var enumerator = await session.Advanced.StreamAsync(query).ConfigureAwait(false);
 
-                var insertBuffer = new List<Postgres.Entities.EntStatus>();
-                var insertBuffer2 = new List<Postgres.Entities.EntStatusValue>();
+                var insertBuffer = new List<EntStatus>();
+                var insertBuffer2 = new List<EntStatusValue>();
                 Core.Log.InfoBasic("Importing statuses...");
                 while (await enumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -351,7 +352,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     if (index % 10 == 0)
                         Core.Log.InfoBasic("Writing: " + index);
 
-                    var status = new Postgres.Entities.EntStatus
+                    var status = new EntStatus
                     {
                         Application = item.Application,
                         ApplicationDisplay = item.ApplicationDisplayName,
@@ -369,7 +370,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                     {
                         foreach(var value in item.Values)
                         {
-                            insertBuffer2.Add(new Postgres.Entities.EntStatusValue
+                            insertBuffer2.Add(new EntStatusValue
                             {
                                 StatusId = status.StatusId,
                                 Type = value.Type,

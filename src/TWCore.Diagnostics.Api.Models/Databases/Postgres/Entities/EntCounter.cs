@@ -15,42 +15,48 @@ limitations under the License.
  */
 
 using System;
+using TWCore.Diagnostics.Counters;
+
 // ReSharper disable UnusedMember.Global
 
-namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
     /// <summary>
-    /// Status entity
+    /// Counter definition
     /// </summary>
-    public class EntStatus : ApplicationEntity
+    public class EntCounter : ApplicationEntity
     {
         /// <summary>
-        /// Status id
+        /// Counter identifier
         /// </summary>
-        public Guid StatusId { get; set; }
+        public Guid CounterId { get; set; }
         /// <summary>
-        /// Machine name
+        /// Counter category
         /// </summary>
-        public string Machine { get; set; }
+        public string Category { get; set; }
         /// <summary>
-        /// Timestamp
+        /// Counter name
         /// </summary>
-        public DateTime Timestamp { get; set; }
+        public string Name { get; set; }
         /// <summary>
-        /// Application display name
+        /// Counter type
         /// </summary>
-        public string ApplicationDisplay { get; set; }
+        public CounterType Type { get; set; }
         /// <summary>
-        /// Elapsed time
+        /// Counter level
         /// </summary>
-        public double Elapsed { get; set; }
+        public CounterLevel Level { get; set; }
         /// <summary>
-        /// Start time
+        /// Counter kind
         /// </summary>
-        public DateTime StartTime { get; set; }
+        public CounterKind Kind { get; set; }
         /// <summary>
-        /// Absolute date
+        /// Counter unit
         /// </summary>
-        public DateTime Date { get; set; }
+        public CounterUnit Unit { get; set; }
+        /// <summary>
+        /// Counter type of the value
+        /// </summary>
+        public string TypeOfValue { get; set; }
     }
 }

@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using TWCore.Diagnostics.Log;
 // ReSharper disable UnusedMember.Global
 
-namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres.Entities
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
     /// <summary>
     /// Log entity
