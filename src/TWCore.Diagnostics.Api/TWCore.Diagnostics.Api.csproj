@@ -8,6 +8,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Npgsql" Version="4.0.7" />
+    <PackageReference Include="Npgsql.Json.NET" Version="4.0.7" />
     <PackageReference Include="RavenDB.Client" Version="4.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
     <PackageReference Include="TWCore" Version="2.1.181-beta4" />
@@ -67,5 +69,49 @@
   <ItemGroup>
     <Folder Include="logs\" />
     <Folder Include="traces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounter.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCounters.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetStatuses.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounter.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatuses.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByApplication.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounters.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
-﻿/*
+/*
 Copyright 2015-2018 Daniel Adrian Redondo Suarez
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
- 
+
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
@@ -14,24 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
-using TWCore.Services;
+using System;
+// ReSharper disable UnusedMember.Global
 
-// ReSharper disable ClassNeverInstantiated.Global
-
-namespace TWCore.Diagnostics.Api
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
-    public class Program
+    /// <summary>
+    /// Counter value
+    /// </summary>
+    public class EntCounterValue
     {
-        public static void Main(string[] args)
-        {
-            Core.InitDefaults(false);
-            Core.RunService(() => new ServiceList(
-                WebService.Create<Startup>(),
-                new DiagnosticRawMessagingServiceAsync(),
-                new DiagnosticBotService()
-                ), args);
-            RavenHelper.CloseDocumentStore();
-        }
+        /// <summary>
+        /// Counter id
+        /// </summary>
+        public Guid CounterId { get; set; }
+        /// <summary>
+        /// Counter timestamp
+        /// </summary>
+        public DateTime Timestamp { get; set; }
+        /// <summary>
+        /// Counter value
+        /// </summary>
+        public double Value { get; set; }
     }
 }

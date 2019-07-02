@@ -1,10 +1,10 @@
-﻿/*
+/*
 Copyright 2015-2018 Daniel Adrian Redondo Suarez
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
- 
+
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
@@ -14,24 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
-using TWCore.Services;
-
-// ReSharper disable ClassNeverInstantiated.Global
-
-namespace TWCore.Diagnostics.Api
+// ReSharper disable UnusedMember.Global
+namespace TWCore.Diagnostics.Api.Models.Database.Postgres.Entities
 {
-    public class Program
+    /// <summary>
+    /// Application Entity
+    /// </summary>
+    public class ApplicationEntity
     {
-        public static void Main(string[] args)
-        {
-            Core.InitDefaults(false);
-            Core.RunService(() => new ServiceList(
-                WebService.Create<Startup>(),
-                new DiagnosticRawMessagingServiceAsync(),
-                new DiagnosticBotService()
-                ), args);
-            RavenHelper.CloseDocumentStore();
-        }
+        /// <summary>
+        /// Environment
+        /// </summary>
+        public string Environment { get; set; }
+        /// <summary>
+        /// Application name
+        /// </summary>
+        public string Application { get; set; }
     }
 }

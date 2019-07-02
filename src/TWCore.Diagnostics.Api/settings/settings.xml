@@ -37,7 +37,13 @@
       <Item Key="Core.Status.Transport.File.Format" Value="TWCore.Diagnostics.Api [STATUS]-{yyyy}-{MM}-{dd}_{HH}-{mm}" />
       <Item Key="Core.Status.Transport.Http.Port" Value="28905" />
       <Item Key="RavenDb.Database" Value="Diagnostics" />
-      <Item Key="RavenDb.Urls" Value="http://10.10.1.52:8080" />
+      <!--<Item Key="RavenDb.Urls" Value="http://10.10.1.52:8080" />-->
+      <Item Key="RavenDb.Urls" Value="http://93.189.37.106:8080" />
+
+      <Item Key="Postgres.ConnectionString" Value="Host=localhost;Port=5432;User ID=diagUser;Password=diagPassw0rd;Database=diagnostics;Pooling=true;" />
+      <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;" />-->
+      <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;Timeout=600;CommandTimeout=600;KeepAlive=600" />-->
+
       <Item Key="Bot.DefaultEnvironment" Value="Docker" />
       <Item Key="Bot.DataFolder" Value="./botdata" />
 

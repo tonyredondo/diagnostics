@@ -92,7 +92,6 @@ AppPackages/
 # Others
 [Bb]in
 [Oo]bj
-sql
 TestResults
 [Tt]est[Rr]esult*
 *.Cache
@@ -120,3 +119,5 @@ cachedViews/*
 *.userprefs
 /tools/TWCore.Object.Api/assemblies
 /test/TWCore.Tests.Benchmark/BenchmarkDotNet.Artifacts/results
+/src/TWCore.Diagnostics.Api/logs
+/src/TWCore.Diagnostics.Api/traces

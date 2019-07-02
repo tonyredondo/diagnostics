@@ -49,8 +49,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         public void Init()
         {
-            RavenHelper.Init();
+            //RavenHelper.Init();
         }
+
         /// <summary>
         /// Gets the environments
         /// </summary>
@@ -59,7 +60,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<Environments_Availables.Result, Environments_Availables>().Select(x => x.Environment).ToListAsync();
+                var query = from item in session.Query<V2_Environments_Availables.Result, V2_Environments_Availables>()
+                            .OrderBy(i => i.Environment)
+                            select item.Environment;
+                return query.ToListAsync();
             });
         }
         /// <summary>
@@ -73,39 +77,71 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var values = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                return session.Query<Logs_Summary.Result, Logs_Summary>()
-                              .Where(x => x.Environment == environment)
-                              .Where(x => x.Date >= fromDate && x.Date <= toDate)
-                              .OrderBy(x => x.Application)
+                return session.Advanced.AsyncDocumentQuery<V2_Logs_Summary.Result, V2_Logs_Summary>()
+                              .NoTracking()
+                              .WhereEquals(x => x.Environment, environment, true)
+                              .WhereBetween(x => x.Date, fromDate, toDate)
                               .ToListAsync();
             }).ConfigureAwait(false);
 
-            var apps = values.GroupBy(x => x.Application).Select(x => new ApplicationsLevels
-            {
-                Application = x.Key,
-                Levels = x.SelectMany(y => y.Levels).GroupBy(y => y.Name).Select(ix => new LogLevelQuantity
-                {
-                    Name = ix.Key,
-                    Count = ix.Sum(i => i.Count)
-                }).OrderBy(y => y.Name).ToArray()
-            }).ToArray();
+            var dctApplicationLevels = new Dictionary<string, ApplicationsLevels>();
+            var dctLogLevels = new Dictionary<LogLevel, LogLevelTimes>();
 
-            var levels = values.SelectMany(col => col.Levels, (result, level) => new
+            foreach (var value in values)
             {
-                Name = level.Name,
-                Count = level.Count,
-                Date = result.Date
-            }).GroupBy(x => x.Name).Select(x => new LogLevelTimes
-            {
-                Name = x.Key,
-                Count = x.Sum(i => i.Count),
-                Series = x.GroupBy(i => i.Date).Select(i => new TimeCount
+                if (!dctApplicationLevels.TryGetValue(value.Application, out var application))
                 {
-                    Date = i.Key,
-                    Count = i.Sum(k => k.Count)
-                }).ToArray()
-            }).OrderBy(x => x.Name).ToArray();
+                    application = new ApplicationsLevels
+                    {
+                        Application = value.Application,
+                        Levels = new List<LogLevelQuantity>()
+                    };
+                    dctApplicationLevels[value.Application] = application;
+                }
 
+                foreach (var level in value.Levels)
+                {
+                    var appLevel = application.Levels.FirstOrDefault(al => al.Name == level.Name);
+                    if (appLevel == null)
+                    {
+                        appLevel = new LogLevelQuantity
+                        {
+                            Name = level.Name,
+                        };
+                        application.Levels.Add(appLevel);
+                    }
+                    appLevel.Count += level.Count;
+
+                    if (!dctLogLevels.TryGetValue(level.Name, out var levelTimes))
+                    {
+                        levelTimes = new LogLevelTimes
+                        {
+                            Name = level.Name,
+                            Series = new List<TimeCount>()
+                        };
+                        dctLogLevels[level.Name] = levelTimes;
+                    }
+
+                    levelTimes.Count += level.Count;
+                    var levelSeries = levelTimes.Series.FirstOrDefault(ls => ls.Date == value.Date);
+                    if (levelSeries == null)
+                    {
+                        levelSeries = new TimeCount
+                        {
+                            Date = value.Date
+                        };
+                        levelTimes.Series.Add(levelSeries);
+                        levelTimes.Series.Sort((a, b) => a.Date.CompareTo(b.Date));
+                    }
+                    levelSeries.Count += level.Count;
+                }
+                application.Levels.Sort((a, b) => a.Name.CompareTo(b.Name));
+            }
+
+            var apps = dctApplicationLevels.Values.ToList();
+            var levels = dctLogLevels.Values.ToList();
+            apps.Sort((a, b) => a.Application.CompareTo(b.Application));
+            levels.Sort((a, b) => a.Name.CompareTo(b.Name));
             return new LogSummary
             {
                 Applications = apps,
@@ -127,21 +163,23 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_ByApplicationLevelsAndEnvironments>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, V2_Logs_ByApplicationLevelsAndEnvironments>();
                 var query = documentQuery
                         .Statistics(out var stats)
-                        .WhereEquals(x => x.Environment, environment)
-                        .WhereEquals(x => x.Application, application)
+                        .NoTracking()
+                        .WhereEquals(x => x.Environment, environment, true)
+                        .WhereEquals(x => x.Application, application, true)
                         .WhereBetween(x => x.Timestamp, fromDate, toDate);
 
                 if (level.HasValue)
-                    query = query.WhereEquals(x => x.Level, level.Value);
+                    query = query.WhereEquals(x => x.Level, level.Value, true);
 
                 query = query.OrderByDescending(x => x.Timestamp);
                 query = query.Skip(page * pageSize).Take(pageSize);
 
                 var data = await query.ToListAsync().ConfigureAwait(false);
 
+                Core.Log.InfoBasic($"Duration: {stats.DurationInMs}, SkippedResults: {stats.SkippedResults}, TotalResults: {stats.TotalResults}, Index: {stats.IndexName}");
                 return new PagedList<NodeLogItem>
                 {
                     PageNumber = page,
@@ -165,8 +203,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var res = await session.Advanced.AsyncDocumentQuery<Traces_List.Result, Traces_List>()
+                var res = await session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
                         .Statistics(out var stats)
+                        .NoTracking()
                         .WhereEquals(x => x.Environment, environment)
                         .WhereBetween(x => x.Start, fromDate, toDate)
                         .OrderByDescending(x => x.Start)
@@ -199,8 +238,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var value = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_ByGroupId>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, V2_Traces_ByGroup>();
                 var query = documentQuery
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereEquals(x => x.Group, groupName)
                     .OrderBy(x => x.Timestamp);
@@ -360,52 +400,56 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <returns>Search results</returns>
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
-            var logsSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
+            var searchData = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var logQuery = session.Advanced.AsyncDocumentQuery<NodeLogItem, Logs_Search>()
-                    .WhereEquals(x => x.Environment, environment)
-                    .WhereBetween(x => x.Timestamp, fromDate, toDate)
+                var query = session.Advanced.AsyncDocumentQuery<SearchGroupResult, V2_Diagnostics_Search>()
+                    //.WhereEquals("Environment", environment)
+                    .NoTracking()
+                    .WhereBetween("Timestamp", fromDate, toDate)
                     .OpenSubclause()
-                    .Search(x => x.Group, searchTerm)
-                    .Search(x => x.Code, searchTerm)
-                    .Search(x => x.Type, searchTerm)
-                    .Search(x => x.Group, "*" + searchTerm + "*")
-                    .Search(x => x.Message, "*" + searchTerm + "*")
+                    .Search("Group", searchTerm)
+                    .Search("SearchTerm", searchTerm)
                     .CloseSubclause()
-                    .OrderBy(x => x.Timestamp);
-                return await logQuery.Take(1000).ToListAsync().ConfigureAwait(false);
+                    .OrderByDescending("Timestamp");
+                return await query.Take(5000).ToListAsync().ConfigureAwait(false);
             });
 
-            var tracesSearch = RavenHelper.ExecuteAndReturnAsync(async session =>
+            var groups = searchData
+                .DistinctBy(i => i.Value)
+                .Select(i => i.Value)
+                .Where(i => !string.IsNullOrEmpty(i))
+                .Take(10)
+                .ToList();
+
+            var logsData = await RavenHelper.ExecuteAndReturnAsync(session =>
             {
-                var traceQuery = session.Advanced.AsyncDocumentQuery<NodeTraceItem, Traces_Search>()
+                return session.Advanced.AsyncDocumentQuery<NodeLogItem, V2_Logs_ByGroup>()
                     .WhereEquals(x => x.Environment, environment)
-                    .WhereBetween(x => x.Timestamp, fromDate, toDate)
-                    .OpenSubclause()
-                    .Search(x => x.Group, searchTerm)
-                    .Search(x => x.Tags, searchTerm)
-                    .Search(x => x.Name, searchTerm)
-                    .Search(x => x.Group, "*" + searchTerm + "*")
-                    .Search(x => x.Tags, "*" + searchTerm + "*")
-                    .Search(x => x.Name, "*" + searchTerm + "*")
-                    .CloseSubclause()
-                    .OrderBy(x => x.Timestamp);
-                return await traceQuery.Take(1000).ToListAsync().ConfigureAwait(false);
+                    .WhereIn(x => x.Group, groups)
+                    .Take(5000)
+                    .ToListAsync();
             });
 
-            await Task.WhenAll(logsSearch, tracesSearch).ConfigureAwait(false);
-
-            var logsData = await logsSearch;
-            var tracesData = await tracesSearch;
-
-            var lstData = new List<NodeInfo>(logsData);
-            lstData.AddRange(tracesData);
-            lstData.Sort((ia, ib) => ia.Timestamp.CompareTo(ib.Timestamp));
+            var tracesData = await RavenHelper.ExecuteAndReturnAsync(session =>
+            {
+                return session.Advanced.AsyncDocumentQuery<NodeTraceItem, V2_Traces_ByGroup>()
+                    .WhereEquals(x => x.Environment, environment)
+                    .WhereIn(x => x.Group, groups)
+                    .Take(5000)
+                    .ToListAsync();
+            });
 
             return new SearchResults
             {
-                Data = lstData
+                Data = logsData.Cast<NodeInfo>().Concat(tracesData).OrderBy(i => i.Application).ThenBy(i => i.Timestamp).ToList() // searchData
             };
+        }
+        public class SearchGroupResult
+        {
+            public string Group { get; set; }
+            public string GroupName { get; set; }
+
+            public string Value => Group ?? GroupName;
         }
         /// <summary>
         /// Get metadata from a group name
@@ -416,7 +460,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Advanced.AsyncDocumentQuery<GroupMetadata, Metadata_ByGroup>()
+                return await session.Advanced.AsyncDocumentQuery<GroupMetadata, V2_Metadata_ByGroup>()
+                    .NoTracking()
                     .WhereEquals(x => x.GroupName, groupName)
                     .OrderByDescending(x => x.Timestamp)
                     .ToListAsync().ConfigureAwait(false);
@@ -438,9 +483,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem, V2_Status_Search>();
                 var query = documentQuery
                     .Statistics(out var stats)
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment)
                     .WhereBetween(x => x.Timestamp, fromDate, toDate);
 
@@ -475,8 +521,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem>();
+                var documentQuery = session.Advanced.AsyncDocumentQuery<NodeStatusItem, V2_Status_Search>();
                 var query = documentQuery
+                    .NoTracking()
                     .WhereEquals(x => x.Environment, environment);
 
                 if (!string.IsNullOrWhiteSpace(machine))
@@ -507,7 +554,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Query<NodeCountersItem, Counters_CounterSelection>()
+                return await session.Query<NodeCountersItem, V2_Counters_CounterSelection>()
                     .Where(x => x.Environment == environment)
                     .OrderBy(x => x.Category)
                     .ThenBy(x => x.Name)
@@ -535,7 +582,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Query<NodeCountersItem>()
+                return await session.Query<NodeCountersItem, V2_Counters_ByCounterId>()
                     .Where(x => x.CountersId == counterId)
                     .Select(i => new NodeCountersQueryItem
                     {
@@ -564,7 +611,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                return await session.Query<NodeCountersValue, Counters_ValueSelection>()
+                return await session.Query<NodeCountersValue, V2_Counters_ValueSelection>()
                     .Where(x => x.CountersId == counterId)
                     .Where(x => x.Timestamp >= fromDate && x.Timestamp <= toDate)
                     .OrderByDescending(x => x.Timestamp)
@@ -641,7 +688,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             #region Get Values
             var counterValuesTask = RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var query = session.Query<NodeCountersValue, Counters_ValueSelection>()
+                var query = session.Query<NodeCountersValue, V2_Counters_ValueSelection>()
                     .Where(x => x.CountersId == counterId)
                     .Where(x => x.Timestamp >= fromDate && x.Timestamp <= toDate)
                     .OrderByDescending(x => x.Timestamp)
@@ -687,7 +734,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                     cValues = counterValues.Where(item => item.Timestamp >= currentItem.Timestamp && item.Timestamp < tDate);
                 }
                 double res = 0;
-                switch(counterData.Type)
+                switch (counterData.Type)
                 {
                     case Counters.CounterType.Average:
                         res = cValues.Any() ? cValues.Average(item => (double)Convert.ChangeType(item.Value, TypeCode.Double)) : 0;

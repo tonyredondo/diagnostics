@@ -17,16 +17,14 @@ limitations under the License.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TWCore.Compression;
-using TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes;
 using TWCore.Diagnostics.Api.Models;
-using TWCore.Diagnostics.Api.Models.Counters;
-using TWCore.Diagnostics.Api.Models.Log;
+using TWCore.Diagnostics.Api.Models.Database.Postgres.Entities;
 using TWCore.Diagnostics.Api.Models.Status;
-using TWCore.Diagnostics.Api.Models.Trace;
 using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Status;
@@ -36,12 +34,11 @@ using TWCore.Messaging;
 using TWCore.Serialization;
 using TWCore.Serialization.NSerializer;
 
-// ReSharper disable UnusedMember.Global
-
-namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
+namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 {
-    public class RavenDbMessagesHandler : IDiagnosticMessagesHandler
+    public class PostgresMessagesHandler : IDiagnosticMessagesHandler
     {
+        private static readonly CultureInfo CultureFormat = CultureInfo.GetCultureInfo("en-US");
         private static readonly DiagnosticsSettings Settings = Core.GetSettings<DiagnosticsSettings>();
         private static readonly ICompressor Compressor = new GZipCompressor();
         private static readonly NBinarySerializer NBinarySerializer = new NBinarySerializer
@@ -59,13 +56,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             EnumsAsStrings = true,
             UseCamelCase = true
         };
+        private static readonly PostgresDal Dal = new PostgresDal();
 
-        /// <summary>
-        /// Initialize handler
-        /// </summary>
         public void Init()
         {
-            RavenHelper.Init();
         }
 
         public async Task ProcessLogItemsMessageAsync(List<LogItem> message)
@@ -73,36 +67,35 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             if (message is null) return;
             using (Watch.Create($"Processing LogItems List Message [{message.Count} items]", LogLevel.InfoBasic))
             {
-                await RavenHelper.BulkInsertAsync(async bulkOp =>
+                try
                 {
-                    try
+                    var logs = new List<EntLog>();
+                    foreach (var logItem in message)
                     {
-                        foreach (var logItem in message)
+                        var item = new EntLog
                         {
-                            var logInfo = new NodeLogItem
-                            {
-                                Environment = logItem.EnvironmentName,
-                                Machine = logItem.MachineName,
-                                Application = logItem.ApplicationName,
-                                InstanceId = logItem.InstanceId,
-                                LogId = logItem.Id,
-                                Assembly = logItem.AssemblyName,
-                                Code = logItem.Code,
-                                Group = logItem.GroupName,
-                                Level = logItem.Level,
-                                Message = logItem.Message,
-                                Type = logItem.TypeName,
-                                Exception = logItem.Exception,
-                                Timestamp = logItem.Timestamp
-                            };
-                            await bulkOp.StoreAsync(logInfo).ConfigureAwait(false);
-                        }
+                            Application = logItem.ApplicationName,
+                            Assembly = logItem.AssemblyName,
+                            Code = logItem.Code,
+                            Date = logItem.Timestamp.Date,
+                            Environment = logItem.EnvironmentName,
+                            Exception = logItem.Exception,
+                            Group = logItem.GroupName,
+                            Level = logItem.Level,
+                            LogId = logItem.Id,
+                            Machine = logItem.MachineName,
+                            Message = logItem.Message,
+                            Timestamp = logItem.Timestamp,
+                            Type = logItem.TypeName
+                        };
+                        logs.Add(item);
                     }
-                    catch (Exception ex)
-                    {
-                        Core.Log.Write(ex);
-                    }
-                }).ConfigureAwait(false);
+                    await Dal.InsertLogAsync(logs).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
             }
         }
 
@@ -111,18 +104,32 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             if (message is null) return;
             using (Watch.Create($"Processing GroupMetadata List Message [{message.Count} items]", LogLevel.InfoBasic))
             {
-                await RavenHelper.BulkInsertAsync(async bulkOp =>
+                try
                 {
-                    try
+                    var metadatas = new List<EntMeta>();
+                    foreach (var groupMetaItem in message)
                     {
-                        foreach (var groupMetaItem in message)
-                            await bulkOp.StoreAsync(groupMetaItem).ConfigureAwait(false);
+                        if (groupMetaItem.Items == null) continue;
+                        foreach (var metaValue in groupMetaItem.Items)
+                        {
+                            var item = new EntMeta
+                            {
+                                Date = groupMetaItem.Timestamp.Date,
+                                Environment = null,
+                                Group = groupMetaItem.GroupName,
+                                Timestamp = groupMetaItem.Timestamp,
+                                Key = metaValue.Key,
+                                Value = metaValue.Value
+                            };
+                            metadatas.Add(item);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Core.Log.Write(ex);
-                    }
-                }).ConfigureAwait(false);
+                    await Dal.InsertMetadataAsync(metadatas).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
             }
         }
 
@@ -133,21 +140,19 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             {
                 foreach (var traceItem in message)
                 {
-                    await RavenHelper.ExecuteAsync(async session =>
+                    try
                     {
-                        var traceInfo = new NodeTraceItem
+                        var item = new EntTrace
                         {
-                            Environment = traceItem.EnvironmentName,
-                            Machine = traceItem.MachineName,
                             Application = traceItem.ApplicationName,
-                            InstanceId = traceItem.InstanceId,
-                            TraceId = traceItem.Id,
-                            Tags = traceItem.Tags?.Select(i => i.ToString()).Join(", "),
+                            Environment = traceItem.EnvironmentName,
                             Group = traceItem.GroupName,
+                            Machine = traceItem.MachineName,
                             Name = traceItem.TraceName,
-                            Timestamp = traceItem.Timestamp
+                            Tags = traceItem.Tags?.Select(i => i.ToString()).Join(", "),
+                            Timestamp = traceItem.Timestamp,
+                            TraceId = traceItem.Id
                         };
-                        await session.StoreAsync(traceInfo).ConfigureAwait(false);
 
                         if (traceItem.TraceObject != null)
                         {
@@ -166,10 +171,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                                     {
                                         NBinarySerializer.Serialize(traceItem.TraceObject, msNBinary);
                                         msNBinary.Position = 0;
-                                        if (Settings.StoreTracesToDisk)
-                                            await TraceDiskStorage.StoreAsync(traceInfo, msNBinary, ".nbin.gz").ConfigureAwait(false);
-                                        else
-                                            session.Advanced.Attachments.Store(traceInfo.Id, "Trace", msNBinary, traceItem.TraceObject?.GetType().FullName);
+                                        await TraceDiskStorage.StoreAsync(item, msNBinary, ".nbin.gz").ConfigureAwait(false);
                                     }
                                     catch (Exception ex)
                                     {
@@ -227,10 +229,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                                         if (bXml)
                                         {
                                             msXml.Position = 0;
-                                            if (Settings.StoreTracesToDisk)
-                                                await TraceDiskStorage.StoreAsync(traceInfo, msXml, ".xml.gz").ConfigureAwait(false);
-                                            else
-                                                session.Advanced.Attachments.Store(traceInfo.Id, "TraceXml", msXml, traceItem.TraceObject?.GetType().FullName);
+                                            await TraceDiskStorage.StoreAsync(item, msXml, ".xml.gz").ConfigureAwait(false);
                                             lstExtensions.Add("XML");
                                         }
                                     }
@@ -279,10 +278,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                                         if (bJson)
                                         {
                                             msJson.Position = 0;
-                                            if (Settings.StoreTracesToDisk)
-                                                await TraceDiskStorage.StoreAsync(traceInfo, msJson, ".json.gz").ConfigureAwait(false);
-                                            else
-                                                session.Advanced.Attachments.Store(traceInfo.Id, "TraceJson", msJson, traceItem.TraceObject?.GetType().FullName);
+                                            await TraceDiskStorage.StoreAsync(item, msJson, ".json.gz").ConfigureAwait(false);
                                             lstExtensions.Add("JSON");
                                         }
                                     }
@@ -315,10 +311,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
                                     if (bTxt)
                                     {
                                         msTxt.Position = 0;
-                                        if (Settings.StoreTracesToDisk)
-                                            await TraceDiskStorage.StoreAsync(traceInfo, msTxt, ".txt.gz").ConfigureAwait(false);
-                                        else
-                                            session.Advanced.Attachments.Store(traceInfo.Id, "TraceTxt", msTxt, traceItem.TraceObject?.GetType().FullName);
+                                        await TraceDiskStorage.StoreAsync(item, msTxt, ".txt.gz").ConfigureAwait(false);
                                         lstExtensions.Add("TXT");
                                     }
                                 }
@@ -330,16 +323,107 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 
                                 if (lstExtensions.Count > 0)
                                 {
-                                    traceInfo.Formats = lstExtensions.ToArray();
-                                    await session.SaveChangesAsync().ConfigureAwait(false);
+                                    item.Formats = lstExtensions.ToArray();
+                                    await Dal.InsertTraceAsync(item);
                                 }
                             }
                         }
                         else
                         {
-                            await session.SaveChangesAsync().ConfigureAwait(false);
+                            await Dal.InsertTraceAsync(item);
                         }
-                    }).ConfigureAwait(false);
+                    }
+                    catch(Exception ex)
+                    {
+                        Core.Log.Write(ex);
+                    }
+                }
+            }
+        }
+
+        public async Task ProcessCountersMessageAsync(List<ICounterItem> message)
+        {
+            if (message is null) return;
+            using (var watch = Watch.Create($"Processing Counter item List Message [{message.Count} items]", LogLevel.InfoBasic))
+            {
+                try
+                {
+                    var lstCounters = new List<EntCounterValue>();
+
+                    foreach (var counter in message)
+                    {
+                        EntCounter cEntity = null;
+
+                        var results = await Dal.GetCounter(counter.Environment, counter.Application, counter.Category, counter.Name);
+                        if (results.Count > 0)
+                        {
+                            cEntity = PostgresBindings.GetCounterEntity(results[0]);
+                        }
+                        else
+                        {
+                            cEntity = new EntCounter
+                            {
+                                Environment = counter.Environment,
+                                Application = counter.Application,
+                                CounterId = Guid.NewGuid(),
+                                Category = counter.Category,
+                                Name = counter.Name,
+                                Level = counter.Level,
+                                Kind = counter.Kind,
+                                Unit = counter.Unit,
+                                Type = counter.Type,
+                                TypeOfValue = counter.TypeOfValue.Name
+                            };
+                            await Dal.InsertCounterAsync(new[] { cEntity }, true).ConfigureAwait(false);
+                        }
+
+                        if (counter is CounterItem<int> intCounter)
+                        {
+                            foreach (var value in intCounter.Values)
+                            {
+                                var nValue = new EntCounterValue
+                                {
+                                    CounterId = cEntity.CounterId,
+                                    Timestamp = value.Timestamp,
+                                    Value = value.Value
+                                };
+                                lstCounters.Add(nValue);
+                            }
+                        }
+                        else if (counter is CounterItem<double> doubleCounter)
+                        {
+                            foreach (var value in doubleCounter.Values)
+                            {
+                                var nValue = new EntCounterValue
+                                {
+                                    CounterId = cEntity.CounterId,
+                                    Timestamp = value.Timestamp,
+                                    Value = value.Value
+                                };
+                                lstCounters.Add(nValue);
+                            }
+                        }
+                        else if (counter is CounterItem<decimal> decimalCounter)
+                        {
+                            foreach (var value in decimalCounter.Values)
+                            {
+                                var nValue = new EntCounterValue
+                                {
+                                    CounterId = cEntity.CounterId,
+                                    Timestamp = value.Timestamp,
+                                    Value = (double)value.Value
+                                };
+                                lstCounters.Add(nValue);
+                            }
+                        }
+
+                    }
+
+                    await Dal.InsertCounterValueAsync(lstCounters, true).ConfigureAwait(false);
+                }
+                catch(Exception ex)
+                {
+                    Core.Log.Write(ex);
                 }
             }
         }
@@ -349,126 +433,50 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             if (message is null) return;
             using (Watch.Create("Processing StatusItemCollection Message", LogLevel.InfoBasic))
             {
-                await RavenHelper.ExecuteAsync(async session =>
+                try
                 {
-                    var instanceIds = await session.Advanced.AsyncRawQuery<StatusId>(@"
-                        from NodeStatusItems 
-                        where InstanceId = $instanceId
-                        select ID() as 'Id'
-                    ")
-                        .AddParameter("instanceId", message.InstanceId)
-                        .ToListAsync().ConfigureAwait(false);
+                    await Dal.DeleteStatus(message.InstanceId).ConfigureAwait(false);
 
-                    foreach (var id in instanceIds)
-                        session.Delete(id.Id);
+                    var item = NodeStatusItem.Create(message);
 
-                    var newStatus = NodeStatusItem.Create(message);
-                    await session.StoreAsync(newStatus).ConfigureAwait(false);
-                    await session.SaveChangesAsync().ConfigureAwait(false);
-                }).ConfigureAwait(false);
-            }
-        }
-
-        public async Task ProcessCountersMessageAsync(List<ICounterItem> message)
-        {
-            if (message is null) return;
-            using (var watch = Watch.Create($"Processing Counter item List Message [{message.Count} items]", LogLevel.InfoBasic))
-            {
-                var lstCounters = new List<NodeCountersValue>();
-
-                foreach (var counter in message)
-                {
-                    NodeCountersItem cEntity = null;
-
-                    await RavenHelper.ExecuteAsync(async session =>
+                    var status = new EntStatus
                     {
-                        cEntity = await session.Advanced.AsyncDocumentQuery<NodeCountersItem, V2_Counters_CounterSelection>()
-                            .WhereEquals(item => item.Environment, counter.Environment)
-                            .WhereEquals(item => item.Application, counter.Application)
-                            .WhereEquals(item => item.Category, counter.Category)
-                            .WhereEquals(item => item.Name, counter.Name)
-                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        Application = item.Application,
+                        ApplicationDisplay = item.ApplicationDisplayName,
+                        Date = item.Date,
+                        Elapsed = item.ElapsedMilliseconds,
+                        Environment = item.Environment,
+                        Machine = item.Machine,
+                        StartTime = item.StartTime,
+                        StatusId = item.InstanceId,
+                        Timestamp = item.Timestamp
+                    };
+                    await Dal.InsertStatusAsync(status).ConfigureAwait(false);
 
-                        if (cEntity == null)
-                        {
-                            cEntity = new NodeCountersItem
-                            {
-                                Environment = counter.Environment,
-                                Application = counter.Application,
-                                CountersId = Guid.NewGuid(),
-                                Category = counter.Category,
-                                Name = counter.Name,
-                                Level = counter.Level,
-                                Kind = counter.Kind,
-                                Unit = counter.Unit,
-                                Type = counter.Type,
-                                TypeOfValue = counter.TypeOfValue.Name
-                            };
-                            await session.StoreAsync(cEntity).ConfigureAwait(false);
-                            await session.SaveChangesAsync().ConfigureAwait(false);
-                        }
-                    }).ConfigureAwait(false);
-
-                    if (counter is CounterItem<int> intCounter)
+                    if (item.Values != null)
                     {
-                        foreach (var value in intCounter.Values)
+                        var insertBuffer = new List<EntStatusValue>();
+
+                        foreach (var value in item.Values)
                         {
-                            var nValue = new NodeCountersValue
+                            insertBuffer.Add(new EntStatusValue
                             {
-                                CountersId = cEntity.CountersId,
-                                Timestamp = value.Timestamp,
-                                Value = value.Value
-                            };
-                            lstCounters.Add(nValue);
+                                StatusId = status.StatusId,
+                                Type = value.Type,
+                                Key = value.Key,
+                                Value = value.Value is IConvertible vConv ? vConv.ToString(CultureFormat) : value.Value?.ToString()
+                            });
                         }
+
+                        await Dal.InsertStatusValuesAsync(insertBuffer);
                     }
-                    else if (counter is CounterItem<double> doubleCounter)
-                    {
-                        foreach (var value in doubleCounter.Values)
-                        {
-                            var nValue = new NodeCountersValue
-                            {
-                                CountersId = cEntity.CountersId,
-                                Timestamp = value.Timestamp,
-                                Value = value.Value
-                            };
-                            lstCounters.Add(nValue);
-                        }
-                    }
-                    else if (counter is CounterItem<decimal> decimalCounter)
-                    {
-                        foreach (var value in decimalCounter.Values)
-                        {
-                            var nValue = new NodeCountersValue
-                            {
-                                CountersId = cEntity.CountersId,
-                                Timestamp = value.Timestamp,
-                                Value = value.Value
-                            };
-                            lstCounters.Add(nValue);
-                        }
-                    }
-                    
                 }
-                
-                await RavenHelper.BulkInsertAsync(async bulkOp =>
+                catch(Exception ex)
                 {
-                    try
-                    {
-                        foreach (var value in lstCounters)
-                            await bulkOp.StoreAsync(value).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Core.Log.Write(ex);
-                    }
-                }).ConfigureAwait(false);
+                    Core.Log.Write(ex);
+                }
             }
         }
 
-        private class StatusId
-        {
-            public string Id { get; set; }
-        }
     }
 }
