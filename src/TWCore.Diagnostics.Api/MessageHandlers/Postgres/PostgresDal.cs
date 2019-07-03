@@ -398,6 +398,18 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 ["@Limit"] = limit
             });
         }
+        public Task<PostgresHelper.DbResult> SearchExact(string environment, string search, DateTime fromDate, DateTime toDate, int limit)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchGroupExact.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@Search"] = search,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Limit"] = limit
+            });
+        }
 
         #endregion
 

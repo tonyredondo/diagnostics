@@ -87,6 +87,7 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchGroupExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
@@ -110,6 +111,7 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchGroupExact.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
