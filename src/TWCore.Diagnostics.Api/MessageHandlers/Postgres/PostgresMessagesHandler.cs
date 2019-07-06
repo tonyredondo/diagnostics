@@ -90,7 +90,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                         };
                         logs.Add(item);
                     }
-                    await Dal.InsertLogAsync(logs).ConfigureAwait(false);
+                    await Dal.InsertLogAsync(logs, true).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

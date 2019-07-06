@@ -62,7 +62,7 @@ namespace TWCore.Diagnostics.Api.Controllers
             if (item == null) return false;
             if (string.IsNullOrWhiteSpace(item.EnvironmentName)) return false;
             if (string.IsNullOrWhiteSpace(item.GroupName)) return false;
-            if (item.Items?.Any() == true) return false;
+            if (item.Items?.Any() != true) return false;
             var groupMetadata = new GroupMetadata
             {
                 InstanceId = item.ApplicationName?.GetHashSHA1Guid() ?? Guid.Empty,

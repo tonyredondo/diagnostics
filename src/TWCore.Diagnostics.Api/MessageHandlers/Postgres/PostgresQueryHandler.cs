@@ -291,7 +291,29 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
-            var results = await Dal.Search(environment, searchTerm, fromDate, toDate, 10).ConfigureAwait(false);
+            PostgresHelper.DbResult results;
+            if (searchTerm == null)
+                return new SearchResults();
+
+            var useExact = true;
+            if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
+            {
+                searchTerm = searchTerm.Substring(5);
+                useExact = false;
+            }
+            else if (searchTerm.StartsWith("~", StringComparison.OrdinalIgnoreCase))
+            {
+                searchTerm = searchTerm.Substring(1);
+                useExact = false;
+            }
+
+            if (Guid.TryParse(searchTerm, out _))
+                useExact = true;
+
+            if (useExact)
+                results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 10).ConfigureAwait(false);
+            else
+                results = await Dal.Search(environment, searchTerm, fromDate, toDate, 10).ConfigureAwait(false);
             var groups = results.Select(row => (string)row[0]).ToList();
             var data = new List<NodeInfo>();
 
@@ -399,7 +421,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var results = await Dal.GetStatuses(environment, machine, application).ConfigureAwait(false);
             var data = new List<NodeStatusItem>();
-            foreach(var item in results)
+            foreach (var item in results)
             {
                 var sStatusId = item.Get<Guid>("status_id");
                 var sEnvironment = item.Get<string>("environment");
@@ -435,7 +457,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             var valuesResults = await Dal.GetStatusesValues(ids).ConfigureAwait(false);
 
             NodeStatusItem currentNode = null;
-            foreach(var item in valuesResults)
+            foreach (var item in valuesResults)
             {
                 var sStatusId = item.Get<Guid>("status_id");
                 var sKey = item.Get<string>("key");
