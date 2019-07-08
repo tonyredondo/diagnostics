@@ -489,7 +489,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             });
                         }
 
-                        foreach(var batch in insertBuffer.Batch(500)) 
+                        foreach(var batch in insertBuffer.Batch(100)) 
                             await Dal.InsertStatusValuesAsync(batch);
                     }
                 }
