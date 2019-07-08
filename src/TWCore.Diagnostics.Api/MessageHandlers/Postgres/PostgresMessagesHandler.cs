@@ -90,7 +90,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                         };
                         logs.Add(item);
                     }
-                    await Dal.InsertLogAsync(logs, true).ConfigureAwait(false);
+                    foreach(var batch in logs.Batch(500))
+                        await Dal.InsertLogAsync(batch, true).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -124,7 +125,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             metadatas.Add(item);
                         }
                     }
-                    await Dal.InsertMetadataAsync(metadatas).ConfigureAwait(false);
+
+                    foreach(var batch in metadatas.Batch(500))
+                        await Dal.InsertMetadataAsync(batch).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -293,17 +296,20 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                 try
                                 {
                                     var bTxt = false;
+                                    var strValue = string.Empty;
                                     if (traceItem.TraceObject is SerializedObject serObj)
                                     {
                                         var value = serObj.GetValue();
                                         if (value is string txtValue)
                                         {
+                                            strValue = txtValue;
                                             msTxt.Write(Encoding.UTF8.GetBytes(txtValue).ToGzip().AsReadOnlySpan());
                                             bTxt = true;
                                         }
                                     }
                                     else if (traceItem.TraceObject is string strObj)
                                     {
+                                        strValue = strObj;
                                         msTxt.Write(Encoding.UTF8.GetBytes(strObj).ToGzip().AsReadOnlySpan());
                                         bTxt = true;
                                     }
@@ -311,8 +317,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                     if (bTxt)
                                     {
                                         msTxt.Position = 0;
-                                        await TraceDiskStorage.StoreAsync(item, msTxt, ".txt.gz").ConfigureAwait(false);
-                                        lstExtensions.Add("TXT");
+
+                                        if (strValue.IsValidJson())
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".json.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("JSON");
+                                        }
+                                        else if (strValue.IsValidXml())
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".xml.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("XML");
+                                        }
+                                        else
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".txt.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("TXT");
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
@@ -419,7 +439,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
                     }
 
-                    await Dal.InsertCounterValueAsync(lstCounters, true).ConfigureAwait(false);
+                    foreach (var batch in lstCounters.Batch(500))
+                        await Dal.InsertCounterValueAsync(batch, true).ConfigureAwait(false);
                 }
                 catch(Exception ex)
                 {
@@ -468,7 +489,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             });
                         }
 
-                        await Dal.InsertStatusValuesAsync(insertBuffer);
+                        foreach(var batch in insertBuffer.Batch(500)) 
+                            await Dal.InsertStatusValuesAsync(batch);
                     }
                 }
                 catch(Exception ex)
