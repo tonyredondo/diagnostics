@@ -77,6 +77,8 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCounters.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetGroupsByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetGroupsByEnvironmentWithErrors.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
@@ -84,6 +86,7 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironmentWithErrors.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
@@ -94,6 +97,7 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounter.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetGroupsByEnvironmentWithErrors.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
@@ -108,6 +112,8 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetGroupsByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironmentWithErrors.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />

@@ -12,6 +12,7 @@ using TWCore.Collections;
 using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -82,14 +83,33 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// <param name="toDate">To date and time</param>
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
+        /// <param name="withErrorsOnly">With errors only</param>
         /// <returns>Traces</returns>
-        [HttpGet("{environment}/traces")]
-        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        [HttpGet("{environment}/groups")]
+        public Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50, bool withErrorsOnly = false)
         {
             if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
             fromDate = fromDate.Date;
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
-            return DbHandlers.Instance.Query.GetTracesByEnvironmentAsync(environment, fromDate, toDate, page, pageSize);
+            return DbHandlers.Instance.Query.GetGroupsByEnvironmentAsync(environment, fromDate, toDate, withErrorsOnly, page, pageSize);
+        }
+        /// <summary>
+        /// Gets the traces objects by environment and dates
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="withErrorsOnly">With errors only</param>
+        /// <returns>Traces</returns>
+        [HttpGet("{environment}/traces")]
+        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50, bool withErrorsOnly = false)
+        {
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GetTracesByEnvironmentAsync(environment, fromDate, toDate, withErrorsOnly, page, pageSize);
         }
         /// <summary>
         /// Get the traces from a Trace Group

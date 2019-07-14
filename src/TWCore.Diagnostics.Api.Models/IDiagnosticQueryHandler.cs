@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TWCore.Collections;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -68,10 +69,22 @@ namespace TWCore.Diagnostics.Api.Models
         /// <param name="environment">Environment name</param>
         /// <param name="fromDate">From date and time</param>
         /// <param name="toDate">To date and time</param>
+        /// <param name="withErrorsOnly">With errors only</param>
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Traces</returns>
-        Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50);
+        Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50);
+        /// <summary>
+        /// Gets the groups objects by environment and dates
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="withErrorsOnly">With errors only</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns>Traces</returns>
+        Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50);
         /// <summary>
         /// Get the traces from a Trace Group
         /// </summary>

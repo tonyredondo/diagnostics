@@ -337,6 +337,18 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 ["@PageSize"] = pageSize
             });
         }
+        public Task<PostgresHelper.DbResult> GetTracesByEnvironmentWithErrors(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetTracesByEnvironmentWithErrors.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
 
         public Task<PostgresHelper.DbResult> GetTracesByGroupId(string environment, string group)
         {
@@ -382,6 +394,33 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
+        #endregion
+
+        #region Groups
+        public Task<PostgresHelper.DbResult> GetGroupsByEnvironment(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetGroupsByEnvironment.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
+        public Task<PostgresHelper.DbResult> GetGroupsByEnvironmentWithErrors(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetGroupsByEnvironmentWithErrors.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Environment"] = environment,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Page"] = page,
+                ["@PageSize"] = pageSize
+            });
+        }
         #endregion
 
         #region Search

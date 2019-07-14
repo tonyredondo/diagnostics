@@ -23,6 +23,7 @@ using TWCore.Collections;
 using TWCore.Compression;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -153,9 +154,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
-        public async Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        public async Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
         {
-            var results = await Dal.GetTracesByEnvironment(environment, fromDate, toDate, page, pageSize).ConfigureAwait(false);
+            var results = withErrorsOnly ?
+                await Dal.GetTracesByEnvironmentWithErrors(environment, fromDate, toDate, page, pageSize).ConfigureAwait(false) :
+                await Dal.GetTracesByEnvironment(environment, fromDate, toDate, page, pageSize).ConfigureAwait(false);
 
             var data = new List<TraceResult>();
 
@@ -288,6 +291,38 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 		/// <param name="id">Trace object id</param>
         public Task<string> GetTraceTxtAsync(string id)
             => GetTraceAsync(id, "TraceTxt");
+
+        public async Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
+        {
+            var results = withErrorsOnly ?
+                await Dal.GetGroupsByEnvironmentWithErrors(environment, fromDate, toDate, page, pageSize).ConfigureAwait(false) :
+                await Dal.GetGroupsByEnvironment(environment, fromDate, toDate, page, pageSize).ConfigureAwait(false);
+
+            var data = new List<GroupResult>();
+
+            foreach (var row in results)
+            {
+                var item = new GroupResult
+                {
+                    Group = row.Get<string>("group"),
+                    LogsCount = (int)row.Get<long>("logscount"),
+                    TracesCount = (int)row.Get<long>("tracescount"),
+                    Start = row.Get<DateTime>("start"),
+                    End = row.Get<DateTime>("end"),
+                    HasErrors = row.Get<bool>("haserror")
+                };
+                data.Add(item);
+            }
+
+            return new PagedList<GroupResult>
+            {
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalResults = results.TotalCount,
+                Data = data
+            };
+        }
+
 
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {

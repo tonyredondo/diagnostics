@@ -25,6 +25,7 @@ using TWCore.Compression;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -199,18 +200,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Traces</returns>
-        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var res = await session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
+                var query = session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
                         .Statistics(out var stats)
                         .NoTracking()
                         .WhereEquals(x => x.Environment, environment)
-                        .WhereBetween(x => x.Start, fromDate, toDate)
-                        .OrderByDescending(x => x.Start)
-                        .Skip(page * pageSize).Take(pageSize)
-                        .ToListAsync().ConfigureAwait(false);
+                        .WhereBetween(x => x.Start, fromDate, toDate);
+                if (withErrorsOnly)
+                    query = query.WhereEquals(x => x.HasError, true);
+
+                query = query.OrderByDescending(x => x.Start)
+                        .Skip(page * pageSize).Take(pageSize);
+
+                var res = await query.ToListAsync().ConfigureAwait(false);
 
                 return new PagedList<TraceResult>
                 {
@@ -390,6 +395,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 		/// <param name="id">Trace object id</param>
         public Task<string> GetTraceTxtAsync(string id)
             => GetTraceAsync(id, "TraceTxt");
+
+        public Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
+        {
+            return Task.FromResult<PagedList<GroupResult>>(null);
+        }
         /// <summary>
         /// Search a term in the database
         /// </summary>
