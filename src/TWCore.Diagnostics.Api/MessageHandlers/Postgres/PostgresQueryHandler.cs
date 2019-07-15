@@ -370,6 +370,34 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return results;
         }
 
+        public async Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
+        {
+            PostgresHelper.DbResult results;
+            if (searchTerm == null)
+                return new List<string>();
+
+            var useExact = true;
+            if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
+            {
+                searchTerm = searchTerm.Substring(5);
+                useExact = false;
+            }
+            else if (searchTerm.StartsWith("~", StringComparison.OrdinalIgnoreCase))
+            {
+                searchTerm = searchTerm.Substring(1);
+                useExact = false;
+            }
+
+            if (Guid.TryParse(searchTerm, out _))
+                useExact = true;
+
+            if (useExact)
+                results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+            else
+                results = await Dal.Search(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+            return results.Select(row => (string)row[0]).ToList();
+        }
+
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
             PostgresHelper.DbResult results;

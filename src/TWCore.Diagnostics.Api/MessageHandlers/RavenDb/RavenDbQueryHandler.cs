@@ -191,6 +191,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             });
         }
 
+        public Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
+        {
+            return Task.FromResult<List<string>>(null);
+        }
         public Task<GroupData> GetGroupDataAsync(string environment, string group)
         {
             return Task.FromResult<GroupData>(null);

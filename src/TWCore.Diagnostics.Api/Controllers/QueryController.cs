@@ -76,6 +76,23 @@ namespace TWCore.Diagnostics.Api.Controllers
             return DbHandlers.Instance.Query.GetLogsByApplicationLevelsEnvironmentAsync(environment, application, level, fromDate, toDate, page, pageSize);
         }
         /// <summary>
+        /// Search a term in the database
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="searchTerm">Term to search in the database</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <returns>Search results</returns>
+        [HttpGet("{environment}/groups/search/{searchTerm}")]
+        public Task<List<string>> GroupsSearchAsync([FromRoute]string environment, [FromRoute]string searchTerm, DateTime fromDate, DateTime toDate)
+        {
+            searchTerm = searchTerm?.Trim();
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GroupSearchAsync(environment, searchTerm, fromDate, toDate);
+        }
+        /// <summary>
         /// Gets the group data
         /// </summary>
         /// <param name="environment">Environment name</param>

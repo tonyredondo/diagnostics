@@ -82,6 +82,15 @@ namespace TWCore.Diagnostics.Api.Models
         /// <returns></returns>
         Task<GroupData> GetGroupDataAsync(string environment, string group);
         /// <summary>
+        /// Group search
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="searchTerm">Search term</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <returns>Groups list</returns>
+        Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate);
+        /// <summary>
         /// Gets the groups objects by environment and dates
         /// </summary>
         /// <param name="environment">Environment name</param>
