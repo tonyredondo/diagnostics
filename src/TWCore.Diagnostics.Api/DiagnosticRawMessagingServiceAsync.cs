@@ -87,7 +87,7 @@ namespace TWCore.Diagnostics.Api
 
             var levels = await pDal.GetLogLevelsByEnvironment("Docker", fromDate, toDate).ConfigureAwait(false);
             var logs = await pDal.GetLogsByApplication("Docker", "Agsw.Travel.Flights.Providers.Services.Travelfusion", LogLevel.Error, fromDate2, toDate, 1, 25).ConfigureAwait(false);
-            var logsByGroup = await pDal.GetLogsByGroup("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).ConfigureAwait(false);
+            var logsByGroup = await pDal.GetLogsByGroup("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53").ConfigureAwait(false);
             var logsSearch = await pDal.SearchLogs("Docker", "e9487fd1-3b5f-4eec-87a2-691207b1ed53", fromDate2, toDate).ConfigureAwait(false);
 
             var tracesByEnv = await pDal.GetTracesByEnvironment("Docker", fromDate, toDate, 0, 50).ConfigureAwait(false);

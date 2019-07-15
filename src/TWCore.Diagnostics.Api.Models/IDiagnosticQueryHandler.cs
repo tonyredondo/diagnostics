@@ -75,6 +75,13 @@ namespace TWCore.Diagnostics.Api.Models
         /// <returns>Traces</returns>
         Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50);
         /// <summary>
+        /// Get group data
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="group">Group name</param>
+        /// <returns></returns>
+        Task<GroupData> GetGroupDataAsync(string environment, string group);
+        /// <summary>
         /// Gets the groups objects by environment and dates
         /// </summary>
         /// <param name="environment">Environment name</param>

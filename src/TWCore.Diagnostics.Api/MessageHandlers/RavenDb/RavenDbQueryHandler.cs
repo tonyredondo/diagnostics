@@ -191,6 +191,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             });
         }
 
+        public Task<GroupData> GetGroupDataAsync(string environment, string group)
+        {
+            return Task.FromResult<GroupData>(null);
+        }
         /// <summary>
         /// Gets the traces objects by environment and dates
         /// </summary>

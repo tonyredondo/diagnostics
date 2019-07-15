@@ -323,6 +323,52 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
+        public async Task<GroupData> GetGroupDataAsync(string environment, string group)
+        {
+            var results = new GroupData
+            {
+                Environment = environment,
+                Group = group,
+                Metadata = null,
+                Data = new List<NodeInfo>()
+            };
+
+            var metadataTask = Dal.GetMetadataByGroup(group);
+            var tracesTask = Dal.GetTracesByGroupId(environment, group);
+            var logsTask = Dal.GetLogsByGroup(environment, group);
+
+            var metadataResults = await metadataTask.ConfigureAwait(false);
+            var dict = new Dictionary<string, KeyValue>();
+            foreach (var row in metadataResults)
+            {
+                var valKey = row.Get<string>("key");
+                var valValue = row.Get<string>("value");
+                if (!dict.ContainsKey(valKey))
+                {
+                    dict[valKey] = new KeyValue
+                    {
+                        Key = valKey,
+                        Value = valValue
+                    };
+                }
+            }
+            results.Metadata = dict.Values.ToArray();
+
+            var tracesResults = await tracesTask.ConfigureAwait(false);
+            foreach (var row in tracesResults)
+                results.Data.Add(PostgresBindings.GetTraceItem(row));
+
+            var logsResults = await logsTask.ConfigureAwait(false);
+            foreach (var row in logsResults)
+                results.Data.Add(PostgresBindings.GetLogItem(row));
+
+            results.Data.Sort((a, b) =>
+            {
+                return a.Timestamp.CompareTo(b.Timestamp);
+            });
+
+            return results;
+        }
 
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
@@ -354,7 +400,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
             foreach (var group in groups)
             {
-                var logsResults = await Dal.GetLogsByGroup(environment, group, fromDate, toDate).ConfigureAwait(false);
+                var logsResults = await Dal.GetLogsByGroup(environment, group).ConfigureAwait(false);
                 var tracesResults = await Dal.GetTracesByGroupId(environment, group).ConfigureAwait(false);
 
                 foreach (var row in logsResults)

@@ -298,15 +298,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
-        public Task<PostgresHelper.DbResult> GetLogsByGroup(string environment, string group, DateTime fromDate, DateTime toDate)
+        public Task<PostgresHelper.DbResult> GetLogsByGroup(string environment, string group)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetLogsByGroup.sql");
             return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
             {
                 ["@Environment"] = environment,
                 ["@Group"] = group,
-                ["@FromDate"] = fromDate,
-                ["@ToDate"] = toDate
             });
         }
         

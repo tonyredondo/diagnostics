@@ -76,6 +76,17 @@ namespace TWCore.Diagnostics.Api.Controllers
             return DbHandlers.Instance.Query.GetLogsByApplicationLevelsEnvironmentAsync(environment, application, level, fromDate, toDate, page, pageSize);
         }
         /// <summary>
+        /// Gets the group data
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="group">Group name</param>
+        /// <returns>Traces</returns>
+        [HttpGet("{environment}/groups/{group}")]
+        public Task<GroupData> GetGroupData([FromRoute]string environment, [FromRoute]string group)
+        {
+            return DbHandlers.Instance.Query.GetGroupDataAsync(environment, group);
+        }
+        /// <summary>
         /// Gets the traces objects by environment and dates
         /// </summary>
         /// <param name="environment">Environment name</param>

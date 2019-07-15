@@ -1,7 +1,6 @@
--- Get Logs by Group and Time
+-- Get Logs by Group
 select * from logs
 where
       environment = @Environment
-  and date between @FromDate and @ToDate
-  and "group" = @Group
-order by timestamp;
+  and "group" = @Group;
+--order by timestamp;
