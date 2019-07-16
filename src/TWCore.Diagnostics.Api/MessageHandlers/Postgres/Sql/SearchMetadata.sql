@@ -4,4 +4,4 @@ select * from
      where
         date between @FromDate and @ToDate
      order by date) as fmeta
-where (value like @Search || '%')
+where (value like @Search || '%');

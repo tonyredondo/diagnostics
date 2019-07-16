@@ -89,6 +89,8 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironmentWithErrors.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchByMetadata.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchByMetadataExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroupExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
@@ -98,6 +100,8 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounter.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetGroupsByEnvironmentWithErrors.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchByMetadataExact.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchByMetadata.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />

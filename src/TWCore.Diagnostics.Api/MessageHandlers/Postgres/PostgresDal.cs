@@ -448,6 +448,32 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
+        public Task<PostgresHelper.DbResult> SearchByMetadata(string key, string value, DateTime fromDate, DateTime toDate, int limit)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchByMetadata.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Key"] = key,
+                ["@Value"] = value,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Limit"] = limit
+            });
+        }
+
+        public Task<PostgresHelper.DbResult> SearchByMetadataExact(string key, string value, DateTime fromDate, DateTime toDate, int limit)
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchByMetadataExact.sql");
+            return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
+            {
+                ["@Key"] = key,
+                ["@Value"] = value,
+                ["@FromDate"] = fromDate,
+                ["@ToDate"] = toDate,
+                ["@Limit"] = limit
+            });
+        }
+
         #endregion
 
         #region Counters

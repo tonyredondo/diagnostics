@@ -376,7 +376,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             if (searchTerm == null)
                 return new List<string>();
 
+            var useGeneralSearch = true;
             var useExact = true;
+            string key = null;
+            string value = null;
             if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
             {
                 searchTerm = searchTerm.Substring(5);
@@ -387,14 +390,48 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 searchTerm = searchTerm.Substring(1);
                 useExact = false;
             }
-
-            if (Guid.TryParse(searchTerm, out _))
+            else if (searchTerm.Contains("="))
+            {
+                useGeneralSearch = false;
+                var values = searchTerm.Split('=');
+                key = values[0];
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
                 useExact = true;
+            }
+            else if (searchTerm.Contains("~"))
+            {
+                useGeneralSearch = false;
+                var values = searchTerm.Split('~');
+                key = values[0];
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                useExact = false;
+            }
 
-            if (useExact)
-                results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+            if (useGeneralSearch)
+            {
+                if (Guid.TryParse(searchTerm, out _))
+                    useExact = true;
+
+                if (useExact)
+                    results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 100).ConfigureAwait(false);
+                else
+                    results = await Dal.Search(environment, searchTerm, fromDate, toDate, 100).ConfigureAwait(false);
+            }
+            else if (value != null)
+            {
+                if (Guid.TryParse(value, out _))
+                    useExact = true;
+
+                if (useExact)
+                    results = await Dal.SearchByMetadataExact(key, value, fromDate, toDate, 100).ConfigureAwait(false);
+                else
+                    results = await Dal.SearchByMetadata(key, value, fromDate, toDate, 100).ConfigureAwait(false);
+            }
             else
-                results = await Dal.Search(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+            {
+                return new List<string>();
+            }
+            
             return results.Select(row => (string)row[0]).ToList();
         }
 
@@ -404,7 +441,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             if (searchTerm == null)
                 return new SearchResults();
 
+            var useGeneralSearch = true;
             var useExact = true;
+            string key = null;
+            string value = null;
             if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
             {
                 searchTerm = searchTerm.Substring(5);
@@ -415,14 +455,48 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 searchTerm = searchTerm.Substring(1);
                 useExact = false;
             }
-
-            if (Guid.TryParse(searchTerm, out _))
+            else if (searchTerm.Contains("="))
+            {
+                useGeneralSearch = false;
+                var values = searchTerm.Split('=');
+                key = values[0];
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
                 useExact = true;
+            }
+            else if (searchTerm.Contains("~"))
+            {
+                useGeneralSearch = false;
+                var values = searchTerm.Split('~');
+                key = values[0];
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                useExact = false;
+            }
 
-            if (useExact)
-                results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 10).ConfigureAwait(false);
+            if (useGeneralSearch)
+            {
+                if (Guid.TryParse(searchTerm, out _))
+                    useExact = true;
+
+                if (useExact)
+                    results = await Dal.SearchExact(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+                else
+                    results = await Dal.Search(environment, searchTerm, fromDate, toDate, 15).ConfigureAwait(false);
+            }
+            else if (value != null)
+            {
+                if (Guid.TryParse(value, out _))
+                    useExact = true;
+
+                if (useExact)
+                    results = await Dal.SearchByMetadataExact(key, value, fromDate, toDate, 15).ConfigureAwait(false);
+                else
+                    results = await Dal.SearchByMetadata(key, value, fromDate, toDate, 15).ConfigureAwait(false);
+            }
             else
-                results = await Dal.Search(environment, searchTerm, fromDate, toDate, 10).ConfigureAwait(false);
+            {
+                results = new PostgresHelper.DbResult();
+            }
+            
             var groups = results.Select(row => (string)row[0]).ToList();
             var data = new List<NodeInfo>();
 
