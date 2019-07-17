@@ -312,12 +312,11 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// <param name="groupName">Group name</param>
         /// <returns>Metadata results</returns>
         [HttpGet("{environment}/metadata/{groupName}")]
-        public async Task<KeyValue[]> GetMetadatasAsync([FromRoute]string environment, [FromRoute]string groupName)
+        public Task<KeyValue[]> GetMetadatasAsync([FromRoute]string environment, [FromRoute]string groupName)
         {
             groupName = groupName?.Trim();
-            if (groupName == null) return Array.Empty<KeyValue>();
-            var result = await DbHandlers.Instance.Query.GetMetadatas(groupName).ConfigureAwait(false);
-            return result.OrderBy(i => i.Key).ToArray();
+            if (groupName == null) return Task.FromResult(Array.Empty<KeyValue>());
+            return DbHandlers.Instance.Query.GetMetadatas(environment, groupName);
         }
         /// <summary>
         /// Get Statuses

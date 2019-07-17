@@ -94,8 +94,8 @@ namespace TWCore.Diagnostics.Api
             var tracesByGroup = await pDal.GetTracesByGroupId("Docker", "a9e326bc-4357-46f6-9ec2-5367d8ad92cd").ConfigureAwait(false);
             var trace = await pDal.GetTracesByTraceId(Guid.Parse("64f6aceb-263c-4864-9092-9cd6f4d569cd")).ConfigureAwait(false);
 
-            var metadataByGroup = await pDal.GetMetadataByGroup("a9e326bc-4357-46f6-9ec2-5367d8ad92cd").ConfigureAwait(false);
-            var metadataSearch = await pDal.SearchMetadata("93", fromDate2, toDate).ConfigureAwait(false);
+            var metadataByGroup = await pDal.GetMetadataByGroup("Docker", "a9e326bc-4357-46f6-9ec2-5367d8ad92cd").ConfigureAwait(false);
+            var metadataSearch = await pDal.SearchMetadata("Docker", "93", fromDate2, toDate).ConfigureAwait(false);
 
 
             var search = await pDal.Search("Docker", "a9e", fromDate2, toDate, 25).ConfigureAwait(false);

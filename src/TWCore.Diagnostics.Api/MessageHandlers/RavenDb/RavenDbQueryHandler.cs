@@ -474,12 +474,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         /// <param name="groupName">Group name</param>
         /// <returns>List of metadatas</returns>
-        public async Task<KeyValue[]> GetMetadatas(string groupName)
+        public async Task<KeyValue[]> GetMetadatas(string environment, string groupName)
         {
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
                 return await session.Advanced.AsyncDocumentQuery<GroupMetadata, V2_Metadata_ByGroup>()
                     .NoTracking()
+                    .WhereEquals(x => x.EnvironmentName, environment)
                     .WhereEquals(x => x.GroupName, groupName)
                     .OrderByDescending(x => x.Timestamp)
                     .ToListAsync().ConfigureAwait(false);

@@ -4,7 +4,8 @@ from logs where environment = @Environment and date between @FromDate and @ToDat
 and ("group" like @Search || '%')
 union distinct
 select distinct "group"
-from metadata where date between @FromDate and @ToDate
+from metadata where (environment = @Environment or environment is null)
+	and date between @FromDate and @ToDate
 and (value like @Search || '%')
 union distinct
 select distinct "group"

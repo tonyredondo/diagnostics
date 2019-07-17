@@ -333,7 +333,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 Data = new List<NodeInfo>()
             };
 
-            var metadataTask = Dal.GetMetadataByGroup(group);
+            var metadataTask = Dal.GetMetadataByGroup(environment, group);
             var tracesTask = Dal.GetTracesByGroupId(environment, group);
             var logsTask = Dal.GetLogsByGroup(environment, group);
 
@@ -423,9 +423,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     useExact = true;
 
                 if (useExact)
-                    results = await Dal.SearchByMetadataExact(key, value, fromDate, toDate, 100).ConfigureAwait(false);
+                    results = await Dal.SearchByMetadataExact(environment, key, value, fromDate, toDate, 100).ConfigureAwait(false);
                 else
-                    results = await Dal.SearchByMetadata(key, value, fromDate, toDate, 100).ConfigureAwait(false);
+                    results = await Dal.SearchByMetadata(environment, key, value, fromDate, toDate, 100).ConfigureAwait(false);
             }
             else
             {
@@ -488,9 +488,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     useExact = true;
 
                 if (useExact)
-                    results = await Dal.SearchByMetadataExact(key, value, fromDate, toDate, 15).ConfigureAwait(false);
+                    results = await Dal.SearchByMetadataExact(environment, key, value, fromDate, toDate, 15).ConfigureAwait(false);
                 else
-                    results = await Dal.SearchByMetadata(key, value, fromDate, toDate, 15).ConfigureAwait(false);
+                    results = await Dal.SearchByMetadata(environment, key, value, fromDate, toDate, 15).ConfigureAwait(false);
             }
             else
             {
@@ -518,9 +518,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
-        public async Task<KeyValue[]> GetMetadatas(string groupName)
+        public async Task<KeyValue[]> GetMetadatas(string environment, string groupName)
         {
-            var results = await Dal.GetMetadataByGroup(groupName).ConfigureAwait(false);
+            var results = await Dal.GetMetadataByGroup(environment, groupName).ConfigureAwait(false);
             var dict = new Dictionary<string, KeyValue>();
             foreach (var row in results)
             {

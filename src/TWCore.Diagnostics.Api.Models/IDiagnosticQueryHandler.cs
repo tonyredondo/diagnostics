@@ -147,7 +147,7 @@ namespace TWCore.Diagnostics.Api.Models
         /// </summary>
         /// <param name="groupName">Group name</param>
         /// <returns>List of metadatas</returns>
-		Task<KeyValue[]> GetMetadatas(string groupName);
+		Task<KeyValue[]> GetMetadatas(string environment, string groupName);
 		
 		/// <summary>
 		/// Gets the statuses

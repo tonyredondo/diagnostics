@@ -1,7 +1,8 @@
 -- Search by metadata exact
 select distinct "group"
 from metadata
-where date between @FromDate and @ToDate
+where (environment = @Environment or environment is null)
+	and date between @FromDate and @ToDate
     and key = @Key
-    and value = @Value
+    and (@Value = '*' or value = @Value)
 limit @Limit;

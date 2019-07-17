@@ -116,7 +116,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             var item = new EntMeta
                             {
                                 Date = groupMetaItem.Timestamp.Date,
-                                Environment = null,
+                                Environment = groupMetaItem.EnvironmentName,
                                 Group = groupMetaItem.GroupName,
                                 Timestamp = groupMetaItem.Timestamp,
                                 Key = metaValue.Key,

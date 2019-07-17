@@ -372,20 +372,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
         #region Metadata
 
-        public Task<PostgresHelper.DbResult> GetMetadataByGroup(string group)
+        public Task<PostgresHelper.DbResult> GetMetadataByGroup(string environment, string group)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.GetMetadataByGroup.sql");
             return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
             {
+                ["@Environment"] = environment,
                 ["@Group"] = group,
             });
         }
 
-        public Task<PostgresHelper.DbResult> SearchMetadata(string search, DateTime fromDate, DateTime toDate)
+        public Task<PostgresHelper.DbResult> SearchMetadata(string environment, string search, DateTime fromDate, DateTime toDate)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchMetadata.sql");
             return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
             {
+                ["@Environment"] = environment,
                 ["@Search"] = search,
                 ["@FromDate"] = fromDate,
                 ["@ToDate"] = toDate
@@ -448,11 +450,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
-        public Task<PostgresHelper.DbResult> SearchByMetadata(string key, string value, DateTime fromDate, DateTime toDate, int limit)
+        public Task<PostgresHelper.DbResult> SearchByMetadata(string environment, string key, string value, DateTime fromDate, DateTime toDate, int limit)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchByMetadata.sql");
             return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
             {
+                ["@Environment"] = environment,
                 ["@Key"] = key,
                 ["@Value"] = value,
                 ["@FromDate"] = fromDate,
@@ -461,11 +464,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             });
         }
 
-        public Task<PostgresHelper.DbResult> SearchByMetadataExact(string key, string value, DateTime fromDate, DateTime toDate, int limit)
+        public Task<PostgresHelper.DbResult> SearchByMetadataExact(string environment, string key, string value, DateTime fromDate, DateTime toDate, int limit)
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.SearchByMetadataExact.sql");
             return PostgresHelper.ExecuteReaderAsync(query, new Dictionary<string, object>
             {
+                ["@Environment"] = environment,
                 ["@Key"] = key,
                 ["@Value"] = value,
                 ["@FromDate"] = fromDate,
