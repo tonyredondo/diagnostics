@@ -5,8 +5,11 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using TWCore.Collections;
 using TWCore.Diagnostics.Api.MessageHandlers;
+using TWCore.Diagnostics.Counters;
 using TWCore.Diagnostics.Log;
 using TWCore.Diagnostics.Trace.Storages;
 using TWCore.Security;
@@ -121,6 +124,51 @@ namespace TWCore.Diagnostics.Api.Controllers
                 }
             }
         }
+
+        [HttpPost("counter")]
+        public async Task<Guid?> PostCounter([FromBody] ExternalCounter item)
+        {
+            if (item == null) return null;
+            if (string.IsNullOrWhiteSpace(item.Environment)) return null;
+
+            try
+            {
+                return await DbHandlers.Instance.Messages.EnsureCounter(item).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Core.Log.Write(ex);
+                return null;
+            }
+        }
+
+        [HttpPost("counter/value")]
+        public bool PostCounterValue([FromBody] ExternalCounterValue item)
+        {
+            if (item == null) return false;
+            if (item.CounterId == Guid.Empty) return false;
+            var cItemValue = new CounterItemValue<double>
+            {
+                Timestamp = item.Timestamp ?? Core.Now,
+                Value = item.Value
+            };
+            _ = Process(item.CounterId, cItemValue);
+            return true;
+
+            async Task Process(Guid id, CounterItemValue<double> mItem)
+            {
+                try
+                {
+                    await DbHandlers.Instance.Messages.InsertCounterValue(id, mItem).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
+            }
+        }
+
+
     }
 
     /// <summary>
@@ -227,8 +275,6 @@ namespace TWCore.Diagnostics.Api.Controllers
         [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
         public KeyValue[] Items { get; set; }
     }
-
-    /// <inheritdoc />
     /// <summary>
     /// External Trace Item
     /// </summary>
@@ -276,5 +322,80 @@ namespace TWCore.Diagnostics.Api.Controllers
         [XmlElement, DataMember]
         public DateTime? Timestamp { get; set; }
 
+    }
+    /// <summary>
+    /// External counter
+    /// </summary>
+    [DataContract]
+    public class ExternalCounter : ICounterItem
+    {
+        /// <summary>
+        /// Environment
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Environment { get; set; }
+        /// <summary>
+        /// Application name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Application { get; set; }
+        /// <summary>
+        /// Counter category
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Category { get; set; }
+        /// <summary>
+        /// Counter name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Name { get; set; }
+        /// <summary>
+        /// Counter type
+        /// </summary>
+        [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CounterType Type { get; set; }
+        /// <summary>
+        /// Counter level
+        /// </summary>
+        [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CounterLevel Level { get; set; }
+        /// <summary>
+        /// Counter kind
+        /// </summary>
+        [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CounterKind Kind { get; set; }
+        /// <summary>
+        /// Counter unit
+        /// </summary>
+        [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CounterUnit Unit { get; set; }
+
+
+        int ICounterItem.Count => 0;
+        Type ICounterItem.TypeOfValue => null;
+    }
+
+    [DataContract]
+    public class ExternalCounterValue
+    {
+        /// <summary>
+        /// Counter id
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public Guid CounterId { get; set; }
+        /// <summary>
+        /// Counter timestamp
+        /// </summary>
+        [DataMember]
+        public DateTime? Timestamp { get; set; }
+        /// <summary>
+        /// Counter value
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public double Value { get; set; }
     }
 }

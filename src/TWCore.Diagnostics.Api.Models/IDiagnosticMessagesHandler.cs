@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TWCore.Diagnostics.Counters;
@@ -63,5 +64,18 @@ namespace TWCore.Diagnostics.Api.Models
         /// <param name="message">Message to handle</param>
         /// <returns>Process task</returns>
         Task ProcessCountersMessageAsync(List<ICounterItem> message);
+        /// <summary>
+        /// Ensure counter
+        /// </summary>
+        /// <param name="counter">Counter item</param>
+        /// <returns>Counter id</returns>
+        Task<Guid> EnsureCounter(ICounterItem counter);
+        /// <summary>
+        /// Insert counter value
+        /// </summary>
+        /// <param name="counterId">Counter id</param>
+        /// <param name="value">Counter value</param>
+        /// <returns>Insert Task</returns>
+        Task InsertCounterValue(Guid counterId, CounterItemValue<double> value);
     }
 }

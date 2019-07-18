@@ -58,10 +58,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         };
         private static readonly PostgresDal Dal = new PostgresDal();
 
+        /// <inheritdoc />
         public void Init()
         {
         }
 
+        /// <inheritdoc />
         public async Task ProcessLogItemsMessageAsync(List<LogItem> message)
         {
             if (message is null) return;
@@ -100,6 +102,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessGroupMetadataMessageAsync(List<GroupMetadata> message)
         {
             if (message is null) return;
@@ -136,6 +139,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessTraceItemsMessageAsync(List<MessagingTraceItem> message)
         {
             if (message is null) return;
@@ -361,6 +365,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessCountersMessageAsync(List<ICounterItem> message)
         {
             if (message is null) return;
@@ -449,6 +454,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessStatusMessageAsync(StatusItemCollection message)
         {
             if (message is null) return;
@@ -500,5 +506,44 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+
+        /// <inheritdoc />
+        public async Task<Guid> EnsureCounter(ICounterItem counter)
+        {
+            var results = await Dal.GetCounter(counter.Environment, counter.Application, counter.Category, counter.Name);
+            if (results.Count > 0)
+            {
+                return PostgresBindings.GetCounterEntity(results[0]).CounterId;
+            }
+            else
+            {
+                var ncounter = new EntCounter
+                {
+                    Environment = counter.Environment,
+                    Application = counter.Application,
+                    CounterId = Guid.NewGuid(),
+                    Category = counter.Category,
+                    Name = counter.Name,
+                    Level = counter.Level,
+                    Kind = counter.Kind,
+                    Unit = counter.Unit,
+                    Type = counter.Type
+                };
+                await Dal.InsertCounterAsync(new[] { ncounter }, true).ConfigureAwait(false);
+                return ncounter.CounterId;
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task InsertCounterValue(Guid counterId, CounterItemValue<double> value)
+        {
+            var nValue = new EntCounterValue
+            {
+                CounterId = counterId,
+                Timestamp = value.Timestamp,
+                Value = value.Value
+            };
+            await Dal.InsertCounterValueAsync(new[] { nValue }, true).ConfigureAwait(false);
+        }
     }
 }
