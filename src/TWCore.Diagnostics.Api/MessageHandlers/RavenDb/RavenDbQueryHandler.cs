@@ -474,7 +474,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         /// <param name="groupName">Group name</param>
         /// <returns>List of metadatas</returns>
-        public async Task<KeyValue[]> GetMetadatas(string environment, string groupName)
+        public async Task<KeyValue[]> GetMetadatasAsync(string environment, string groupName)
         {
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -536,7 +536,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="machine">Machine name or null</param>
         /// <param name="application">Application name or null</param>
         /// <returns>Get Current Status list</returns>
-        public async Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application)
+        public async Task<List<NodeStatusItem>> GetCurrentStatusAsync(string environment, string machine, string application)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -569,7 +569,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         /// <param name="environment">Environment name</param>
         /// <returns>List of counters</returns>
-        public async Task<List<NodeCountersQueryItem>> GetCounters(string environment)
+        public async Task<List<NodeCountersQueryItem>> GetCountersAsync(string environment)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -597,7 +597,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
 		/// <param name="counterId">Counter Id</param>
         /// <returns>Counter data</returns>
-        public async Task<NodeCountersQueryItem> GetCounter(Guid counterId)
+        public async Task<NodeCountersQueryItem> GetCounterAsync(Guid counterId)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -626,7 +626,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 		/// <param name="toDate">To date and time</param>
         /// <param name="limit">Value limit</param>
         /// <returns>List of counter values</returns>
-        public async Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
+        public async Task<List<NodeCountersQueryValue>> GetCounterValuesAsync(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -652,9 +652,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="valuesDivision">Counter values division</param>
         /// <param name="samples">Samples quantity</param>
         /// <returns>Values list</returns>
-        public async Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
+        public async Task<List<NodeLastCountersValue>> GetLastCounterValuesAsync(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
         {
-            var counterDataTask = GetCounter(counterId);
+            var counterDataTask = GetCounterAsync(counterId);
             var toDate = Core.Now;
             var fromDate = toDate;
 
@@ -782,6 +782,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             #endregion
 
             return lstValues;
+        }
+
+        public async Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        {
+            return null;
         }
 
         #region Nested Types

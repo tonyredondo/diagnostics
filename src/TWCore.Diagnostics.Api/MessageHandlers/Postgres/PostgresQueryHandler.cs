@@ -36,6 +36,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 {
     public class PostgresQueryHandler : IDiagnosticQueryHandler
     {
+        #region Fields
         private static readonly DiagnosticsSettings Settings = Core.GetSettings<DiagnosticsSettings>();
         private static readonly ICompressor Compressor = new GZipCompressor();
         private static readonly NBinarySerializer NBinarySerializer = new NBinarySerializer
@@ -43,17 +44,21 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             Compressor = Compressor
         };
         private static readonly PostgresDal Dal = new PostgresDal();
+        #endregion
 
+        /// <inheritdoc />
         public void Init()
         {
         }
 
+        /// <inheritdoc />
         public async Task<List<string>> GetEnvironmentsAsync()
         {
             var results = await Dal.GetAllEnvironments().ConfigureAwait(false);
             return results.Select(row => (string)row[0]).ToList();
         }
 
+        /// <inheritdoc />
         public async Task<LogSummary> GetLogsApplicationsLevelsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate)
         {
             var results = await Dal.GetLogLevelsByEnvironment(environment, fromDate, toDate).ConfigureAwait(false);
@@ -129,6 +134,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
+        /// <inheritdoc />
         public async Task<PagedList<NodeLogItem>> GetLogsByApplicationLevelsEnvironmentAsync(string environment, string application, LogLevel? level, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
         {
             PostgresHelper.DbResult results;
@@ -154,6 +160,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
+        /// <inheritdoc />
         public async Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
         {
             var results = withErrorsOnly ?
@@ -184,6 +191,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
+        /// <inheritdoc />
         public async Task<List<NodeTraceItem>> GetTracesByGroupIdAsync(string environment, string groupName)
         {
             var results = await Dal.GetTracesByGroupId(environment, groupName).ConfigureAwait(false);
@@ -196,7 +204,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return data;
         }
 
-
+        /// <inheritdoc />
         public async Task<SerializedObject> GetTraceObjectAsync(string id)
         {
             var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
@@ -228,11 +236,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             #endregion
         }
 
-        /// <summary>
-        /// Gets the Trace object
-        /// </summary>
-        /// <returns>The trace object</returns>
-        /// <param name="id">Trace object id</param>
+        /// <inheritdoc />
         public async Task<string> GetTraceAsync(string id, string traceName)
         {
             var results = await Dal.GetTracesByTraceId(new Guid(id)).ConfigureAwait(false);
@@ -270,28 +274,19 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             #endregion
         }
 
-        /// <summary>
-        /// Gets the Trace object in xml
-        /// </summary>
-        /// <returns>The trace object</returns>
-        /// <param name="id">Trace object id</param>
+        /// <inheritdoc />
         public Task<string> GetTraceXmlAsync(string id)
             => GetTraceAsync(id, "TraceXml");
-        /// <summary>
-        /// Gets the Trace object in json
-        /// </summary>
-        /// <returns>The trace object</returns>
-        /// <param name="id">Trace object id</param>
+        
+        /// <inheritdoc />
         public Task<string> GetTraceJsonAsync(string id)
             => GetTraceAsync(id, "TraceJson");
-        /// <summary>
-		/// Gets the Trace object in txt
-		/// </summary>
-		/// <returns>The trace object</returns>
-		/// <param name="id">Trace object id</param>
+        
+        /// <inheritdoc />
         public Task<string> GetTraceTxtAsync(string id)
             => GetTraceAsync(id, "TraceTxt");
 
+        /// <inheritdoc />
         public async Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
         {
             var results = withErrorsOnly ?
@@ -323,6 +318,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
+        /// <inheritdoc />
         public async Task<GroupData> GetGroupDataAsync(string environment, string group)
         {
             var results = new GroupData
@@ -370,6 +366,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return results;
         }
 
+        /// <inheritdoc />
         public async Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
             PostgresHelper.DbResult results;
@@ -435,6 +432,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return results.Select(row => (string)row[0]).ToList();
         }
 
+        /// <inheritdoc />
         public async Task<SearchResults> SearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
         {
             PostgresHelper.DbResult results;
@@ -518,7 +516,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
-        public async Task<KeyValue[]> GetMetadatas(string environment, string groupName)
+        /// <inheritdoc />
+        public async Task<KeyValue[]> GetMetadatasAsync(string environment, string groupName)
         {
             var results = await Dal.GetMetadataByGroup(environment, groupName).ConfigureAwait(false);
             var dict = new Dictionary<string, KeyValue>();
@@ -538,6 +537,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return dict.Values.ToArray();
         }
 
+        /// <inheritdoc />
         public async Task<PagedList<NodeStatusItem>> GetStatusesAsync(string environment, string machine, string application, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
         {
             var results = await Dal.GetStatuses(environment, machine, application, fromDate, toDate, page, pageSize).ConfigureAwait(false);
@@ -600,7 +600,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             };
         }
 
-        public async Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application)
+        /// <inheritdoc />
+        public async Task<List<NodeStatusItem>> GetCurrentStatusAsync(string environment, string machine, string application)
         {
             var results = await Dal.GetStatuses(environment, machine, application).ConfigureAwait(false);
             var data = new List<NodeStatusItem>();
@@ -661,7 +662,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return rData;
         }
 
-        public async Task<List<NodeCountersQueryItem>> GetCounters(string environment)
+        /// <inheritdoc />
+        public async Task<List<NodeCountersQueryItem>> GetCountersAsync(string environment)
         {
             var results = await Dal.GetCounters(environment).ConfigureAwait(false);
             var data = new List<NodeCountersQueryItem>();
@@ -670,14 +672,16 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return data;
         }
 
-        public async Task<NodeCountersQueryItem> GetCounter(Guid counterId)
+        /// <inheritdoc />
+        public async Task<NodeCountersQueryItem> GetCounterAsync(Guid counterId)
         {
             var results = await Dal.GetCounter(counterId).ConfigureAwait(false);
             if (results.Count == 0) return null;
             return PostgresBindings.GetCounterItem(results[0]);
         }
 
-        public async Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
+        /// <inheritdoc />
+        public async Task<List<NodeCountersQueryValue>> GetCounterValuesAsync(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
         {
             var results = await Dal.GetCountersValues(counterId, fromDate, toDate).ConfigureAwait(false);
             var counterValues = new List<NodeCountersQueryValue>();
@@ -694,9 +698,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             return counterValues;
         }
 
-        public async Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = null)
+        /// <inheritdoc />
+        public async Task<List<NodeLastCountersValue>> GetLastCounterValuesAsync(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = null)
         {
-            var counterDataTask = GetCounter(counterId);
+            var counterDataTask = GetCounterAsync(counterId);
             var toDate = Core.Now.AddDays(1).Date;
             var fromDate = toDate;
 
@@ -820,5 +825,130 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
 
 
+        /// <inheritdoc />
+        public async Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        {
+            var counterTask = GetCounterAsync(counterId);
+            var counterValuesTask = Dal.GetCountersValues(counterId, fromDate, toDate);
+
+            var results = new CounterValuesAggregate
+            {
+                DataUnit = dataUnit,
+                FromDate = fromDate,
+                ToDate = toDate
+            };
+
+            #region Create date placeholders
+            if (dataUnit == CounterValuesDataUnit.All)
+            {
+                results.Data.Add(new CounterValuesAggregateItem { From = fromDate, To = toDate });
+            }
+            else
+            {
+                var nToDate = toDate;
+                var now = Core.Now;
+                if (now < nToDate)
+                {
+                    nToDate = now.TruncateTo(TimeSpan.FromMinutes(1));
+                    switch (dataUnit)
+                    {
+                        case CounterValuesDataUnit.Yearly:
+                            nToDate = nToDate.AddYears(1).Date;
+                            break;
+                        case CounterValuesDataUnit.Monthly:
+                            nToDate = nToDate.AddMonths(1).Date;
+                            break;
+                        case CounterValuesDataUnit.Daily:
+                            nToDate = nToDate.AddDays(1).Date;
+                            break;
+                        case CounterValuesDataUnit.Hourly:
+                            nToDate = nToDate.AddHours(1).TruncateTo(TimeSpan.FromHours(1));
+                            break;
+                        case CounterValuesDataUnit.Minutely:
+                            nToDate = nToDate.AddMinutes(1).TruncateTo(TimeSpan.FromMinutes(1));
+                            break;
+                    }
+                }
+
+                for (var fDate = fromDate.Date; fDate < nToDate;)
+                {
+                    var count = results.Data.Count;
+                    var previous = count > 0 ? results.Data[count - 1] : null;
+                    if (previous != null)
+                        previous.To = fDate;
+
+                    var current = new CounterValuesAggregateItem { From = fDate };
+                    results.Data.Add(current);
+
+                    switch(dataUnit)
+                    {
+                        case CounterValuesDataUnit.Yearly:
+                            fDate = fDate.AddYears(1);
+                            break;
+                        case CounterValuesDataUnit.Monthly:
+                            fDate = fDate.AddMonths(1);
+                            break;
+                        case CounterValuesDataUnit.Daily:
+                            fDate = fDate.AddDays(1);
+                            break;
+                        case CounterValuesDataUnit.Hourly:
+                            fDate = fDate.AddHours(1);
+                            break;
+                        case CounterValuesDataUnit.Minutely:
+                            fDate = fDate.AddMinutes(1);
+                            break;
+                        default:
+                            fDate = fDate.Add(nToDate - fDate).AddSeconds(1);
+                            break;
+                    }
+                }
+                if (results.Data.Count > 0)
+                    results.Data[results.Data.Count - 1].To = nToDate;
+            }
+            #endregion
+
+            var counter = await counterTask.ConfigureAwait(false);
+            results.Counter = counter;
+
+            var counterValues = await counterValuesTask.ConfigureAwait(false);
+            foreach (var row in counterValues)
+            {
+                var timestamp = row.Get<DateTime>("timestamp");
+                var value = row.Get<float>("value");
+
+                var placeHolder = results.Data.Find(item => item.From <= timestamp && timestamp < item.To);
+
+                if (!(placeHolder.Value is List<float> lFloat))
+                {
+                    lFloat = new List<float>();
+                    placeHolder.Value = lFloat;
+                }
+
+                lFloat.Add(value);
+            }
+
+            foreach(var item in results.Data)
+            {
+                if (item.Value == null)
+                    item.Value = 0;
+                else if (item.Value is List<float> lFloat)
+                {
+                    switch (counter.Type)
+                    {
+                        case Counters.CounterType.Average:
+                            item.Value = lFloat.Count > 0 ? lFloat.Average() : 0;
+                            break;
+                        case Counters.CounterType.Cumulative:
+                            item.Value = lFloat.Sum();
+                            break;
+                        case Counters.CounterType.Current:
+                            item.Value = lFloat.LastOrDefault();
+                            break;
+                    }
+                }
+            }
+
+            return results;
+        }
     }
 }

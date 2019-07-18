@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -75,12 +77,16 @@ namespace TWCore.Diagnostics.Api.Models.Counters
         [XmlAttribute, DataMember]
         public string Name { get; set; }
         [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public CounterType Type { get; set; }
         [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public CounterLevel Level { get; set; }
         [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public CounterKind Kind { get; set; }
         [XmlAttribute, DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public CounterUnit Unit { get; set; }
         [XmlAttribute, DataMember]
         public string TypeOfValue { get; set; }

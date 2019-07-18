@@ -316,7 +316,7 @@ namespace TWCore.Diagnostics.Api.Controllers
         {
             groupName = groupName?.Trim();
             if (groupName == null) return Task.FromResult(Array.Empty<KeyValue>());
-            return DbHandlers.Instance.Query.GetMetadatas(environment, groupName);
+            return DbHandlers.Instance.Query.GetMetadatasAsync(environment, groupName);
         }
         /// <summary>
         /// Get Statuses
@@ -347,7 +347,7 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/status/current")]
         public Task<List<NodeStatusItem>> GetCurrentStatus([FromRoute] string environment, string machine, string application)
         {
-            return DbHandlers.Instance.Query.GetCurrentStatus(environment, machine, application);
+            return DbHandlers.Instance.Query.GetCurrentStatusAsync(environment, machine, application);
         }
 
         /// <summary>
@@ -358,7 +358,7 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/counters")]
         public Task<List<NodeCountersQueryItem>> GetCounters([FromRoute] string environment)
         {
-            return DbHandlers.Instance.Query.GetCounters(environment);
+            return DbHandlers.Instance.Query.GetCountersAsync(environment);
         }
         /// <summary>
         /// Get Counters
@@ -368,8 +368,25 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/counters/{counterId}")]
         public Task<NodeCountersQueryItem> GetCounters([FromRoute] Guid counterId)
         {
-            return DbHandlers.Instance.Query.GetCounter(counterId);
+            return DbHandlers.Instance.Query.GetCounterAsync(counterId);
         }
+        /// <summary>
+        /// Get aggregation for counter values
+        /// </summary>
+        /// <param name="counterId">Counter id</param>
+        /// <param name="fromDate">From date</param>
+        /// <param name="toDate">To Date</param>
+        /// <param name="dataUnit">Data unit of the aggregation</param>
+        /// <returns>Counter values aggregated</returns>
+        [HttpGet("{environment}/counters/{counterId}/aggregation/{dataUnit}")]
+        public Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        {
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GetCounterAggregationAsync(counterId, fromDate, toDate, dataUnit);
+        }
+
         /// <summary>
         /// Get Counter Values
         /// </summary>
@@ -384,7 +401,7 @@ namespace TWCore.Diagnostics.Api.Controllers
             if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
             fromDate = fromDate.Date;
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
-            return DbHandlers.Instance.Query.GetCounterValues(counterId, fromDate, toDate, limit);
+            return DbHandlers.Instance.Query.GetCounterValuesAsync(counterId, fromDate, toDate, limit);
         }
         /// <summary>
         /// Get Last Counter Values
@@ -396,9 +413,8 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/lastcountervalues/{counterId}/{valuesDivision}/{samples?}")]
         public Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
         {
-            return DbHandlers.Instance.Query.GetLastCounterValues(counterId, valuesDivision, samples, lastDate);
+            return DbHandlers.Instance.Query.GetLastCounterValuesAsync(counterId, valuesDivision, samples, lastDate);
         }
-
 
         #region Private Methods
         private static string PrintXML(string xml)

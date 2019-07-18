@@ -170,7 +170,7 @@ namespace TWCore.Diagnostics.Api
                 {
                     var cKind = (CounterKind)counterKind;
                     await bot.SendTextMessageAsync(message.Chat, $"`Querying {cKind} counters for {_currentEnvironment}...`").ConfigureAwait(false);
-                    var counters = await DbHandlers.Instance.Query.GetCounters(_currentEnvironment).ConfigureAwait(false);
+                    var counters = await DbHandlers.Instance.Query.GetCountersAsync(_currentEnvironment).ConfigureAwait(false);
                     await bot.SendTextMessageAsync(message.Chat, "`Counters:`").ConfigureAwait(false);
                     counters = counters.Where(c => c.Kind == cKind).OrderBy(c => c.Application).ThenBy(c => c.Category).ThenBy(c => c.Name).ToList();
                     foreach (var batch in counters.Batch(20))
@@ -190,11 +190,11 @@ namespace TWCore.Diagnostics.Api
                 var arrText = message.Text.SplitAndTrim(" ");
                 if (arrText.Length == 2 && Guid.TryParse(arrText[1], out var counterId))
                 {
-                    var counterItem = await DbHandlers.Instance.Query.GetCounter(counterId).ConfigureAwait(false);
+                    var counterItem = await DbHandlers.Instance.Query.GetCounterAsync(counterId).ConfigureAwait(false);
                     if (counterItem != null)
                         await bot.SendTextMessageAsync(message.Chat, $"`Today latest 20 counter values for {counterItem.Application}\\{counterItem.Category}\\{counterItem.Name} [{counterItem.Type}]:`").ConfigureAwait(false);
 
-                    var counterValues = await DbHandlers.Instance.Query.GetCounterValues(counterId, Core.Now.Date.AddSeconds(-1), Core.Now.Date.AddDays(1)).ConfigureAwait(false);
+                    var counterValues = await DbHandlers.Instance.Query.GetCounterValuesAsync(counterId, Core.Now.Date.AddSeconds(-1), Core.Now.Date.AddDays(1)).ConfigureAwait(false);
                     if (counterValues.Count > 0)
                     {
                         var msg = "```" + counterValues.Take(20).Select(v => v.Timestamp + ": " + v.Value).Join("\n") + "\n\n";
@@ -231,7 +231,7 @@ namespace TWCore.Diagnostics.Api
                 var arrText = message.Text.SplitAndTrim(" ");
                 if (arrText.Length == 2 && Guid.TryParse(arrText[1], out var counterId))
                 {
-                    var counterItem = await DbHandlers.Instance.Query.GetCounter(counterId).ConfigureAwait(false);
+                    var counterItem = await DbHandlers.Instance.Query.GetCounterAsync(counterId).ConfigureAwait(false);
                     if (counterItem != null)
                     {
                         var cAlert = _counterAlerts.GetOrAdd(counterId, _ =>
@@ -278,7 +278,7 @@ namespace TWCore.Diagnostics.Api
                 var arrText = message.Text.SplitAndTrim(" ");
                 if (arrText.Length == 2 && Guid.TryParse(arrText[1], out var counterId))
                 {
-                    var counterItem = await DbHandlers.Instance.Query.GetCounter(counterId).ConfigureAwait(false);
+                    var counterItem = await DbHandlers.Instance.Query.GetCounterAsync(counterId).ConfigureAwait(false);
                     if (counterItem != null)
                     {
                         var cAlert = _counterAlerts.GetOrAdd(counterId, _ =>
@@ -320,7 +320,7 @@ namespace TWCore.Diagnostics.Api
                 var arrText = message.Text.SplitAndTrim(" ");
                 if (Guid.TryParse(arrText[1], out var counterId))
                 {
-                    var counterItem = await DbHandlers.Instance.Query.GetCounter(counterId).ConfigureAwait(false);
+                    var counterItem = await DbHandlers.Instance.Query.GetCounterAsync(counterId).ConfigureAwait(false);
                     if (counterItem != null)
                     {
                         var cAlert = _counterAlerts.GetOrAdd(counterId, _ =>
@@ -361,7 +361,7 @@ namespace TWCore.Diagnostics.Api
                     {
                         if (cAlert.Value.Chats.Contains(message.Chat.Id))
                         {
-                            var counterItem = await DbHandlers.Instance.Query.GetCounter(cAlert.Key).ConfigureAwait(false);
+                            var counterItem = await DbHandlers.Instance.Query.GetCounterAsync(cAlert.Key).ConfigureAwait(false);
                             buffer += $"{counterItem.CountersId} | {counterItem.Application}\\{counterItem.Category}\\{counterItem.Name} [{counterItem.Type}] => {cAlert.Value.Message}\n";
                         }
                     }
