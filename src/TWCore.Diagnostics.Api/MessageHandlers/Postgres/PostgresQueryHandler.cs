@@ -277,11 +277,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         /// <inheritdoc />
         public Task<string> GetTraceXmlAsync(string id)
             => GetTraceAsync(id, "TraceXml");
-        
+
         /// <inheritdoc />
         public Task<string> GetTraceJsonAsync(string id)
             => GetTraceAsync(id, "TraceJson");
-        
+
         /// <inheritdoc />
         public Task<string> GetTraceTxtAsync(string id)
             => GetTraceAsync(id, "TraceTxt");
@@ -348,7 +348,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     };
                 }
             }
-            results.Metadata = dict.Values.ToArray();
+            results.Metadata = dict.Values.OrderBy(i => i.Key).ToArray();
 
             var tracesResults = await tracesTask.ConfigureAwait(false);
             foreach (var row in tracesResults)
@@ -428,7 +428,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 return new List<string>();
             }
-            
+
             return results.Select(row => (string)row[0]).ToList();
         }
 
@@ -494,7 +494,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 results = new PostgresHelper.DbResult();
             }
-            
+
             var groups = results.Select(row => (string)row[0]).ToList();
             var data = new List<NodeInfo>();
 
@@ -525,6 +525,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 var valKey = row.Get<string>("key");
                 var valValue = row.Get<string>("value");
+
                 if (!dict.ContainsKey(valKey))
                 {
                     dict[valKey] = new KeyValue
@@ -534,7 +535,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     };
                 }
             }
-            return dict.Values.ToArray();
+            return dict.Values.OrderBy(i => i.Key).ToArray();
         }
 
         /// <inheritdoc />
@@ -880,7 +881,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     var current = new CounterValuesAggregateItem { From = fDate };
                     results.Data.Add(current);
 
-                    switch(dataUnit)
+                    switch (dataUnit)
                     {
                         case CounterValuesDataUnit.Yearly:
                             fDate = fDate.AddYears(1);
@@ -927,7 +928,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 lFloat.Add(value);
             }
 
-            foreach(var item in results.Data)
+            foreach (var item in results.Data)
             {
                 if (item.Value == null)
                     item.Value = 0;
