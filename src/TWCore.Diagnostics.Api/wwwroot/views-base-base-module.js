@@ -361,8 +361,7 @@ var CarouselsComponent = /** @class */ (function () {
     };
     CarouselsComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
-            template: __webpack_require__(/*! ./carousels.component.html */ "./src/app/views/base/carousels.component.html"),
-            providers: [
+            template: __webpack_require__(/*! ./carousels.component.html */ "./src/app/views/base/carousels.component.html"), providers: [
                 { provide: ngx_bootstrap_carousel__WEBPACK_IMPORTED_MODULE_1__["CarouselConfig"], useValue: { interval: 1500, noPause: true } }
             ]
         }),
@@ -543,8 +542,8 @@ var PaginationsComponent = /** @class */ (function () {
     PaginationsComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./paginations.component.html */ "./src/app/views/base/paginations.component.html"),
-            styles: ['.pager li.btn:active { box-shadow: none; }'],
-            encapsulation: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewEncapsulation"].None
+            encapsulation: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewEncapsulation"].None,
+            styles: [".pager li.btn:active { box-shadow: none; }"]
         }),
         __metadata("design:paramtypes", [])
     ], PaginationsComponent);

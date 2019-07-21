@@ -9,5 +9,5 @@ and value = @Search
 union distinct
 select distinct "group"
 from traces where environment = @Environment and timestamp between @FromDate and @ToDate
-and "group" = @Search
+and ("group" = @Search or application = @Search)
 limit @Limit;

@@ -176,10 +176,8 @@ var AlertsComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./alerts.component.html */ "./src/app/views/notifications/alerts.component.html"),
             encapsulation: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewEncapsulation"].None,
-            styles: [
-                "\n  .alert-md-local {\n    background-color: #009688;\n    border-color: #00695C;\n    color: #fff;\n  }\n  "
-            ],
-            providers: [{ provide: ngx_bootstrap_alert__WEBPACK_IMPORTED_MODULE_2__["AlertConfig"], useFactory: getAlertConfig }]
+            providers: [{ provide: ngx_bootstrap_alert__WEBPACK_IMPORTED_MODULE_2__["AlertConfig"], useFactory: getAlertConfig }],
+            styles: ["\n  .alert-md-local {\n    background-color: #009688;\n    border-color: #00695C;\n    color: #fff;\n  }\n  "]
         }),
         __metadata("design:paramtypes", [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["DomSanitizer"]])
     ], AlertsComponent);

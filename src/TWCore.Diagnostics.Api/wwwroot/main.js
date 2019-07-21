@@ -259,13 +259,12 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
+	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
+		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -290,13 +289,13 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 var map = {
 	"./views/base/base.module": [
 		"./src/app/views/base/base.module.ts",
-		"views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-diagnosti~bf33a4f6",
-		"views-base-base-module~views-diagnostics-diagnostics-module",
+		"default~views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-d~5b1495dc",
+		"default~views-base-base-module~views-diagnostics-diagnostics-module",
 		"views-base-base-module"
 	],
 	"./views/buttons/buttons.module": [
 		"./src/app/views/buttons/buttons.module.ts",
-		"views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-diagnosti~bf33a4f6",
+		"default~views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-d~5b1495dc",
 		"views-buttons-buttons-module"
 	],
 	"./views/chartjs/chartjs.module": [
@@ -305,16 +304,18 @@ var map = {
 	],
 	"./views/dashboard/dashboard.module": [
 		"./src/app/views/dashboard/dashboard.module.ts",
-		"views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-diagnosti~bf33a4f6",
-		"views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-widgets-widgets-module",
+		"default~views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-d~5b1495dc",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-theme-theme-modu~af04d646",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module",
 		"views-dashboard-dashboard-module"
 	],
 	"./views/diagnostics/diagnostics.module": [
 		"./src/app/views/diagnostics/diagnostics.module.ts",
-		"views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-diagnosti~bf33a4f6",
-		"views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-widgets-widgets-module",
-		"views-base-base-module~views-diagnostics-diagnostics-module",
-		"views-diagnostics-diagnostics-module~views-notifications-notifications-module",
+		"default~views-base-base-module~views-buttons-buttons-module~views-dashboard-dashboard-module~views-d~5b1495dc",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-theme-theme-modu~af04d646",
+		"default~views-base-base-module~views-diagnostics-diagnostics-module",
+		"default~views-diagnostics-diagnostics-module~views-notifications-notifications-module",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module",
 		"views-diagnostics-diagnostics-module"
 	],
 	"./views/icons/icons.module": [
@@ -323,16 +324,17 @@ var map = {
 	],
 	"./views/notifications/notifications.module": [
 		"./src/app/views/notifications/notifications.module.ts",
-		"views-diagnostics-diagnostics-module~views-notifications-notifications-module",
+		"default~views-diagnostics-diagnostics-module~views-notifications-notifications-module",
 		"views-notifications-notifications-module"
 	],
 	"./views/theme/theme.module": [
 		"./src/app/views/theme/theme.module.ts",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-theme-theme-modu~af04d646",
 		"views-theme-theme-module"
 	],
 	"./views/widgets/widgets.module": [
 		"./src/app/views/widgets/widgets.module.ts",
-		"views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-widgets-widgets-module",
+		"default~views-dashboard-dashboard-module~views-diagnostics-diagnostics-module~views-theme-theme-modu~af04d646",
 		"views-widgets-widgets-module"
 	]
 };
@@ -340,14 +342,14 @@ function webpackAsyncContext(req) {
 	var ids = map[req];
 	if(!ids) {
 		return Promise.resolve().then(function() {
-			var e = new Error('Cannot find module "' + req + '".');
+			var e = new Error("Cannot find module '" + req + "'");
 			e.code = 'MODULE_NOT_FOUND';
 			throw e;
 		});
 	}
 	return Promise.all(ids.slice(1).map(__webpack_require__.e)).then(function() {
-		var module = __webpack_require__(ids[0]);
-		return module;
+		var id = ids[0];
+		return __webpack_require__(id);
 	});
 }
 webpackAsyncContext.keys = function webpackAsyncContextKeys() {
@@ -554,6 +556,7 @@ var AppModule = /** @class */ (function () {
             providers: [{ provide: _services_api_configuration__WEBPACK_IMPORTED_MODULE_4__["Configuration"], useFactory: configurationFactory }]
         };
     };
+    var AppModule_1;
     AppModule = AppModule_1 = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
             imports: [
@@ -593,7 +596,6 @@ var AppModule = /** @class */ (function () {
         __metadata("design:paramtypes", [AppModule])
     ], AppModule);
     return AppModule;
-    var AppModule_1;
 }());
 
 
@@ -735,7 +737,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<app-header [fixed]=\"true\" [navbarBrandFull]=\"{src: 'assets/img/brand/diagnostics.svg', width: 130, height: 25, alt: 'Diagnostics'}\"\n  [navbarBrandMinimized]=\"{src: 'assets/img/brand/diagnostics.svg', width: 30, height: 30, alt: 'Diagnostics'}\" [sidebarToggler]=\"'lg'\"\n  [asideMenuToggler]=\"false\" [mobileAsideMenuToggler]=\"false\">\n  <ul class=\"nav navbar-nav ml-auto env-nav\">\n    <!-- <li class=\"nav-item d-md-down-none\">\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-bell\"></i><span class=\"badge badge-pill badge-danger\">5</span></a>\n    </li>\n    <li class=\"nav-item d-md-down-none\">\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-list\"></i></a>\n    </li>\n    <li class=\"nav-item d-md-down-none\">\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-location-pin\"></i></a>\n    </li> -->\n    <li class=\"nav-item dropdown\" dropdown placement=\"bottom right\">\n      <a class=\"nav-link\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\" dropdownToggle\n        (click)=\"false\">\n        <div>Environment:\n          <span class=\"bolder\">{{currentEnvironment}}</span>\n        </div>\n      </a>\n      <div class=\"dropdown-menu dropdown-menu-right\" *dropdownMenu aria-labelledby=\"simple-dropdown\">\n        <div class=\"dropdown-header text-center\">\n          <strong>Environments</strong>\n        </div>\n        <a *ngFor=\"let item of environments\" class=\"dropdown-item\" (click)=\"changeEnvironmentAndReload(item)\">\n          <i class=\"fa fa-tasks\"></i> {{item}}\n          <span class=\"badge badge-info\"></span>\n        </a>\n      </div>\n    </li>\n  </ul>\n</app-header>\n\n<div class=\"app-body\">\n  <app-sidebar [fixed]=\"true\" [display]=\"'lg'\">\n    <app-sidebar-nav [navItems]=\"navItems\" [perfectScrollbar] [disabled]=\"sidebarMinimized\"></app-sidebar-nav>\n    <app-sidebar-minimizer></app-sidebar-minimizer>\n  </app-sidebar>\n  <!-- Main content -->\n  <main class=\"main\">\n    <!-- Breadcrumb -->\n    <div class=\"row\">&nbsp;</div>\n    <!-- <ol class=\"breadcrumb\">\n      <app-breadcrumb></app-breadcrumb>\n    </ol> -->\n    <div class=\"container-fluid\">\n      <router-outlet></router-outlet>\n    </div>\n    <!-- /.container-fluid -->\n  </main>\n</div>\n\n\n<app-footer>\n  <span>\n    <a href=\"https://github.com/tonyredondo/TWCore2.Diagnostics.Client\">TWCore Diagnostics</a> &copy; 2018 Daniel Redondo.</span>\n  <span class=\"ml-auto\">Powered by\n    <a href=\"https://coreui.io/angular\">CoreUI for Angular</a>\n  </span>\n</app-footer>\n"
+module.exports = "<app-header [fixed]=\"true\" [navbarBrandFull]=\"{src: 'assets/img/brand/diagnostics_big.png', width: '80%', height: 'auto', alt: 'Diagnostics'}\"\r\n  [navbarBrandMinimized]=\"{src: 'assets/img/brand/diagnostics_small.png', width: 30, height: 30, alt: 'Diagnostics'}\" [sidebarToggler]=\"'lg'\"\r\n  [asideMenuToggler]=\"false\" [mobileAsideMenuToggler]=\"false\">\r\n  <ul class=\"nav navbar-nav ml-auto env-nav\">\r\n    <!-- <li class=\"nav-item d-md-down-none\">\r\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-bell\"></i><span class=\"badge badge-pill badge-danger\">5</span></a>\r\n    </li>\r\n    <li class=\"nav-item d-md-down-none\">\r\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-list\"></i></a>\r\n    </li>\r\n    <li class=\"nav-item d-md-down-none\">\r\n      <a class=\"nav-link\" href=\"#\"><i class=\"icon-location-pin\"></i></a>\r\n    </li> -->\r\n    <li *ngIf=\"environments != null\" class=\"nav-item dropdown\" dropdown placement=\"bottom right\">\r\n      <a class=\"nav-link\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\" dropdownToggle\r\n        (click)=\"false\">\r\n        <div>Environment:\r\n          <span class=\"bolder\">{{currentEnvironment}}</span>\r\n        </div>\r\n      </a>\r\n      <div class=\"dropdown-menu dropdown-menu-right\" *dropdownMenu aria-labelledby=\"simple-dropdown\">\r\n        <div class=\"dropdown-header text-center\">\r\n          <strong>Environments</strong>\r\n        </div>\r\n        <a *ngFor=\"let item of environments\" class=\"dropdown-item\" (click)=\"changeEnvironmentAndReload(item)\">\r\n          <i class=\"fa fa-tasks\"></i> {{item}}\r\n          <span class=\"badge badge-info\"></span>\r\n        </a>\r\n      </div>\r\n    </li>\r\n    <li *ngIf=\"environments == null\">\r\n      <div class=\"envDrop\">\r\n        Loading environments...\r\n      </div>\r\n    </li>\r\n  </ul>\r\n</app-header>\r\n\r\n<div class=\"app-body\" *ngIf=\"environments != null\">\r\n  <app-sidebar [fixed]=\"true\" [display]=\"'lg'\">\r\n    <app-sidebar-nav [navItems]=\"navItems\" [perfectScrollbar] [disabled]=\"sidebarMinimized\"></app-sidebar-nav>\r\n    <app-sidebar-minimizer></app-sidebar-minimizer>\r\n  </app-sidebar>\r\n  <!-- Main content -->\r\n  <main class=\"main\">\r\n    <!-- Breadcrumb -->\r\n    <div class=\"row\">&nbsp;</div>\r\n    <!-- <ol class=\"breadcrumb\">\r\n      <app-breadcrumb></app-breadcrumb>\r\n    </ol> -->\r\n    <div class=\"container-fluid\">\r\n      <router-outlet></router-outlet>\r\n    </div>\r\n    <!-- /.container-fluid -->\r\n  </main>\r\n</div>\r\n\r\n\r\n<app-footer>\r\n  <span class=\"ml-auto\">\r\n    <a href=\"https://github.com/tonyredondo/TWCore2.Diagnostics.Client\">&copy; 2019 Daniel Redondo</a></span>\r\n</app-footer>\r\n"
 
 /***/ }),
 
@@ -1282,6 +1284,86 @@ var QueryService = /** @class */ (function () {
             reportProgress: reportProgress
         });
     };
+    QueryService.prototype.apiQueryByEnvironmentGroupSearchBySearchTermGet = function (environment, searchTerm, fromDate, toDate, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        if (environment === null || environment === undefined) {
+            throw new Error('Required parameter environment was null or undefined when calling apiQueryByEnvironmentGroupSearchBySearchTermGet.');
+        }
+        if (searchTerm === null || searchTerm === undefined) {
+            throw new Error('Required parameter searchTerm was null or undefined when calling apiQueryByEnvironmentGroupSearchBySearchTermGet.');
+        }
+        var queryParameters = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]({ encoder: new _encoder__WEBPACK_IMPORTED_MODULE_2__["CustomHttpUrlEncodingCodec"]() });
+        if (fromDate !== undefined) {
+            queryParameters = queryParameters.set('fromDate', fromDate.toISOString());
+        }
+        if (toDate !== undefined) {
+            queryParameters = queryParameters.set('toDate', toDate.toISOString());
+        }
+        var headers = this.defaultHeaders;
+        // to determine the Accept header
+        var httpHeaderAccepts = [
+            'text/plain',
+            'application/json',
+            'text/json',
+            'application/xml',
+            'text/xml',
+            'application/binary-formatter',
+            'application/n-binary',
+            'application/pw-binary',
+            'application/w-binary'
+        ];
+        var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+        // to determine the Content-Type header
+        var consumes = [];
+        return this.httpClient.get(this.basePath + "/api/query/" + encodeURIComponent(String(environment)) + "/groups/search/" + encodeURIComponent(String(searchTerm)), {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
+            headers: headers,
+            observe: observe,
+            reportProgress: reportProgress
+        });
+    };
+    QueryService.prototype.apiQueryByEnvironmentGroupLoadGet = function (environment, group, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        if (environment === null || environment === undefined) {
+            throw new Error('Required parameter environment was null or undefined when calling apiQueryByEnvironmentGroupLoadGet.');
+        }
+        if (group === null || group === undefined) {
+            throw new Error('Required parameter searchTerm was null or undefined when calling apiQueryByEnvironmentGroupLoadGet.');
+        }
+        var queryParameters = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]({ encoder: new _encoder__WEBPACK_IMPORTED_MODULE_2__["CustomHttpUrlEncodingCodec"]() });
+        var headers = this.defaultHeaders;
+        // to determine the Accept header
+        var httpHeaderAccepts = [
+            'text/plain',
+            'application/json',
+            'text/json',
+            'application/xml',
+            'text/xml',
+            'application/binary-formatter',
+            'application/n-binary',
+            'application/pw-binary',
+            'application/w-binary'
+        ];
+        var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+        // to determine the Content-Type header
+        var consumes = [];
+        return this.httpClient.get(this.basePath + "/api/query/" + encodeURIComponent(String(environment)) + "/groups/" + encodeURIComponent(String(group)), {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
+            headers: headers,
+            observe: observe,
+            reportProgress: reportProgress
+        });
+    };
     QueryService.prototype.apiQueryByEnvironmentStatusCurrentGet = function (environment, machine, application, observe, reportProgress) {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
@@ -1405,7 +1487,7 @@ var QueryService = /** @class */ (function () {
             reportProgress: reportProgress
         });
     };
-    QueryService.prototype.apiQueryByEnvironmentTracesGet = function (environment, fromDate, toDate, page, pageSize, observe, reportProgress) {
+    QueryService.prototype.apiQueryByEnvironmentTracesGet = function (environment, fromDate, toDate, withErrorsOnly, page, pageSize, observe, reportProgress) {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         if (environment === null || environment === undefined) {
@@ -1417,6 +1499,9 @@ var QueryService = /** @class */ (function () {
         }
         if (toDate !== undefined) {
             queryParameters = queryParameters.set('toDate', toDate.toISOString());
+        }
+        if (withErrorsOnly !== undefined) {
+            queryParameters = queryParameters.set('withErrorsOnly', withErrorsOnly);
         }
         if (page !== undefined) {
             queryParameters = queryParameters.set('page', page);
@@ -1649,6 +1734,55 @@ var QueryService = /** @class */ (function () {
             reportProgress: reportProgress
         });
     };
+    QueryService.prototype.apiQueryByEnvironmentGroupsGet = function (environment, fromDate, toDate, withErrorsOnly, page, pageSize, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        if (environment === null || environment === undefined) {
+            throw new Error('Required parameter environment was null or undefined when calling apiQueryByEnvironmentGroupsGet.');
+        }
+        var queryParameters = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]({ encoder: new _encoder__WEBPACK_IMPORTED_MODULE_2__["CustomHttpUrlEncodingCodec"]() });
+        if (fromDate !== undefined) {
+            queryParameters = queryParameters.set('fromDate', fromDate.toISOString());
+        }
+        if (toDate !== undefined) {
+            queryParameters = queryParameters.set('toDate', toDate.toISOString());
+        }
+        if (withErrorsOnly !== undefined) {
+            queryParameters = queryParameters.set('withErrorsOnly', withErrorsOnly);
+        }
+        if (page !== undefined) {
+            queryParameters = queryParameters.set('page', page);
+        }
+        if (pageSize !== undefined) {
+            queryParameters = queryParameters.set('pageSize', pageSize);
+        }
+        var headers = this.defaultHeaders;
+        // to determine the Accept header
+        var httpHeaderAccepts = [
+            'text/plain',
+            'application/json',
+            'text/json',
+            'application/xml',
+            'text/xml',
+            'application/binary-formatter',
+            'application/n-binary',
+            'application/pw-binary',
+            'application/w-binary'
+        ];
+        var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+        // to determine the Content-Type header
+        var consumes = [];
+        return this.httpClient.get(this.basePath + "/api/query/" + encodeURIComponent(String(environment)) + "/groups", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
+            headers: headers,
+            observe: observe,
+            reportProgress: reportProgress
+        });
+    };
     QueryService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
         __param(1, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"])()), __param(1, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"])(_variables__WEBPACK_IMPORTED_MODULE_3__["BASE_PATH"])), __param(2, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"])()),
@@ -1750,9 +1884,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CustomHttpUrlEncodingCodec", function() { return CustomHttpUrlEncodingCodec; });
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -2015,6 +2152,7 @@ __webpack_require__.r(__webpack_exports__);
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 var environment = {
     production: false,
+    //  apiUrl: 'http://93.189.37.106:55999',
     apiUrl: window.location.origin,
     name: ''
 };
@@ -2091,7 +2229,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\GitHub\TWCore2.Diagnostics.Client\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! C:\Github\TWCore2.Diagnostics.Client\src\main.ts */"./src/main.ts");
 
 
 /***/ })

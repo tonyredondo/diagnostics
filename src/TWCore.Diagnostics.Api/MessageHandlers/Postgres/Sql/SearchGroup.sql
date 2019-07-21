@@ -10,5 +10,5 @@ and (value like @Search || '%')
 union distinct
 select distinct "group"
 from traces where environment = @Environment and timestamp between @FromDate and @ToDate
-and ("group" like @Search || '%')
+and ("group" like @Search || '%' or application like @Search || '%')
 limit @Limit;
