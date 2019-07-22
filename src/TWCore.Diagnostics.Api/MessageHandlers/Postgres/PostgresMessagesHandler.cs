@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,10 +60,12 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         };
         private static readonly PostgresDal Dal = new PostgresDal();
 
+        /// <inheritdoc />
         public void Init()
         {
         }
 
+        /// <inheritdoc />
         public async Task ProcessLogItemsMessageAsync(List<LogItem> message)
         {
             if (message is null) return;
@@ -90,7 +94,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                         };
                         logs.Add(item);
                     }
-                    await Dal.InsertLogAsync(logs, true).ConfigureAwait(false);
+                    foreach (var batch in logs.Batch(500))
+                        await Dal.InsertLogAsync(batch, true).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -99,6 +104,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessGroupMetadataMessageAsync(List<GroupMetadata> message)
         {
             if (message is null) return;
@@ -115,7 +121,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             var item = new EntMeta
                             {
                                 Date = groupMetaItem.Timestamp.Date,
-                                Environment = null,
+                                Environment = groupMetaItem.EnvironmentName,
                                 Group = groupMetaItem.GroupName,
                                 Timestamp = groupMetaItem.Timestamp,
                                 Key = metaValue.Key,
@@ -124,7 +130,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             metadatas.Add(item);
                         }
                     }
-                    await Dal.InsertMetadataAsync(metadatas).ConfigureAwait(false);
+
+                    foreach (var batch in metadatas.Batch(500))
+                        await Dal.InsertMetadataAsync(batch).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -133,6 +141,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessTraceItemsMessageAsync(List<MessagingTraceItem> message)
         {
             if (message is null) return;
@@ -293,17 +302,51 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                 try
                                 {
                                     var bTxt = false;
+                                    var strValue = string.Empty;
+
                                     if (traceItem.TraceObject is SerializedObject serObj)
                                     {
                                         var value = serObj.GetValue();
                                         if (value is string txtValue)
                                         {
+                                            if (txtValue.IsValidJson())
+                                            {
+                                                txtValue = JValue.Parse(txtValue).ToString(Formatting.Indented);
+                                            }
+                                            else if (txtValue.IsValidXml())
+                                            {
+                                                try
+                                                {
+                                                    txtValue = txtValue.PrettyXml();
+                                                }
+                                                catch
+                                                {
+                                                    //
+                                                }
+                                            }
+                                            strValue = txtValue;
                                             msTxt.Write(Encoding.UTF8.GetBytes(txtValue).ToGzip().AsReadOnlySpan());
                                             bTxt = true;
                                         }
                                     }
                                     else if (traceItem.TraceObject is string strObj)
                                     {
+                                        if (strObj.IsValidJson())
+                                        {
+                                            strObj = JValue.Parse(strObj).ToString(Formatting.Indented);
+                                        }
+                                        else if (strObj.IsValidXml())
+                                        {
+                                            try
+                                            {
+                                                strObj = strObj.PrettyXml();
+                                            }
+                                            catch
+                                            {
+                                                //
+                                            }
+                                        }
+                                        strValue = strObj;
                                         msTxt.Write(Encoding.UTF8.GetBytes(strObj).ToGzip().AsReadOnlySpan());
                                         bTxt = true;
                                     }
@@ -311,8 +354,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                     if (bTxt)
                                     {
                                         msTxt.Position = 0;
-                                        await TraceDiskStorage.StoreAsync(item, msTxt, ".txt.gz").ConfigureAwait(false);
-                                        lstExtensions.Add("TXT");
+
+                                        if (strValue.IsValidJson())
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".json.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("JSON");
+                                        }
+                                        else if (strValue.IsValidXml())
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".xml.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("XML");
+                                        }
+                                        else
+                                        {
+                                            await TraceDiskStorage.StoreAsync(item, msTxt, ".txt.gz").ConfigureAwait(false);
+                                            lstExtensions.Add("TXT");
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
@@ -333,7 +390,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             await Dal.InsertTraceAsync(item);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Core.Log.Write(ex);
                     }
@@ -341,6 +398,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessCountersMessageAsync(List<ICounterItem> message)
         {
             if (message is null) return;
@@ -419,15 +477,17 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
                     }
 
-                    await Dal.InsertCounterValueAsync(lstCounters, true).ConfigureAwait(false);
+                    foreach (var batch in lstCounters.Batch(500))
+                        await Dal.InsertCounterValueAsync(batch, true).ConfigureAwait(false);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Core.Log.Write(ex);
                 }
             }
         }
 
+        /// <inheritdoc />
         public async Task ProcessStatusMessageAsync(StatusItemCollection message)
         {
             if (message is null) return;
@@ -468,15 +528,55 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             });
                         }
 
-                        await Dal.InsertStatusValuesAsync(insertBuffer);
+                        foreach (var batch in insertBuffer.Batch(100))
+                            await Dal.InsertStatusValuesAsync(batch);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Core.Log.Write(ex);
                 }
             }
         }
 
+
+        /// <inheritdoc />
+        public async Task<Guid> EnsureCounter(ICounterItem counter)
+        {
+            var results = await Dal.GetCounter(counter.Environment, counter.Application, counter.Category, counter.Name);
+            if (results.Count > 0)
+            {
+                return PostgresBindings.GetCounterEntity(results[0]).CounterId;
+            }
+            else
+            {
+                var ncounter = new EntCounter
+                {
+                    Environment = counter.Environment,
+                    Application = counter.Application,
+                    CounterId = Guid.NewGuid(),
+                    Category = counter.Category,
+                    Name = counter.Name,
+                    Level = counter.Level,
+                    Kind = counter.Kind,
+                    Unit = counter.Unit,
+                    Type = counter.Type
+                };
+                await Dal.InsertCounterAsync(new[] { ncounter }, true).ConfigureAwait(false);
+                return ncounter.CounterId;
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task InsertCounterValue(Guid counterId, CounterItemValue<double> value)
+        {
+            var nValue = new EntCounterValue
+            {
+                CounterId = counterId,
+                Timestamp = value.Timestamp,
+                Value = value.Value
+            };
+            await Dal.InsertCounterValueAsync(new[] { nValue }, true).ConfigureAwait(false);
+        }
     }
 }

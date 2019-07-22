@@ -12,6 +12,7 @@ using TWCore.Collections;
 using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -40,6 +41,69 @@ namespace TWCore.Diagnostics.Api.Controllers
         {
             return DbHandlers.Instance.Query.GetEnvironmentsAsync();
         }
+
+
+        /// <summary>
+        /// Gets the traces objects by environment and dates
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="withErrorsOnly">With errors only</param>
+        /// <returns>Traces</returns>
+        [HttpGet("{environment}/groups")]
+        public Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50, bool withErrorsOnly = false)
+        {
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GetGroupsByEnvironmentAsync(environment, fromDate, toDate, withErrorsOnly, page, pageSize);
+        }
+        /// <summary>
+        /// Gets the group data
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="group">Group name</param>
+        /// <returns>Traces</returns>
+        [HttpGet("{environment}/groups/{group}")]
+        public Task<GroupData> GetGroupData([FromRoute]string environment, [FromRoute]string group)
+        {
+            return DbHandlers.Instance.Query.GetGroupDataAsync(environment, group);
+        }
+        /// <summary>
+        /// Search a term in the database
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="searchTerm">Term to search in the database</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <returns>Search results</returns>
+        [HttpGet("{environment}/groups/search/{searchTerm}")]
+        public Task<List<string>> GroupsSearchAsync([FromRoute]string environment, [FromRoute]string searchTerm, DateTime fromDate, DateTime toDate)
+        {
+            searchTerm = searchTerm?.Trim();
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GroupSearchAsync(environment, searchTerm, fromDate, toDate);
+        }
+        /// <summary>
+        /// Gets the metadata from a group name
+        /// </summary>
+        /// <param name="groupName">Group name</param>
+        /// <returns>Metadata results</returns>
+        [HttpGet("{environment}/groups/{group}/metadata")]
+        public Task<KeyValue[]> GetMetadatasAsync([FromRoute]string environment, [FromRoute]string groupName)
+        {
+            groupName = groupName?.Trim();
+            if (groupName == null) return Task.FromResult(Array.Empty<KeyValue>());
+            return DbHandlers.Instance.Query.GetMetadatasAsync(environment, groupName);
+        }
+
+
+
         /// <summary>
         /// Gets the Applications with logs by environment
         /// </summary>
@@ -74,6 +138,8 @@ namespace TWCore.Diagnostics.Api.Controllers
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
             return DbHandlers.Instance.Query.GetLogsByApplicationLevelsEnvironmentAsync(environment, application, level, fromDate, toDate, page, pageSize);
         }
+
+
         /// <summary>
         /// Gets the traces objects by environment and dates
         /// </summary>
@@ -82,14 +148,15 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// <param name="toDate">To date and time</param>
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
+        /// <param name="withErrorsOnly">With errors only</param>
         /// <returns>Traces</returns>
         [HttpGet("{environment}/traces")]
-        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync([FromRoute]string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50, bool withErrorsOnly = false)
         {
             if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
             fromDate = fromDate.Date;
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
-            return DbHandlers.Instance.Query.GetTracesByEnvironmentAsync(environment, fromDate, toDate, page, pageSize);
+            return DbHandlers.Instance.Query.GetTracesByEnvironmentAsync(environment, fromDate, toDate, withErrorsOnly, page, pageSize);
         }
         /// <summary>
         /// Get the traces from a Trace Group
@@ -102,7 +169,6 @@ namespace TWCore.Diagnostics.Api.Controllers
         {
             return DbHandlers.Instance.Query.GetTracesByGroupIdAsync(environment, groupName);
         }
-
         /// <summary>
         /// Get Trace object
         /// </summary>
@@ -241,6 +307,8 @@ namespace TWCore.Diagnostics.Api.Controllers
             }
             return txtData;
         }
+
+
         /// <summary>
         /// Search a term in the database
         /// </summary>
@@ -258,19 +326,8 @@ namespace TWCore.Diagnostics.Api.Controllers
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
             return DbHandlers.Instance.Query.SearchAsync(environment, searchTerm, fromDate, toDate);
         }
-        /// <summary>
-        /// Gets the metadata from a group name
-        /// </summary>
-        /// <param name="groupName">Group name</param>
-        /// <returns>Metadata results</returns>
-        [HttpGet("{environment}/metadata/{groupName}")]
-        public async Task<KeyValue[]> GetMetadatasAsync([FromRoute]string environment, [FromRoute]string groupName)
-        {
-            groupName = groupName?.Trim();
-            if (groupName == null) return Array.Empty<KeyValue>();
-            var result = await DbHandlers.Instance.Query.GetMetadatas(groupName).ConfigureAwait(false);
-            return result.OrderBy(i => i.Key).ToArray();
-        }
+
+
         /// <summary>
         /// Get Statuses
         /// </summary>
@@ -300,8 +357,9 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/status/current")]
         public Task<List<NodeStatusItem>> GetCurrentStatus([FromRoute] string environment, string machine, string application)
         {
-            return DbHandlers.Instance.Query.GetCurrentStatus(environment, machine, application);
+            return DbHandlers.Instance.Query.GetCurrentStatusAsync(environment, machine, application);
         }
+
 
         /// <summary>
         /// Get Counters
@@ -311,7 +369,7 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/counters")]
         public Task<List<NodeCountersQueryItem>> GetCounters([FromRoute] string environment)
         {
-            return DbHandlers.Instance.Query.GetCounters(environment);
+            return DbHandlers.Instance.Query.GetCountersAsync(environment);
         }
         /// <summary>
         /// Get Counters
@@ -321,23 +379,73 @@ namespace TWCore.Diagnostics.Api.Controllers
         [HttpGet("{environment}/counters/{counterId}")]
         public Task<NodeCountersQueryItem> GetCounters([FromRoute] Guid counterId)
         {
-            return DbHandlers.Instance.Query.GetCounter(counterId);
+            return DbHandlers.Instance.Query.GetCounterAsync(counterId);
         }
         /// <summary>
         /// Get Counter Values
         /// </summary>
         /// <param name="counterId">Counter id</param>
         /// <param name="fromDate">From date and time</param>
-		/// <param name="toDate">To date and time</param>
-		/// <param name="limit">Values count limit</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="limit">Values count limit</param>
         /// <returns>List of counter values</returns>
-        [HttpGet("{environment}/countervalues/{counterId}")]
+        [HttpGet("{environment}/counters/{counterId}/values")]
         public Task<List<NodeCountersQueryValue>> GetCounterValues([FromRoute] string environment, [FromRoute] Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
         {
             if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
             fromDate = fromDate.Date;
             toDate = toDate.Date.AddDays(1).AddSeconds(-1);
-            return DbHandlers.Instance.Query.GetCounterValues(counterId, fromDate, toDate, limit);
+            return DbHandlers.Instance.Query.GetCounterValuesAsync(counterId, fromDate, toDate, limit);
+        }
+        /// <summary>
+        /// Get aggregation for counter values
+        /// </summary>
+        /// <param name="counterId">Counter id</param>
+        /// <param name="fromDate">From date</param>
+        /// <param name="toDate">To Date</param>
+        /// <param name="dataUnit">Data unit of the aggregation</param>
+        /// <returns>Counter values aggregated</returns>
+        [HttpGet("{environment}/counters/{counterId}/aggregation/{dataUnit}")]
+        public Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        {
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GetCounterAggregationAsync(counterId, fromDate, toDate, dataUnit);
+        }
+
+
+
+        #region Deprecated
+        /// <summary>
+        /// Gets the metadata from a group name
+        /// </summary>
+        /// <param name="groupName">Group name</param>
+        /// <returns>Metadata results</returns>
+        [HttpGet("{environment}/metadata/{groupName}", Order = 100)]
+        [Obsolete]
+        public Task<KeyValue[]> GetMetadatasDeprecatedAsync([FromRoute]string environment, [FromRoute]string groupName)
+        {
+            groupName = groupName?.Trim();
+            if (groupName == null) return Task.FromResult(Array.Empty<KeyValue>());
+            return DbHandlers.Instance.Query.GetMetadatasAsync(environment, groupName);
+        }
+        /// <summary>
+        /// Get Counter Values
+        /// </summary>
+        /// <param name="counterId">Counter id</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="limit">Values count limit</param>
+        /// <returns>List of counter values</returns>
+        [HttpGet("{environment}/countervalues/{counterId}", Order = 101)]
+        [Obsolete]
+        public Task<List<NodeCountersQueryValue>> GetCounterValuesDeprecated([FromRoute] string environment, [FromRoute] Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
+        {
+            if (toDate == DateTime.MinValue) toDate = Core.Now.Date;
+            fromDate = fromDate.Date;
+            toDate = toDate.Date.AddDays(1).AddSeconds(-1);
+            return DbHandlers.Instance.Query.GetCounterValuesAsync(counterId, fromDate, toDate, limit);
         }
         /// <summary>
         /// Get Last Counter Values
@@ -346,11 +454,14 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// <param name="valuesDivision">Counter values division</param>
         /// <param name="samples">Samples quantity</param>
         /// <returns>Values list</returns>
-        [HttpGet("{environment}/lastcountervalues/{counterId}/{valuesDivision}/{samples?}")]
-        public Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
+        [HttpGet("{environment}/lastcountervalues/{counterId}/{valuesDivision}/{samples?}", Order = 102)]
+        [Obsolete]
+        public Task<List<NodeLastCountersValue>> GetLastCounterValuesDeprecated(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
         {
-            return DbHandlers.Instance.Query.GetLastCounterValues(counterId, valuesDivision, samples, lastDate);
+            return DbHandlers.Instance.Query.GetLastCounterValuesAsync(counterId, valuesDivision, samples, lastDate);
         }
+        #endregion
+
 
 
         #region Private Methods

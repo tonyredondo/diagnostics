@@ -25,6 +25,7 @@ using TWCore.Compression;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb.Indexes;
 using TWCore.Diagnostics.Api.Models;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -190,6 +191,14 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             });
         }
 
+        public Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate)
+        {
+            return Task.FromResult<List<string>>(null);
+        }
+        public Task<GroupData> GetGroupDataAsync(string environment, string group)
+        {
+            return Task.FromResult<GroupData>(null);
+        }
         /// <summary>
         /// Gets the traces objects by environment and dates
         /// </summary>
@@ -199,18 +208,22 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Traces</returns>
-        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50)
+        public Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
         {
             return RavenHelper.ExecuteAndReturnAsync(async session =>
             {
-                var res = await session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
+                var query = session.Advanced.AsyncDocumentQuery<V2_Traces_List.Result, V2_Traces_List>()
                         .Statistics(out var stats)
                         .NoTracking()
                         .WhereEquals(x => x.Environment, environment)
-                        .WhereBetween(x => x.Start, fromDate, toDate)
-                        .OrderByDescending(x => x.Start)
-                        .Skip(page * pageSize).Take(pageSize)
-                        .ToListAsync().ConfigureAwait(false);
+                        .WhereBetween(x => x.Start, fromDate, toDate);
+                if (withErrorsOnly)
+                    query = query.WhereEquals(x => x.HasError, true);
+
+                query = query.OrderByDescending(x => x.Start)
+                        .Skip(page * pageSize).Take(pageSize);
+
+                var res = await query.ToListAsync().ConfigureAwait(false);
 
                 return new PagedList<TraceResult>
                 {
@@ -390,6 +403,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 		/// <param name="id">Trace object id</param>
         public Task<string> GetTraceTxtAsync(string id)
             => GetTraceAsync(id, "TraceTxt");
+
+        public Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50)
+        {
+            return Task.FromResult<PagedList<GroupResult>>(null);
+        }
         /// <summary>
         /// Search a term in the database
         /// </summary>
@@ -456,12 +474,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         /// <param name="groupName">Group name</param>
         /// <returns>List of metadatas</returns>
-        public async Task<KeyValue[]> GetMetadatas(string groupName)
+        public async Task<KeyValue[]> GetMetadatasAsync(string environment, string groupName)
         {
             var metas = await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
                 return await session.Advanced.AsyncDocumentQuery<GroupMetadata, V2_Metadata_ByGroup>()
                     .NoTracking()
+                    .WhereEquals(x => x.EnvironmentName, environment)
                     .WhereEquals(x => x.GroupName, groupName)
                     .OrderByDescending(x => x.Timestamp)
                     .ToListAsync().ConfigureAwait(false);
@@ -517,7 +536,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="machine">Machine name or null</param>
         /// <param name="application">Application name or null</param>
         /// <returns>Get Current Status list</returns>
-        public async Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application)
+        public async Task<List<NodeStatusItem>> GetCurrentStatusAsync(string environment, string machine, string application)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -550,7 +569,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
         /// <param name="environment">Environment name</param>
         /// <returns>List of counters</returns>
-        public async Task<List<NodeCountersQueryItem>> GetCounters(string environment)
+        public async Task<List<NodeCountersQueryItem>> GetCountersAsync(string environment)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -578,7 +597,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// </summary>
 		/// <param name="counterId">Counter Id</param>
         /// <returns>Counter data</returns>
-        public async Task<NodeCountersQueryItem> GetCounter(Guid counterId)
+        public async Task<NodeCountersQueryItem> GetCounterAsync(Guid counterId)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -607,7 +626,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
 		/// <param name="toDate">To date and time</param>
         /// <param name="limit">Value limit</param>
         /// <returns>List of counter values</returns>
-        public async Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
+        public async Task<List<NodeCountersQueryValue>> GetCounterValuesAsync(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600)
         {
             return await RavenHelper.ExecuteAndReturnAsync(async session =>
             {
@@ -633,9 +652,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
         /// <param name="valuesDivision">Counter values division</param>
         /// <param name="samples">Samples quantity</param>
         /// <returns>Values list</returns>
-        public async Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
+        public async Task<List<NodeLastCountersValue>> GetLastCounterValuesAsync(Guid counterId, CounterValuesDivision valuesDivision, int samples = 0, DateTime? lastDate = default)
         {
-            var counterDataTask = GetCounter(counterId);
+            var counterDataTask = GetCounterAsync(counterId);
             var toDate = Core.Now;
             var fromDate = toDate;
 
@@ -763,6 +782,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             #endregion
 
             return lstValues;
+        }
+
+        public async Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        {
+            return null;
         }
 
         #region Nested Types

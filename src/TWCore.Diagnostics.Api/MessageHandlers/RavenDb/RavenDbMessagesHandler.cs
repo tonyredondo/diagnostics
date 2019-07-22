@@ -466,6 +466,15 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             }
         }
 
+        public Task<Guid> EnsureCounter(ICounterItem counter)
+        {
+            return null;
+        }
+        public Task InsertCounterValue(Guid counterId, CounterItemValue<double> value)
+        {
+            return null;
+        }
+
         private class StatusId
         {
             public string Id { get; set; }

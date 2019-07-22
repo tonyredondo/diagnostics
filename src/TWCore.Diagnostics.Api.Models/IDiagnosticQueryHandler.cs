@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TWCore.Collections;
 using TWCore.Diagnostics.Api.Models.Counters;
+using TWCore.Diagnostics.Api.Models.Groups;
 using TWCore.Diagnostics.Api.Models.Log;
 using TWCore.Diagnostics.Api.Models.Status;
 using TWCore.Diagnostics.Api.Models.Trace;
@@ -68,10 +69,38 @@ namespace TWCore.Diagnostics.Api.Models
         /// <param name="environment">Environment name</param>
         /// <param name="fromDate">From date and time</param>
         /// <param name="toDate">To date and time</param>
+        /// <param name="withErrorsOnly">With errors only</param>
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Traces</returns>
-        Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, int page, int pageSize = 50);
+        Task<PagedList<TraceResult>> GetTracesByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50);
+        /// <summary>
+        /// Get group data
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="group">Group name</param>
+        /// <returns></returns>
+        Task<GroupData> GetGroupDataAsync(string environment, string group);
+        /// <summary>
+        /// Group search
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="searchTerm">Search term</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <returns>Groups list</returns>
+        Task<List<string>> GroupSearchAsync(string environment, string searchTerm, DateTime fromDate, DateTime toDate);
+        /// <summary>
+        /// Gets the groups objects by environment and dates
+        /// </summary>
+        /// <param name="environment">Environment name</param>
+        /// <param name="fromDate">From date and time</param>
+        /// <param name="toDate">To date and time</param>
+        /// <param name="withErrorsOnly">With errors only</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns>Traces</returns>
+        Task<PagedList<GroupResult>> GetGroupsByEnvironmentAsync(string environment, DateTime fromDate, DateTime toDate, bool withErrorsOnly, int page, int pageSize = 50);
         /// <summary>
         /// Get the traces from a Trace Group
         /// </summary>
@@ -118,7 +147,7 @@ namespace TWCore.Diagnostics.Api.Models
         /// </summary>
         /// <param name="groupName">Group name</param>
         /// <returns>List of metadatas</returns>
-		Task<KeyValue[]> GetMetadatas(string groupName);
+		Task<KeyValue[]> GetMetadatasAsync(string environment, string groupName);
 		
 		/// <summary>
 		/// Gets the statuses
@@ -139,19 +168,19 @@ namespace TWCore.Diagnostics.Api.Models
 		/// <param name="machine">Machine name or null</param>
 		/// <param name="application">Application name or null</param>
         /// <returns>Get Current Status list</returns>
-        Task<List<NodeStatusItem>> GetCurrentStatus(string environment, string machine, string application);
+        Task<List<NodeStatusItem>> GetCurrentStatusAsync(string environment, string machine, string application);
         /// <summary>
         /// Get Counters
         /// </summary>
 		/// <param name="environment">Environment name</param>
         /// <returns>List of counters</returns>
-        Task<List<NodeCountersQueryItem>> GetCounters(string environment);
+        Task<List<NodeCountersQueryItem>> GetCountersAsync(string environment);
         /// <summary>
         /// Get Counter by counterId
         /// </summary>
 		/// <param name="counterId">Counter Id</param>
         /// <returns>Counter data</returns>
-        Task<NodeCountersQueryItem> GetCounter(Guid counterId);
+        Task<NodeCountersQueryItem> GetCounterAsync(Guid counterId);
         /// <summary>
         /// Get Counter Values
         /// </summary>
@@ -160,7 +189,7 @@ namespace TWCore.Diagnostics.Api.Models
 		/// <param name="toDate">To date and time</param>
         /// <param name="limit">Value limit</param>
         /// <returns>List of counter values</returns>
-        Task<List<NodeCountersQueryValue>> GetCounterValues(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600);
+        Task<List<NodeCountersQueryValue>> GetCounterValuesAsync(Guid counterId, DateTime fromDate, DateTime toDate, int limit = 3600);
         /// <summary>
         /// Get Last Counter Values
         /// </summary>
@@ -168,6 +197,15 @@ namespace TWCore.Diagnostics.Api.Models
         /// <param name="valuesDivision">Counter values division</param>
         /// <param name="samples">Samples quantity</param>
         /// <returns>Values list</returns>
-        Task<List<NodeLastCountersValue>> GetLastCounterValues(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = default);
+        Task<List<NodeLastCountersValue>> GetLastCounterValuesAsync(Guid counterId, CounterValuesDivision valuesDivision, int samples = 250, DateTime? lastDate = default);
+        /// <summary>
+        /// Get Aggregation data from counter values
+        /// </summary>
+        /// <param name="counterId">Counter id</param>
+        /// <param name="fromDate">From date and time</param>
+		/// <param name="toDate">To date and time</param>
+        /// <param name="dataUnit">Unit of the aggregation</param>
+        /// <returns></returns>
+        Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit);
     }
 }

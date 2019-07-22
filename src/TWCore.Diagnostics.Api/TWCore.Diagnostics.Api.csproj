@@ -10,30 +10,30 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Npgsql" Version="4.0.7" />
     <PackageReference Include="Npgsql.Json.NET" Version="4.0.7" />
-    <PackageReference Include="RavenDB.Client" Version="4.2.0" />
+    <PackageReference Include="RavenDB.Client" Version="4.2.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
-    <PackageReference Include="TWCore" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Bot" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Bot.Slack" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Bot.Telegram" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Cache" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Cache.Client" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Collections" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Data.MySql" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Data.PostgreSQL" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Data.SqlServer" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging.Kafka" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging.NATS" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging.NSQ" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging.RabbitMQ" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Messaging.Redis" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Net.HttpServer" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Object" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Serialization.NSerializer" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Services" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Triggers" Version="2.1.181-beta4" />
-    <PackageReference Include="TWCore.Web" Version="2.1.181-beta4" />
+    <PackageReference Include="TWCore" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Bot" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Bot.Slack" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Bot.Telegram" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Cache" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Cache.Client" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Collections" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Data.MySql" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Data.PostgreSQL" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Data.SqlServer" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging.Kafka" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging.NATS" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging.NSQ" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging.RabbitMQ" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Messaging.Redis" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Net.HttpServer" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Object" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Serialization.NSerializer" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Services" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Triggers" Version="2.1.181-beta5" />
+    <PackageReference Include="TWCore.Web" Version="2.1.181-beta5" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
@@ -77,6 +77,8 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCounters.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCountersValues.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetGroupsByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetGroupsByEnvironmentWithErrors.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogsByApplication2.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
@@ -84,8 +86,11 @@
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\GetTracesByEnvironmentWithErrors.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchByMetadata.sql" />
+    <None Remove="MessageHandlers\Postgres\Sql\SearchByMetadataExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroupExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
@@ -94,6 +99,9 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounter.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetGroupsByEnvironmentWithErrors.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchByMetadataExact.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\SearchByMetadata.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusById.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesPaged.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetStatusesValues.sql" />
@@ -108,6 +116,8 @@
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetLogsByGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchLogs.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetMetadataByGroup.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetGroupsByEnvironment.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironmentWithErrors.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByTraceId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByGroupId.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetTracesByEnvironment.sql" />

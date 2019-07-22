@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api", "src\TWCore.Diagnostics.Api\TWCore.Diagnostics.Api.csproj", "{19DDD6F2-31FF-4EA6-A325-9282CA16E432}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api.Models", "src\TWCore.Diagnostics.Api.Models\TWCore.Diagnostics.Api.Models.csproj", "{699CCCE5-B0B8-47BD-8B78-7975B92BF0C7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{E2193D26-BD8C-4849-83B6-F62CFB95953E}"
+	ProjectSection(SolutionItems) = preProject
+		common.props = common.props
+		commonWithDoc.props = commonWithDoc.props
+		README.md = README.md
+		version.props = version.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

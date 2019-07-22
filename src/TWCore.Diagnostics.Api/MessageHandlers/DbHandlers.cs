@@ -136,6 +136,23 @@ namespace TWCore.Diagnostics.Api.MessageHandlers
                 foreach (var item in _parent._messageHandlers)
                     await item.ProcessCountersMessageAsync(message).ConfigureAwait(false);
             }
+            public async Task<Guid> EnsureCounter(ICounterItem counter)
+            {
+                if (counter == null) return Guid.Empty;
+                var guid = Guid.Empty;
+                foreach (var item in _parent._messageHandlers)
+                {
+                    guid = await item.EnsureCounter(counter).ConfigureAwait(false);
+                    break;
+                }
+                return guid;
+            }
+            public async Task InsertCounterValue(Guid counterId, CounterItemValue<double> value)
+            {
+                if (value == null) return;
+                foreach (var item in _parent._messageHandlers)
+                    await item.InsertCounterValue(counterId, value).ConfigureAwait(false);
+            }
             #endregion
         }
 		#endregion
