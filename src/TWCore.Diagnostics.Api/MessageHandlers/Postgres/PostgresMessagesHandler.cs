@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -92,7 +94,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                         };
                         logs.Add(item);
                     }
-                    foreach(var batch in logs.Batch(500))
+                    foreach (var batch in logs.Batch(500))
                         await Dal.InsertLogAsync(batch, true).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -129,7 +131,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                         }
                     }
 
-                    foreach(var batch in metadatas.Batch(500))
+                    foreach (var batch in metadatas.Batch(500))
                         await Dal.InsertMetadataAsync(batch).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -301,11 +303,27 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                 {
                                     var bTxt = false;
                                     var strValue = string.Empty;
+
                                     if (traceItem.TraceObject is SerializedObject serObj)
                                     {
                                         var value = serObj.GetValue();
                                         if (value is string txtValue)
                                         {
+                                            if (txtValue.IsValidJson())
+                                            {
+                                                txtValue = JValue.Parse(txtValue).ToString(Formatting.Indented);
+                                            }
+                                            else if (txtValue.IsValidXml())
+                                            {
+                                                try
+                                                {
+                                                    txtValue = txtValue.PrettyXml();
+                                                }
+                                                catch
+                                                {
+                                                    //
+                                                }
+                                            }
                                             strValue = txtValue;
                                             msTxt.Write(Encoding.UTF8.GetBytes(txtValue).ToGzip().AsReadOnlySpan());
                                             bTxt = true;
@@ -313,6 +331,21 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                                     }
                                     else if (traceItem.TraceObject is string strObj)
                                     {
+                                        if (strObj.IsValidJson())
+                                        {
+                                            strObj = JValue.Parse(strObj).ToString(Formatting.Indented);
+                                        }
+                                        else if (strObj.IsValidXml())
+                                        {
+                                            try
+                                            {
+                                                strObj = strObj.PrettyXml();
+                                            }
+                                            catch
+                                            {
+                                                //
+                                            }
+                                        }
                                         strValue = strObj;
                                         msTxt.Write(Encoding.UTF8.GetBytes(strObj).ToGzip().AsReadOnlySpan());
                                         bTxt = true;
@@ -357,7 +390,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             await Dal.InsertTraceAsync(item);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Core.Log.Write(ex);
                     }
@@ -447,7 +480,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     foreach (var batch in lstCounters.Batch(500))
                         await Dal.InsertCounterValueAsync(batch, true).ConfigureAwait(false);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Core.Log.Write(ex);
                 }
@@ -495,11 +528,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             });
                         }
 
-                        foreach(var batch in insertBuffer.Batch(100)) 
+                        foreach (var batch in insertBuffer.Batch(100))
                             await Dal.InsertStatusValuesAsync(batch);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Core.Log.Write(ex);
                 }
