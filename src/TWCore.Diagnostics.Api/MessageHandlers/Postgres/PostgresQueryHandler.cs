@@ -379,28 +379,28 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             string value = null;
             if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
             {
-                searchTerm = searchTerm.Substring(5);
+                searchTerm = searchTerm.Substring(5).Trim();
                 useExact = false;
             }
             else if (searchTerm.StartsWith("~", StringComparison.OrdinalIgnoreCase))
             {
-                searchTerm = searchTerm.Substring(1);
+                searchTerm = searchTerm.Substring(1).Trim();
                 useExact = false;
             }
             else if (searchTerm.Contains("="))
             {
                 useGeneralSearch = false;
                 var values = searchTerm.Split('=');
-                key = values[0];
-                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                key = values[0].Trim();
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1].Trim() : null;
                 useExact = true;
             }
             else if (searchTerm.Contains("~"))
             {
                 useGeneralSearch = false;
                 var values = searchTerm.Split('~');
-                key = values[0];
-                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                key = values[0].Trim();
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1].Trim() : null;
                 useExact = false;
             }
 
@@ -445,28 +445,28 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             string value = null;
             if (searchTerm.StartsWith("LIKE:", StringComparison.OrdinalIgnoreCase))
             {
-                searchTerm = searchTerm.Substring(5);
+                searchTerm = searchTerm.Substring(5).Trim();
                 useExact = false;
             }
             else if (searchTerm.StartsWith("~", StringComparison.OrdinalIgnoreCase))
             {
-                searchTerm = searchTerm.Substring(1);
+                searchTerm = searchTerm.Substring(1).Trim();
                 useExact = false;
             }
             else if (searchTerm.Contains("="))
             {
                 useGeneralSearch = false;
                 var values = searchTerm.Split('=');
-                key = values[0];
-                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                key = values[0].Trim();
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1].Trim() : null;
                 useExact = true;
             }
             else if (searchTerm.Contains("~"))
             {
                 useGeneralSearch = false;
                 var values = searchTerm.Split('~');
-                key = values[0];
-                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1] : null;
+                key = values[0].Trim();
+                value = values.Length > 2 ? string.Join('=', values.Skip(1)) : values.Length > 1 ? values[1].Trim() : null;
                 useExact = false;
             }
 
