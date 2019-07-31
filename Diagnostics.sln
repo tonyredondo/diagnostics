@@ -9,8 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWCore.Diagnostics.Api.Mode
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{E2193D26-BD8C-4849-83B6-F62CFB95953E}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		common.props = common.props
 		commonWithDoc.props = commonWithDoc.props
+		Dockerfile = Dockerfile
 		README.md = README.md
 		version.props = version.props
 	EndProjectSection

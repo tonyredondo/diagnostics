@@ -58,11 +58,12 @@
       <Item Key="Diagnostics.ForceJsonOnApp" Value="Agsw.Travel.Api;" />
       
       <Item Key="Core.Services.Queue.ConfigFile" Value="./settings/queues.redis.xml" />
+      <Item Key="Diagnostics.Messaging.Enabled" Value="false" />
     </Items>
     <Overwrite EnvironmentName="Docker" MachineName="">
+      <Item Key="Diagnostics.Messaging.Enabled" Value="{Env:DIAGNOSTICS_MESSAGING_ENABLED}" />
       <Item Key="Core.Status.Transport.Http.Port" Value="{Env:DIAGNOSTICS_STATUS_HTTP_PORT}" />
-      <Item Key="RavenDb.Database" Value="{Env:DIAGNOSTICS_RAVENDB_DATABASE}" />
-      <Item Key="RavenDb.Urls" Value="{Env:DIAGNOSTICS_RAVENDB_URLS}" />
+      <Item Key="Postgres.ConnectionString" Value="{Env:DIAGNOSTICS_POSTGRES_CONNECTIONSTRING}" />
       <Item Key="Bot.DefaultEnvironment" Value="{Env:DIAGNOSTICS_BOT_DEFAULTENVIRONMENT}" />
       <Item Key="Bot.SlackToken" Value="{Env:DIAGNOSTICS_BOT_SLACKTOKEN}" />
       <Item Key="Core.Services.Queue.ConfigFile" Value="{Env:DIAGNOSTICS_QUEUE_CONFIG}" />

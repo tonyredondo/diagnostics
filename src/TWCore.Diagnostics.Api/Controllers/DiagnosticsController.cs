@@ -168,7 +168,124 @@ namespace TWCore.Diagnostics.Api.Controllers
             }
         }
 
+        [HttpPost("ingest")]
+        public bool PostIngest([FromBody] IngestPayload[] payload)
+        {
+            if (payload == null || payload.Length == 0) return false;
 
+            List<LogItem> lstLogItems = null;
+            List<GroupMetadata> lstGroupMetadata = null;
+            List<MessagingTraceItem> lstTraceItem = null;
+
+            foreach (var item in payload)
+            {
+                if (string.IsNullOrWhiteSpace(item.EnvironmentName)) continue;
+                if (string.IsNullOrWhiteSpace(item.GroupName)) continue;
+
+                var instanceId = item.ApplicationName?.GetHashSHA1Guid() ?? Guid.Empty;
+                var timestamp = item.Timestamp ?? Core.Now;
+
+                if (!string.IsNullOrEmpty(item.Message))
+                {
+                    if (lstLogItems == null)
+                        lstLogItems = new List<LogItem>();
+
+                    lstLogItems.Add(new LogItem
+                    {
+                        MachineName = item.MachineName,
+                        ApplicationName = item.ApplicationName,
+                        ProcessName = item.ProcessName,
+                        AssemblyName = item.AssemblyName,
+                        TypeName = item.TypeName,
+                        Level = item.Level,
+                        Message = item.Message,
+                        Timestamp = timestamp,
+                        GroupName = item.GroupName,
+                        Exception = item.Exception,
+                        Code = item.Code,
+                        EnvironmentName = item.EnvironmentName,
+                        Id = Guid.NewGuid(),
+                        InstanceId = instanceId
+                    });
+                }
+                if (item.Metadata != null && item.Metadata.Length > 0)
+                {
+                    if (lstGroupMetadata == null)
+                        lstGroupMetadata = new List<GroupMetadata>();
+
+                    lstGroupMetadata.Add(new GroupMetadata
+                    {
+                        InstanceId = instanceId,
+                        GroupName = item.GroupName,
+                        Timestamp = timestamp,
+                        Items = item.Metadata
+                    });
+                }
+                if (!string.IsNullOrEmpty(item.TraceName) || !string.IsNullOrEmpty(item.TraceData))
+                {
+                    if (lstTraceItem == null)
+                        lstTraceItem = new List<MessagingTraceItem>();
+
+                    lstTraceItem.Add(new MessagingTraceItem
+                    {
+                        MachineName = item.MachineName,
+                        ApplicationName = item.ApplicationName,
+                        Tags = item.Tags.Select(tag => $"{tag.Key}: {tag.Value}").ToArray(),
+                        GroupName = item.GroupName,
+                        TraceName = item.TraceName,
+                        TraceObject = item.TraceData,
+                        Timestamp = timestamp,
+                        EnvironmentName = item.EnvironmentName,
+                        Id = Guid.NewGuid(),
+                        InstanceId = instanceId
+                    });
+                }
+
+            }
+
+            _ = ProcessLog(lstLogItems);
+            _ = ProcessMetadata(lstGroupMetadata);
+            _ = ProcessTrace(lstTraceItem);
+
+            return lstLogItems != null || lstGroupMetadata != null || lstTraceItem != null;
+
+            async Task ProcessLog(List<LogItem> logItems)
+            {
+                if (logItems == null) return;
+                try
+                {
+                    await DbHandlers.Instance.Messages.ProcessLogItemsMessageAsync(logItems).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
+            }
+            async Task ProcessMetadata(List<GroupMetadata> metaItems)
+            {
+                if (metaItems == null) return;
+                try
+                {
+                    await DbHandlers.Instance.Messages.ProcessGroupMetadataMessageAsync(metaItems).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
+            }
+            async Task ProcessTrace(List<MessagingTraceItem> traceItems)
+            {
+                if (traceItems == null) return;
+                try
+                {
+                    await DbHandlers.Instance.Messages.ProcessTraceItemsMessageAsync(traceItems).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Core.Log.Write(ex);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -397,5 +514,95 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// </summary>
         [XmlAttribute, DataMember]
         public double Value { get; set; }
+    }
+
+
+    //*****************************************************************************
+    public class IngestPayload
+    {
+        /// <summary>
+        /// Environment name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string EnvironmentName { get; set; }
+        /// <summary>
+        /// Machine name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string MachineName { get; set; }
+        /// <summary>
+        /// Application name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string ApplicationName { get; set; }
+        /// <summary>
+        /// Process name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string ProcessName { get; set; }
+        /// <summary>
+        /// Assembly name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string AssemblyName { get; set; }
+        /// <summary>
+        /// Type name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string TypeName { get; set; }
+        /// <summary>
+        /// Log level
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public LogLevel Level { get; set; }
+        /// <summary>
+        /// Code
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Code { get; set; }
+        /// <summary>
+        /// Message
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string Message { get; set; }
+        /// <summary>
+        /// Item timestamp
+        /// </summary>
+        [XmlElement, DataMember]
+        public DateTime? Timestamp { get; set; }
+        /// <summary>
+        /// Message group name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string GroupName { get; set; }
+        /// <summary>
+        /// If is an error log item, the exception object instance
+        /// </summary>
+        [XmlElement, DataMember]
+        public SerializableException Exception { get; set; }
+
+        /// <summary>
+        /// Gets the Metadata Items
+        /// </summary>
+        /// <value>The metadata items</value>
+        [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
+        public KeyValue[] Metadata { get; set; }
+
+        /// <summary>
+        /// Trace Name
+        /// </summary>
+        [XmlAttribute, DataMember]
+        public string TraceName { get; set; }
+        /// <summary>
+        /// Trace Data
+        /// </summary>
+        [XmlElement, DataMember]
+        public string TraceData { get; set; }
+        /// <summary>
+        /// Gets the Tags Items
+        /// </summary>
+        /// <value>The metadata items</value>
+        [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
+        public KeyValue[] Tags { get; set; }
     }
 }

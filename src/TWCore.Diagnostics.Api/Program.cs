@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using System;
+using System.Collections;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Services;
 
@@ -26,12 +28,22 @@ namespace TWCore.Diagnostics.Api
         public static void Main(string[] args)
         {
             Core.InitDefaults(false);
-            Core.RunService(() => new ServiceList(
-                WebService.Create<Startup>(),
-                new DiagnosticRawMessagingServiceAsync(),
-                new DiagnosticBotService()
-                ), args);
-            RavenHelper.CloseDocumentStore();
+
+            //var vars = Environment.GetEnvironmentVariables();
+            //foreach(DictionaryEntry item in vars)
+            //    Core.Log.InfoDetail($"{item.Key} = {item.Value}");
+
+            var enableMessaging = true;
+            if (Core.Settings.TryGet("Diagnostics.Messaging.Enabled", out var messagingSettings))
+                enableMessaging = messagingSettings.Value.ParseTo(false);
+            else
+                enableMessaging = false;
+
+            Core.RunOnInit(() => Core.Log.InfoBasic("Diagnostics.Messaging.Enabled is {0}", enableMessaging));
+            if (enableMessaging)
+                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticRawMessagingServiceAsync(), new DiagnosticBotService()), args);
+            else
+                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticBotService()), args);
         }
     }
 }
