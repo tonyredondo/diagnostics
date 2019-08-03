@@ -230,7 +230,7 @@ namespace TWCore.Diagnostics.Api.Controllers
                     {
                         MachineName = item.MachineName,
                         ApplicationName = item.ApplicationName,
-                        Tags = item.Tags.Select(tag => $"{tag.Key}: {tag.Value}").ToArray(),
+                        Tags = item.TraceTags?.Select(tag => $"{tag.Key}: {tag.Value}").ToArray(),
                         GroupName = item.GroupName,
                         TraceName = item.TraceName,
                         TraceObject = item.TraceData,
@@ -603,6 +603,6 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// </summary>
         /// <value>The metadata items</value>
         [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
-        public KeyValue[] Tags { get; set; }
+        public KeyValue[] TraceTags { get; set; }
     }
 }

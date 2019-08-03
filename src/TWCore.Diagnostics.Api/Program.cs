@@ -29,10 +29,6 @@ namespace TWCore.Diagnostics.Api
         {
             Core.InitDefaults(false);
 
-            //var vars = Environment.GetEnvironmentVariables();
-            //foreach(DictionaryEntry item in vars)
-            //    Core.Log.InfoDetail($"{item.Key} = {item.Value}");
-
             var enableMessaging = true;
             if (Core.Settings.TryGet("Diagnostics.Messaging.Enabled", out var messagingSettings))
                 enableMessaging = messagingSettings.Value.ParseTo(false);
