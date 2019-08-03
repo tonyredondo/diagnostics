@@ -216,6 +216,7 @@ namespace TWCore.Diagnostics.Api.Controllers
                     lstGroupMetadata.Add(new GroupMetadata
                     {
                         InstanceId = instanceId,
+                        EnvironmentName = item.EnvironmentName,
                         GroupName = item.GroupName,
                         Timestamp = timestamp,
                         Items = item.Metadata
