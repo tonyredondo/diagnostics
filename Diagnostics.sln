@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{E2193D26-B
 		.dockerignore = .dockerignore
 		common.props = common.props
 		commonWithDoc.props = commonWithDoc.props
+		dockerBuildAndPublish.cmd = dockerBuildAndPublish.cmd
 		Dockerfile = Dockerfile
 		README.md = README.md
 		version.props = version.props
