@@ -9,7 +9,7 @@
       <Item Key="Core.Log.Storage.Html.LogLevel" Value="255" />
       <Item Key="Core.Log.Storage.Console.Enabled" Value="true" />
       <Item Key="Core.Log.Storage.Console.LogLevel" Value="1023" />
-      <Item Key="Core.Log.Storage.Messages.Enabled" Value="true" />
+      <Item Key="Core.Log.Storage.Messages.Enabled" Value="false" />
       <Item Key="Core.Log.Storage.Messages.LogLevel" Value="131" />
       
       <!--Trace Settings-->
@@ -17,7 +17,7 @@
       <Item Key="Core.Trace.Serializer" Value="TWCore.Serialization.NSerializer.NBinarySerializer, TWCore.Serialization.NSerializer" />
       <Item Key="Core.Trace.Compressor" Value="TWCore.Compression.DeflateCompressor, TWCore" />
       <Item Key="Core.Trace.Storage.File.Enabled" Value="true" />
-      <Item Key="Core.Trace.Storage.Messages.Enabled" Value="true" />
+      <Item Key="Core.Trace.Storage.Messages.Enabled" Value="false" />
 
       <!--Status Settings-->
       <Item Key="Core.Status.Transport.Http.Enabled" Value="true" />
