@@ -74,6 +74,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 var valLevel = value.Get<LogLevel>("level");
                 var valCount = (int)value.Get<long>("count");
 
+                if (valApplication == null) continue;
                 if (!dctApplicationLevels.TryGetValue(valApplication, out var application))
                 {
                     application = new ApplicationsLevels

@@ -181,6 +181,9 @@ namespace TWCore.Diagnostics.Api.Controllers
             {
                 if (string.IsNullOrWhiteSpace(item.EnvironmentName)) continue;
                 if (string.IsNullOrWhiteSpace(item.GroupName)) continue;
+                bool addLog = true;
+                bool addMetadata = true;
+                bool addTrace = true;
 
                 var instanceId = item.ApplicationName?.GetHashSHA1Guid() ?? Guid.Empty;
                 var timestamp = item.Timestamp ?? Core.Now;
@@ -189,57 +192,77 @@ namespace TWCore.Diagnostics.Api.Controllers
                 {
                     if (lstLogItems == null)
                         lstLogItems = new List<LogItem>();
-
-                    lstLogItems.Add(new LogItem
+                    if (item.TraceData != null && item.Exception == null)
                     {
-                        MachineName = item.MachineName,
-                        ApplicationName = item.ApplicationName,
-                        ProcessName = item.ProcessName,
-                        AssemblyName = item.AssemblyName,
-                        TypeName = item.TypeName,
-                        Level = item.Level,
-                        Message = item.Message,
-                        Timestamp = timestamp,
-                        GroupName = item.GroupName,
-                        Exception = item.Exception,
-                        Code = item.Code,
-                        EnvironmentName = item.EnvironmentName,
-                        Id = Guid.NewGuid(),
-                        InstanceId = instanceId
-                    });
+                        if (item.TraceName == null)
+                            item.TraceName = item.Message;
+                        if (item.TraceName == item.Message)
+                        {
+                            item.TraceTags = item.TraceTags ?? new List<KeyValue>();
+                            item.TraceTags.Add(new KeyValue("Level", item.Level.ToString()));
+                            addLog = false;
+                        }
+                    }
+
+                    if (addLog)
+                    {
+                        lstLogItems.Add(new LogItem
+                        {
+                            MachineName = item.MachineName,
+                            ApplicationName = item.ApplicationName,
+                            ProcessName = item.ProcessName,
+                            AssemblyName = item.AssemblyName,
+                            TypeName = item.TypeName,
+                            Level = item.Level,
+                            Message = item.Message,
+                            Timestamp = timestamp,
+                            GroupName = item.GroupName,
+                            Exception = item.Exception,
+                            Code = item.Code,
+                            EnvironmentName = item.EnvironmentName,
+                            Id = Guid.NewGuid(),
+                            InstanceId = instanceId
+                        });
+                    }
                 }
-                if (item.Metadata != null && item.Metadata.Length > 0)
+                if (item.Metadata != null && item.Metadata.Count > 0)
                 {
                     if (lstGroupMetadata == null)
                         lstGroupMetadata = new List<GroupMetadata>();
 
-                    lstGroupMetadata.Add(new GroupMetadata
+                    if (addMetadata)
                     {
-                        InstanceId = instanceId,
-                        EnvironmentName = item.EnvironmentName,
-                        GroupName = item.GroupName,
-                        Timestamp = timestamp,
-                        Items = item.Metadata
-                    });
+                        lstGroupMetadata.Add(new GroupMetadata
+                        {
+                            InstanceId = instanceId,
+                            EnvironmentName = item.EnvironmentName,
+                            GroupName = item.GroupName,
+                            Timestamp = timestamp,
+                            Items = item.Metadata.ToArray()
+                        });
+                    }
                 }
                 if (!string.IsNullOrEmpty(item.TraceName) || !string.IsNullOrEmpty(item.TraceData))
                 {
                     if (lstTraceItem == null)
                         lstTraceItem = new List<MessagingTraceItem>();
 
-                    lstTraceItem.Add(new MessagingTraceItem
+                    if (addTrace)
                     {
-                        MachineName = item.MachineName,
-                        ApplicationName = item.ApplicationName,
-                        Tags = item.TraceTags?.Select(tag => $"{tag.Key}: {tag.Value}").ToArray(),
-                        GroupName = item.GroupName,
-                        TraceName = item.TraceName,
-                        TraceObject = item.TraceData,
-                        Timestamp = timestamp,
-                        EnvironmentName = item.EnvironmentName,
-                        Id = Guid.NewGuid(),
-                        InstanceId = instanceId
-                    });
+                        lstTraceItem.Add(new MessagingTraceItem
+                        {
+                            MachineName = item.MachineName,
+                            ApplicationName = item.ApplicationName,
+                            Tags = item.TraceTags?.Select(tag => $"{tag.Key}: {tag.Value}").ToArray(),
+                            GroupName = item.GroupName,
+                            TraceName = item.TraceName,
+                            TraceObject = item.TraceData,
+                            Timestamp = timestamp,
+                            EnvironmentName = item.EnvironmentName,
+                            Id = Guid.NewGuid(),
+                            InstanceId = instanceId
+                        });
+                    }
                 }
 
             }
@@ -587,7 +610,7 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// </summary>
         /// <value>The metadata items</value>
         [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
-        public KeyValue[] Metadata { get; set; }
+        public List<KeyValue> Metadata { get; set; }
 
         /// <summary>
         /// Trace Name
@@ -604,6 +627,6 @@ namespace TWCore.Diagnostics.Api.Controllers
         /// </summary>
         /// <value>The metadata items</value>
         [XmlArray("Items"), XmlArrayItem("Item"), DataMember]
-        public KeyValue[] TraceTags { get; set; }
+        public List<KeyValue> TraceTags { get; set; }
     }
 }
