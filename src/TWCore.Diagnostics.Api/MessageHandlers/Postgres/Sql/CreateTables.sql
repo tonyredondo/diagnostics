@@ -1,4 +1,3 @@
-create database diagnostics;
 
 create table logs
 (
