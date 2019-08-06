@@ -72,6 +72,7 @@
     <Folder Include="traces\" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="MessageHandlers\Postgres\Sql\Creation.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\DeleteStatus.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetCounter.sql" />
@@ -95,6 +96,7 @@
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroup.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchGroupExact.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\SearchMetadata.sql" />
+    <EmbeddedResource Include="MessageHandlers\Postgres\Sql\Creation.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetAllEnvironments.sql" />
     <None Remove="MessageHandlers\Postgres\Sql\GetLogLevelsByEnvironment.sql" />
     <EmbeddedResource Include="MessageHandlers\Postgres\Sql\GetCounterById.sql" />
