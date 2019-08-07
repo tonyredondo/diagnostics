@@ -16,6 +16,8 @@ limitations under the License.
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
+using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Services;
 
@@ -36,10 +38,25 @@ namespace TWCore.Diagnostics.Api
                 enableMessaging = false;
 
             Core.RunOnInit(() => Core.Log.InfoBasic("Diagnostics.Messaging.Enabled is {0}", enableMessaging));
+            CreateDBOnStartUp().WaitAsync();
+
             if (enableMessaging)
                 Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticRawMessagingServiceAsync(), new DiagnosticBotService()), args);
             else
                 Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticBotService()), args);
+        }
+
+        private static async Task CreateDBOnStartUp()
+        {
+            Core.Log.InfoBasic("Creating database...");
+            var dal = new PostgresDal();
+            try
+            {
+                await dal.CreateDatabaseAsync().ConfigureAwait(false);
+            }
+            catch { }
+            await dal.EnsureTablesAndIndexesAsync().ConfigureAwait(false);
+            Core.Log.InfoBasic("Done.");
         }
     }
 }

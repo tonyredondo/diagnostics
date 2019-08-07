@@ -1,5 +1,5 @@
 
-create table logs
+create table if not exists logs
 (
     log_id      uuid not null
         constraint logs_pk
@@ -18,25 +18,25 @@ create table logs
     date        date
 );
 
-create unique index logs_logid_uindex
+create unique index if not exists logs_logid_uindex
     on logs (log_id);
 
-create index logs_env
+create index if not exists logs_env
     on logs (environment);
 
-create index logs_env_date
+create index if not exists logs_env_date
     on logs (environment asc, date desc);
 
-create index logs_byapp
+create index if not exists logs_byapp
     on logs (environment asc, application asc, date desc, level asc);
 
-create index logs_search
+create index if not exists logs_search
     on logs (environment, date, "group");
 
-create index logs_bygroup
+create index if not exists logs_bygroup
     on logs (environment, "group");
 
-create table traces
+create table if not exists traces
 (
     trace_id    uuid not null
         constraint traces_pk
@@ -51,13 +51,13 @@ create table traces
     formats     text[]
 );
 
-create index traces_search
+create index if not exists traces_search
     on traces (environment asc, timestamp desc, application asc, "group" asc);
 
-create index traces_bygroup
+create index if not exists traces_bygroup
     on traces (environment, "group");
 
-create table counters
+create table if not exists counters
 (
     counter_id  uuid not null
         constraint counters_pk
@@ -73,16 +73,16 @@ create table counters
     typeofvalue varchar(512)
 );
 
-create index counters_search
+create index if not exists counters_search
     on counters (environment, application, category);
 
-create index counters_env
+create index if not exists counters_env
     on counters (environment);
 
-create index counters_new
+create index if not exists counters_new
     on counters (environment, application, category, name);
 
-create table counters_values
+create table if not exists counters_values
 (
     counter_id uuid      not null
         constraint counters_values_counters_counterid_fk
@@ -94,7 +94,7 @@ create table counters_values
         primary key (counter_id, timestamp)
 );
 
-create table metadata
+create table if not exists metadata
 (
     "group"     varchar(512) not null,
     environment varchar(128),
@@ -104,19 +104,19 @@ create table metadata
     date        date
 );
 
-create index metadata_bygroup
+create index if not exists metadata_bygroup
     on metadata (environment, "group");
 
-create index metadata_byvalue
+create index if not exists metadata_byvalue
     on metadata (environment, timestamp, value);
 
-create index metadata_search2
+create index if not exists metadata_search2
     on metadata (environment, date, key, value);
 
-create index metadata_search
+create index if not exists metadata_search
     on metadata (environment, date, value);
 
-create table status
+create table if not exists status
 (
     status_id           uuid not null
         constraint status_pk
@@ -131,10 +131,10 @@ create table status
     date                date
 );
 
-create unique index status_statusid_uindex
+create unique index if not exists status_statusid_uindex
     on status (status_id);
 
-create table status_values
+create table if not exists status_values
 (
     status_id uuid          not null
         constraint status_values_status_statusid_fk

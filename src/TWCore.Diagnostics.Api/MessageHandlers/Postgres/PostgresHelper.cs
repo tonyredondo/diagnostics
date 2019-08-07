@@ -28,22 +28,10 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             using (var connection = new NpgsqlConnection(connectionString.ToString()))
             {
                 await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-                //connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     prepareCommand(command);
-                    try
-                    {
-                        response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Core.Log.Write(ex);
-                        connection.Close();
-                        await Task.Delay(5000).ConfigureAwait(false);
-                        connection.Open();
-                        response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-                    }
+                    response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
             }
             return response;

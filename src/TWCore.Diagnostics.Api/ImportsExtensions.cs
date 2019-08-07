@@ -30,7 +30,12 @@ namespace TWCore.Diagnostics.Api
         {
             Core.Log.InfoBasic("Creating database...");
             var dal = new PostgresDal();
-            await dal.CreateDatabaseAsync().ConfigureAwait(false);
+            try
+            {
+                await dal.CreateDatabaseAsync().ConfigureAwait(false);
+            }
+            catch { }
+            await dal.EnsureTablesAndIndexesAsync().ConfigureAwait(false);
             Core.Log.InfoBasic("Done.");
         }
     }

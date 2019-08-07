@@ -588,8 +588,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.CreateDB.sql");
             await PostgresHelper.ExecuteNonQueryWithoutDBAsync(query).ConfigureAwait(false);
-            var query2 = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.CreateTables.sql");
-            await PostgresHelper.ExecuteNonQueryAsync(query2).ConfigureAwait(false);
+        }
+        public async Task EnsureTablesAndIndexesAsync()
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.CreateTables.sql");
+            await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
         }
         #endregion
     }
