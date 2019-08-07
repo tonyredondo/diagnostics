@@ -68,6 +68,7 @@
       <Item Key="Bot.DefaultEnvironment" Value="{Env:DIAGNOSTICS_BOT_DEFAULTENVIRONMENT}" />
       <Item Key="Bot.SlackToken" Value="{Env:DIAGNOSTICS_BOT_SLACKTOKEN}" />
       <Item Key="Core.Services.Queue.ConfigFile" Value="{Env:DIAGNOSTICS_QUEUE_CONFIG}" />
+      <Item Key="RavenDb.Urls" Value="{Env:DIAGNOSTICS_RAVENDB_URLS}" />
     </Overwrite>
   </AppSettings>
 
