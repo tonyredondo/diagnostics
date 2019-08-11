@@ -913,12 +913,14 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             results.Counter = counter;
 
             var counterValues = await counterValuesTask.ConfigureAwait(false);
+            var allValues = new List<float>();
             foreach (var row in counterValues)
             {
                 var timestamp = row.Get<DateTime>("timestamp");
                 var value = row.Get<float>("value");
 
                 var placeHolder = results.Data.Find(item => item.From <= timestamp && timestamp < item.To);
+                if (placeHolder is null) continue;
 
                 if (!(placeHolder.Value is List<float> lFloat))
                 {
@@ -927,6 +929,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 }
 
                 lFloat.Add(value);
+                allValues.Add(value);
             }
 
             foreach (var item in results.Data)
@@ -948,6 +951,19 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                             break;
                     }
                 }
+            }
+
+            switch (counter.Type)
+            {
+                case Counters.CounterType.Average:
+                    results.Value = allValues.Count > 0 ? allValues.Average() : 0;
+                    break;
+                case Counters.CounterType.Cumulative:
+                    results.Value = allValues.Sum();
+                    break;
+                case Counters.CounterType.Current:
+                    results.Value = allValues.LastOrDefault();
+                    break;
             }
 
             return results;

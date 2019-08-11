@@ -27,7 +27,7 @@ namespace TWCore.Diagnostics.Api.Models.Counters
         public DateTime From { get; set; }
         [XmlAttribute, DataMember]
         public DateTime To { get; set; }
-        [XmlAttribute, DataMember]
+        [XmlElement, DataMember]
         public object Value { get; set; }
     }
 }

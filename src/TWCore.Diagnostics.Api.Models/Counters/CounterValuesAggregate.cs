@@ -32,8 +32,9 @@ namespace TWCore.Diagnostics.Api.Models.Counters
         public DateTime ToDate { get; set; }
         [XmlAttribute, DataMember]
         public CounterValuesDataUnit DataUnit { get; set; }
+        [XmlElement, DataMember]
+        public object Value { get; set; }
         [XmlAttribute, DataMember]
         public List<CounterValuesAggregateItem> Data { get; set; } = new List<CounterValuesAggregateItem>();
-
     }
 }
