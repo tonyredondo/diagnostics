@@ -935,7 +935,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             foreach (var item in results.Data)
             {
                 if (item.Value == null)
-                    item.Value = 0;
+                    item.Value = 0F;
                 else if (item.Value is List<float> lFloat)
                 {
                     switch (counter.Type)
@@ -957,12 +957,15 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             {
                 case Counters.CounterType.Average:
                     results.Value = allValues.Count > 0 ? allValues.Average() : 0;
+                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
                     break;
                 case Counters.CounterType.Cumulative:
                     results.Value = allValues.Sum();
+                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
                     break;
                 case Counters.CounterType.Current:
                     results.Value = allValues.LastOrDefault();
+                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
                     break;
             }
 

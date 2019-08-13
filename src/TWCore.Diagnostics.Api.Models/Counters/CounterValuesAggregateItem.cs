@@ -27,6 +27,9 @@ namespace TWCore.Diagnostics.Api.Models.Counters
         public DateTime From { get; set; }
         [XmlAttribute, DataMember]
         public DateTime To { get; set; }
+        [XmlAttribute, DataMember]
+        public long Timestamp 
+            => (long)(From.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds + 0.5);
         [XmlElement, DataMember]
         public object Value { get; set; }
     }
