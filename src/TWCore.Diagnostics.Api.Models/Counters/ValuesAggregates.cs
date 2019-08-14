@@ -14,27 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace TWCore.Diagnostics.Api.Models.Counters
 {
     [DataContract]
-    public class CounterValuesAggregate
+    public class ValuesAggregates
     {
-        [XmlAttribute, DataMember]
-        public NodeCountersQueryItem Counter { get; set; }
-        [XmlAttribute, DataMember]
-        public DateTime FromDate { get; set; }
-        [XmlAttribute, DataMember]
-        public DateTime ToDate { get; set; }
-        [XmlAttribute, DataMember]
-        public CounterValuesDataUnit DataUnit { get; set; }
         [XmlElement, DataMember]
-        public ValuesAggregates Aggregates { get; set; }
-        [XmlAttribute, DataMember]
-        public List<CounterValuesAggregateItem> Data { get; set; } = new List<CounterValuesAggregateItem>();
+        public object CurrentDay { get; set; }
+        [XmlElement, DataMember]
+        public object AverageInCurrentDay { get; set; }
+        [XmlElement, DataMember]
+        public object CurrentWeek { get; set; }
+        [XmlElement, DataMember]
+        public object AverageInCurrentWeek { get; set; }
+        [XmlElement, DataMember]
+        public object AggregatedValue { get; set; }
+        [XmlElement, DataMember]
+        public object AverageValue { get; set; }
     }
 }

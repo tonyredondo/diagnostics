@@ -832,22 +832,27 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         {
             var counterTask = GetCounterAsync(counterId);
             var counterValuesTask = Dal.GetCountersValues(counterId, fromDate, toDate);
+            await Task.WhenAll(counterTask, counterValuesTask).ConfigureAwait(false);
+            var counter = counterTask.Result;
+            var counterValues = counterValuesTask.Result;
+
 
             var results = new CounterValuesAggregate
             {
                 DataUnit = dataUnit,
                 FromDate = fromDate,
-                ToDate = toDate
+                ToDate = toDate,
+                Aggregates = new ValuesAggregates()
             };
 
             #region Create date placeholders
+            var nToDate = toDate;
             if (dataUnit == CounterValuesDataUnit.All)
             {
                 results.Data.Add(new CounterValuesAggregateItem { From = fromDate, To = toDate });
             }
             else
             {
-                var nToDate = toDate;
                 var now = Core.Now;
                 if (now < nToDate)
                 {
@@ -909,10 +914,11 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
             #endregion
 
-            var counter = await counterTask.ConfigureAwait(false);
             results.Counter = counter;
 
-            var counterValues = await counterValuesTask.ConfigureAwait(false);
+            var fromDay = toDate.Date;
+            var fromWeek = toDate.Date.AddDays(-7);
+
             var allValues = new List<float>();
             foreach (var row in counterValues)
             {
@@ -921,14 +927,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
 
                 var placeHolder = results.Data.Find(item => item.From <= timestamp && timestamp < item.To);
                 if (placeHolder is null) continue;
-
                 if (!(placeHolder.Value is List<float> lFloat))
                 {
                     lFloat = new List<float>();
                     placeHolder.Value = lFloat;
                 }
-
                 lFloat.Add(value);
+
                 allValues.Add(value);
             }
 
@@ -941,7 +946,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     switch (counter.Type)
                     {
                         case Counters.CounterType.Average:
-                            item.Value = lFloat.Count > 0 ? lFloat.Average() : 0;
+                            item.Value = lFloat.Count > 0 ? Math.Round(lFloat.Average(), 2) : 0;
                             break;
                         case Counters.CounterType.Cumulative:
                             item.Value = lFloat.Sum();
@@ -953,19 +958,40 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                 }
             }
 
+            var currentLastDayData = results.Data.Where(item => item.From >= fromDay).Select(i => (float)i.Value).ToList();
+            var currentLastWeekData = results.Data.Where(item => item.From >= fromWeek).Select(i => (float)i.Value).ToList();
+
             switch (counter.Type)
             {
                 case Counters.CounterType.Average:
-                    results.Value = allValues.Count > 0 ? allValues.Average() : 0;
-                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
+                    results.Aggregates.CurrentDay = currentLastDayData.Count > 0 ? Math.Round(currentLastDayData.Average(), 2) : 0;
+                    results.Aggregates.AverageInCurrentDay = currentLastDayData.Count > 0 ? Math.Round(currentLastDayData.Average(), 2) : 0;
+
+                    results.Aggregates.CurrentWeek = currentLastWeekData.Count > 0 ? Math.Round(currentLastWeekData.Average(), 2) : 0;
+                    results.Aggregates.AverageInCurrentWeek = currentLastWeekData.Count > 0 ? Math.Round(currentLastWeekData.Average(), 2) : 0;
+
+                    results.Aggregates.AggregatedValue = results.Data.Count > 0 ? Math.Round(results.Data.Select(i => (float)i.Value).Average(), 2) : 0;
+                    results.Aggregates.AverageValue = results.Data.Count > 0 ? Math.Round(results.Data.Select(i => (float)i.Value).Average(), 2) : 0;
                     break;
                 case Counters.CounterType.Cumulative:
-                    results.Value = allValues.Sum();
-                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
+                    results.Aggregates.CurrentDay = Math.Round(currentLastDayData.Sum(), 2);
+                    results.Aggregates.AverageInCurrentDay = currentLastDayData.Count > 0 ? Math.Round(currentLastDayData.Average(), 2) : 0;
+
+                    results.Aggregates.CurrentWeek = Math.Round(currentLastWeekData.Sum(), 2);
+                    results.Aggregates.AverageInCurrentWeek = currentLastWeekData.Count > 0 ? Math.Round(currentLastWeekData.Average(), 2) : 0;
+
+                    results.Aggregates.AggregatedValue = Math.Round(allValues.Sum(), 2);
+                    results.Aggregates.AverageValue = results.Data.Count > 0 ? Math.Round(results.Data.Select(i => (float)i.Value).Average(), 2) : 0;
                     break;
                 case Counters.CounterType.Current:
-                    results.Value = allValues.LastOrDefault();
-                    results.AverageValue = results.Data.Count > 0 ? results.Data.Select(i => (float)i.Value).Average() : 0;
+                    results.Aggregates.CurrentDay = Math.Round(currentLastDayData.LastOrDefault(), 2);
+                    results.Aggregates.AverageInCurrentDay = currentLastDayData.Count > 0 ? Math.Round(currentLastDayData.Average(), 2) : 0;
+
+                    results.Aggregates.CurrentWeek = Math.Round(currentLastWeekData.LastOrDefault(), 2);
+                    results.Aggregates.AverageInCurrentWeek = currentLastWeekData.Count > 0 ? Math.Round(currentLastWeekData.Average(), 2) : 0;
+
+                    results.Aggregates.AggregatedValue = Math.Round(allValues.LastOrDefault(), 2);
+                    results.Aggregates.AverageValue = results.Data.Count > 0 ? Math.Round(results.Data.Select(i => (float)i.Value).Average(), 2) : 0;
                     break;
             }
 
