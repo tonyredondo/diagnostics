@@ -884,7 +884,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     if (previous != null)
                         previous.To = fDate;
 
-                    var current = new CounterValuesAggregateItem { From = fDate };
+                    var current = new CounterValuesAggregateItem { From = new DateTime(fDate.Ticks, DateTimeKind.Local) };
                     results.Data.Add(current);
 
                     switch (dataUnit)
@@ -910,7 +910,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     }
                 }
                 if (results.Data.Count > 0)
-                    results.Data[results.Data.Count - 1].To = nToDate;
+                    results.Data[results.Data.Count - 1].To = new DateTime(nToDate.Ticks, DateTimeKind.Local);
             }
             #endregion
 
@@ -940,13 +940,13 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             foreach (var item in results.Data)
             {
                 if (item.Value == null)
-                    item.Value = 0F;
+                    item.Value = (float)0;
                 else if (item.Value is List<float> lFloat)
                 {
                     switch (counter.Type)
                     {
                         case Counters.CounterType.Average:
-                            item.Value = lFloat.Count > 0 ? Math.Round(lFloat.Average(), 2) : 0;
+                            item.Value = (float)(lFloat.Count > 0 ? Math.Round(lFloat.Average(), 2) : 0);
                             break;
                         case Counters.CounterType.Cumulative:
                             item.Value = lFloat.Sum();
