@@ -946,7 +946,7 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
                     switch (counter.Type)
                     {
                         case Counters.CounterType.Average:
-                            item.Value = (float)(lFloat.Count > 0 ? Math.Round(lFloat.Average(), 2) : 0);
+                            item.Value = (float)(lFloat.Count > 0 ? Math.Round(lFloat.Average(), 4) : 0);
                             break;
                         case Counters.CounterType.Cumulative:
                             item.Value = lFloat.Sum();
