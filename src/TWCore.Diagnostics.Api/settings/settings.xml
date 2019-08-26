@@ -60,7 +60,7 @@
       
       <Item Key="Core.Services.Queue.ConfigFile" Value="./settings/queues.redis.xml" />
       <Item Key="Diagnostics.Messaging.Enabled" Value="false" />
-      <Item Key="Diagnostics.UseNewPathStructure" Value="false" />
+      <Item Key="Diagnostics.UseNewPathStructure" Value="true" />
     </Items>
     <Overwrite EnvironmentName="Docker" MachineName="">
       <Item Key="Diagnostics.Messaging.Enabled" Value="{Env:DIAGNOSTICS_MESSAGING_ENABLED}" />
