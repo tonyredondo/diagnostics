@@ -52,7 +52,7 @@ create table if not exists traces
 );
 
 create index if not exists traces_search
-    on traces (environment asc, timestamp desc, application asc, "group" asc);
+    on traces (environment asc, timestamp desc, application asc, "group" asc, name asc);
 
 create index if not exists traces_bygroup
     on traces (environment, "group");
