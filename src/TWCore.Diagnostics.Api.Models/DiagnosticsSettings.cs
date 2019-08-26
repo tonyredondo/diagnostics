@@ -69,5 +69,9 @@ namespace TWCore.Diagnostics
         /// Process timer in seconds
         /// </summary>
         public int ProcessTimerInSeconds { get; set; } = 5;
+        /// <summary>
+        /// Use the new path structure
+        /// </summary>
+        public bool UseNewPathStructure { get; set; } = false;
     }
 }

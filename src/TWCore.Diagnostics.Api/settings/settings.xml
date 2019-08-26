@@ -60,9 +60,11 @@
       
       <Item Key="Core.Services.Queue.ConfigFile" Value="./settings/queues.redis.xml" />
       <Item Key="Diagnostics.Messaging.Enabled" Value="false" />
+      <Item Key="Diagnostics.UseNewPathStructure" Value="false" />
     </Items>
     <Overwrite EnvironmentName="Docker" MachineName="">
       <Item Key="Diagnostics.Messaging.Enabled" Value="{Env:DIAGNOSTICS_MESSAGING_ENABLED}" />
+      <Item Key="Diagnostics.UseNewPathStructure" Value="{Env:DIAGNOSTICS_USE_NEW_PATH_STRUCTURE}" />
       <Item Key="Core.Status.Transport.Http.Port" Value="{Env:DIAGNOSTICS_STATUS_HTTP_PORT}" />
       <Item Key="Postgres.ConnectionString" Value="{Env:DIAGNOSTICS_POSTGRES_CONNECTIONSTRING}" />
       <Item Key="Bot.DefaultEnvironment" Value="{Env:DIAGNOSTICS_BOT_DEFAULTENVIRONMENT}" />
