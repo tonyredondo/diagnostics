@@ -1,40 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Title>TWCore.Diagnostics.Api</Title>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Anemonis.AspNetCore.RequestDecompression" Version="1.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Npgsql" Version="4.0.8" />
-    <PackageReference Include="Npgsql.Json.NET" Version="4.0.7" />
-    <PackageReference Include="RavenDB.Client" Version="4.2.2" />
+    <PackageReference Include="Npgsql" Version="4.0.9" />
+    <PackageReference Include="Npgsql.Json.NET" Version="4.0.9" />
+    <PackageReference Include="RavenDB.Client" Version="4.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
-    <PackageReference Include="TWCore" Version="2.1.181" />
-    <PackageReference Include="TWCore.Bot" Version="2.1.181" />
-    <PackageReference Include="TWCore.Bot.Slack" Version="2.1.181" />
-    <PackageReference Include="TWCore.Bot.Telegram" Version="2.1.181" />
-    <PackageReference Include="TWCore.Cache" Version="2.1.181" />
-    <PackageReference Include="TWCore.Cache.Client" Version="2.1.181" />
-    <PackageReference Include="TWCore.Collections" Version="2.1.181" />
-    <PackageReference Include="TWCore.Data.MySql" Version="2.1.181" />
-    <PackageReference Include="TWCore.Data.PostgreSQL" Version="2.1.181" />
-    <PackageReference Include="TWCore.Data.SqlServer" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging.Kafka" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging.NATS" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging.NSQ" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging.RabbitMQ" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging.Redis" Version="2.1.181" />
-    <PackageReference Include="TWCore.Net.HttpServer" Version="2.1.181" />
-    <PackageReference Include="TWCore.Object" Version="2.1.181" />
-    <PackageReference Include="TWCore.Serialization.NSerializer" Version="2.1.181" />
-    <PackageReference Include="TWCore.Services" Version="2.1.181" />
-    <PackageReference Include="TWCore.Triggers" Version="2.1.181" />
-    <PackageReference Include="TWCore.Web" Version="2.1.181" />
+    <PackageReference Include="TWCore" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.AspNetCore" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Bot" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Bot.Slack" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Bot.Telegram" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Cache" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Cache.Client" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Collections" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Data.MySql" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Data.PostgreSQL" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Data.SqlServer" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging.Kafka" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging.NATS" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging.NSQ" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging.RabbitMQ" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging.Redis" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Net.HttpServer" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Object" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Serialization.NSerializer" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Services" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Triggers" Version="3.0.0-beta4" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />

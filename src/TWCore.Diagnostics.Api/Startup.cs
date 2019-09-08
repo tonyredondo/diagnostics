@@ -19,11 +19,10 @@ using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TWCore.Diagnostics.Api.MessageHandlers;
-using TWCore.Web;
+using TWCore.AspNetCore;
 using Microsoft.OpenApi.Models;
 using Anemonis.AspNetCore.RequestDecompression;
 // ReSharper disable ClassNeverInstantiated.Global
@@ -45,7 +44,7 @@ namespace TWCore.Diagnostics.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.SetDefaultTWCoreValues();
+            services.SetDefaultTWCoreValues(true);
             services.AddRequestDecompression(o =>
             {
                 o.Providers.Add<DeflateDecompressionProvider>();
@@ -70,11 +69,6 @@ namespace TWCore.Diagnostics.Api
                     builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowAllOrigins"));
-            });
-            
             
             services.AddSwaggerGen(c =>
             {
@@ -95,16 +89,11 @@ namespace TWCore.Diagnostics.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseRequestDecompression();
             app.UseSession();
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
             app.UseResponseCompression();
-            
             
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -113,13 +102,11 @@ namespace TWCore.Diagnostics.Api
             });
             
             app.UseStaticFiles();
-            app.UseMvc(routes =>
+            app.UseCors();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute("HomeIndex", "{*url}", defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("HomeIndex", "{*url}", defaults: new { controller = "Home", action = "Index" });
             });
         }
     }

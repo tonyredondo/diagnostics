@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Title>TWCore.Diagnostics.Api.Models</Title>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="TWCore" Version="2.1.181" />
-    <PackageReference Include="TWCore.Messaging" Version="2.1.181" />
+    <PackageReference Include="TWCore" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore.Messaging" Version="3.0.0-beta4" />
   </ItemGroup>
 </Project>
