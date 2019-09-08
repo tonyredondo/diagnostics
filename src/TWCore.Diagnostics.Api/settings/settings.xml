@@ -42,7 +42,8 @@
 
       <!--<Item Key="Postgres.ConnectionString" Value="Host=localhost;Port=5432;User ID=tUser;Password=tPass;Database=diagnostics;Pooling=true;" />-->
       <!--<Item Key="Postgres.ConnectionString" Value="Host=localhost;Port=5432;User ID=diagUser;Password=diagPassw0rd;Database=diagnostics;Pooling=true;" />-->
-      <Item Key="Postgres.ConnectionString" Value="Host=93.189.37.106;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />
+      <!--<Item Key="Postgres.ConnectionString" Value="Host=93.189.37.106;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />-->
+      <Item Key="Postgres.ConnectionString" Value="Host=89.17.208.157;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />
       <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;" />-->
       <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;Timeout=600;CommandTimeout=600;KeepAlive=600" />-->
 
