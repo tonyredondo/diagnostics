@@ -66,7 +66,7 @@ namespace TWCore.Diagnostics.Api
             {
                 options.AddPolicy("AllowAllOrigins", builder =>
                 {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
             
@@ -102,10 +102,12 @@ namespace TWCore.Diagnostics.Api
             });
             
             app.UseStaticFiles();
+            app.UseRouting();
             app.UseCors();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                //endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute("HomeIndex", "{*url}", defaults: new { controller = "Home", action = "Index" });
             });
         }
