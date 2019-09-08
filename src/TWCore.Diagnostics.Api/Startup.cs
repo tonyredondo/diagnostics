@@ -25,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Web;
 using Microsoft.OpenApi.Models;
+using Anemonis.AspNetCore.RequestDecompression;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -45,6 +46,12 @@ namespace TWCore.Diagnostics.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.SetDefaultTWCoreValues();
+            services.AddRequestDecompression(o =>
+            {
+                o.Providers.Add<DeflateDecompressionProvider>();
+                o.Providers.Add<GzipDecompressionProvider>();
+                o.Providers.Add<BrotliDecompressionProvider>();
+            });
 
             // Adds a default in-memory implementation of IDistributedCache.
             services.AddDistributedMemoryCache();
@@ -90,6 +97,7 @@ namespace TWCore.Diagnostics.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseRequestDecompression();
             app.UseSession();
             if (env.IsDevelopment())
             {

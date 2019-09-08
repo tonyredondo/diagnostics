@@ -9,7 +9,7 @@
       <Item Key="Core.Log.Storage.Html.LogLevel" Value="255" />
       <Item Key="Core.Log.Storage.Console.Enabled" Value="true" />
       <Item Key="Core.Log.Storage.Console.LogLevel" Value="1023" />
-      <Item Key="Core.Log.Storage.Messages.Enabled" Value="true" />
+      <Item Key="Core.Log.Storage.Messages.Enabled" Value="false" />
       <Item Key="Core.Log.Storage.Messages.LogLevel" Value="131" />
       
       <!--Trace Settings-->
@@ -17,7 +17,7 @@
       <Item Key="Core.Trace.Serializer" Value="TWCore.Serialization.NSerializer.NBinarySerializer, TWCore.Serialization.NSerializer" />
       <Item Key="Core.Trace.Compressor" Value="TWCore.Compression.DeflateCompressor, TWCore" />
       <Item Key="Core.Trace.Storage.File.Enabled" Value="true" />
-      <Item Key="Core.Trace.Storage.Messages.Enabled" Value="true" />
+      <Item Key="Core.Trace.Storage.Messages.Enabled" Value="false" />
 
       <!--Status Settings-->
       <Item Key="Core.Status.Transport.Http.Enabled" Value="true" />
@@ -40,8 +40,10 @@
       <!--<Item Key="RavenDb.Urls" Value="http://10.10.1.52:8080" />-->
       <Item Key="RavenDb.Urls" Value="http://93.189.37.106:8080" />
 
+      <!--<Item Key="Postgres.ConnectionString" Value="Host=localhost;Port=5432;User ID=tUser;Password=tPass;Database=diagnostics;Pooling=true;" />-->
       <!--<Item Key="Postgres.ConnectionString" Value="Host=localhost;Port=5432;User ID=diagUser;Password=diagPassw0rd;Database=diagnostics;Pooling=true;" />-->
-      <Item Key="Postgres.ConnectionString" Value="Host=93.189.37.106;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />
+      <!--<Item Key="Postgres.ConnectionString" Value="Host=93.189.37.106;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />-->
+      <Item Key="Postgres.ConnectionString" Value="Host=89.17.208.157;Port=5432;User ID=diaguser;Password=diagpassword;Database=diagnostics;Pooling=true;" />
       <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;" />-->
       <!--<Item Key="Postgres.ConnectionString" Value="Host=10.10.0.100;Port=32771;User ID=testUser;Password=testPassw0rd;Database=diagnostics;Pooling=true;Timeout=600;CommandTimeout=600;KeepAlive=600" />-->
 
@@ -58,14 +60,18 @@
       <Item Key="Diagnostics.ForceJsonOnApp" Value="Agsw.Travel.Api;" />
       
       <Item Key="Core.Services.Queue.ConfigFile" Value="./settings/queues.redis.xml" />
+      <Item Key="Diagnostics.Messaging.Enabled" Value="false" />
+      <Item Key="Diagnostics.UseNewPathStructure" Value="true" />
     </Items>
     <Overwrite EnvironmentName="Docker" MachineName="">
+      <Item Key="Diagnostics.Messaging.Enabled" Value="{Env:DIAGNOSTICS_MESSAGING_ENABLED}" />
+      <Item Key="Diagnostics.UseNewPathStructure" Value="{Env:DIAGNOSTICS_USE_NEW_PATH_STRUCTURE}" />
       <Item Key="Core.Status.Transport.Http.Port" Value="{Env:DIAGNOSTICS_STATUS_HTTP_PORT}" />
-      <Item Key="RavenDb.Database" Value="{Env:DIAGNOSTICS_RAVENDB_DATABASE}" />
-      <Item Key="RavenDb.Urls" Value="{Env:DIAGNOSTICS_RAVENDB_URLS}" />
+      <Item Key="Postgres.ConnectionString" Value="{Env:DIAGNOSTICS_POSTGRES_CONNECTIONSTRING}" />
       <Item Key="Bot.DefaultEnvironment" Value="{Env:DIAGNOSTICS_BOT_DEFAULTENVIRONMENT}" />
       <Item Key="Bot.SlackToken" Value="{Env:DIAGNOSTICS_BOT_SLACKTOKEN}" />
       <Item Key="Core.Services.Queue.ConfigFile" Value="{Env:DIAGNOSTICS_QUEUE_CONFIG}" />
+      <Item Key="RavenDb.Urls" Value="{Env:DIAGNOSTICS_RAVENDB_URLS}" />
     </Overwrite>
   </AppSettings>
 

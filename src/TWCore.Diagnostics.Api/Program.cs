@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+using System;
+using System.Collections;
+using System.Threading.Tasks;
+using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Diagnostics.Api.MessageHandlers.RavenDb;
 using TWCore.Services;
 
@@ -26,12 +30,33 @@ namespace TWCore.Diagnostics.Api
         public static void Main(string[] args)
         {
             Core.InitDefaults(false);
-            Core.RunService(() => new ServiceList(
-                WebService.Create<Startup>(),
-                new DiagnosticRawMessagingServiceAsync(),
-                new DiagnosticBotService()
-                ), args);
-            RavenHelper.CloseDocumentStore();
+
+            var enableMessaging = true;
+            if (Core.Settings.TryGet("Diagnostics.Messaging.Enabled", out var messagingSettings))
+                enableMessaging = messagingSettings.Value.ParseTo(false);
+            else
+                enableMessaging = false;
+
+            Core.RunOnInit(() => Core.Log.InfoBasic("Diagnostics.Messaging.Enabled is {0}", enableMessaging));
+            CreateDBOnStartUp().WaitAsync();
+
+            if (enableMessaging)
+                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticRawMessagingServiceAsync(), new DiagnosticBotService()), args);
+            else
+                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticBotService()), args);
+        }
+
+        private static async Task CreateDBOnStartUp()
+        {
+            Core.Log.InfoBasic("Creating database...");
+            var dal = new PostgresDal();
+            try
+            {
+                await dal.CreateDatabaseAsync().ConfigureAwait(false);
+            }
+            catch { }
+            await dal.EnsureTablesAndIndexesAsync().ConfigureAwait(false);
+            Core.Log.InfoBasic("Done.");
         }
     }
 }

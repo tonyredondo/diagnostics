@@ -16,12 +16,30 @@ limitations under the License.
 
 using System.Threading.Tasks;
 using TWCore.Diagnostics.Api.MessageHandlers;
+using TWCore.Diagnostics.Api.MessageHandlers.Postgres;
 using TWCore.Services;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace TWCore.Diagnostics.Api
 {
+    public class CreateDBExtensions : ContainerParameterServiceAsync
+    {
+        public CreateDBExtensions() : base("create-db", "Create postgres database") { }
+        protected override async Task OnHandlerAsync(ParameterHandlerInfo info)
+        {
+            Core.Log.InfoBasic("Creating database...");
+            var dal = new PostgresDal();
+            try
+            {
+                await dal.CreateDatabaseAsync().ConfigureAwait(false);
+            }
+            catch { }
+            await dal.EnsureTablesAndIndexesAsync().ConfigureAwait(false);
+            Core.Log.InfoBasic("Done.");
+        }
+    }
+
     public class ImportLogsExtensions : ContainerParameterServiceAsync
     {
         public ImportLogsExtensions() : base("import-logs", "Import logs from the RavenDB to Postgresql") { }

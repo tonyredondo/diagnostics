@@ -101,7 +101,11 @@ namespace TWCore.Diagnostics
             if (traceItem == null)
                 throw new Exception("The TraceItem is null");
 
-            var folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group);
+            string folderPath;
+            if (Settings.UseNewPathStructure)
+                folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Timestamp.ToString("HH"), traceItem.Group);
+            else
+                folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group);
             folderPath = folderPath.RemovePathInvalidChars();
 
             if (!Directory.Exists(folderPath))
@@ -109,7 +113,12 @@ namespace TWCore.Diagnostics
                 if (createIfNotExists)
                     Directory.CreateDirectory(folderPath);
                 else
-                    throw new Exception($"Trace data folder '{folderPath}' doesn't exist.");
+                {
+                    var oldFolderPath = folderPath;
+                    folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group).RemovePathInvalidChars();
+                    if (!Directory.Exists(folderPath))
+                        throw new Exception($"Trace data folder '{oldFolderPath}' doesn't exist.");
+                }
             }
             var idValue = string.Empty;
             if (traceItem.TraceId != Guid.Empty)
@@ -144,7 +153,11 @@ namespace TWCore.Diagnostics
             if (traceItem == null)
                 throw new Exception("The TraceItem is null");
 
-            var folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group);
+            string folderPath;
+            if (Settings.UseNewPathStructure)
+                folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Timestamp.ToString("HH"), traceItem.Group);
+            else
+                folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group);
             folderPath = folderPath.RemovePathInvalidChars();
 
             if (!Directory.Exists(folderPath))
@@ -152,7 +165,12 @@ namespace TWCore.Diagnostics
                 if (createIfNotExists)
                     Directory.CreateDirectory(folderPath);
                 else
-                    throw new Exception($"Trace data folder '{folderPath}' doesn't exist.");
+                {
+                    var oldFolderPath = folderPath;
+                    folderPath = Path.Combine(Settings.TracesFolderPath, traceItem.Environment, traceItem.Timestamp.ToString("yyyy-MM-dd"), traceItem.Group).RemovePathInvalidChars();
+                    if (!Directory.Exists(folderPath))
+                        throw new Exception($"Trace data folder '{oldFolderPath}' doesn't exist.");
+                }
             }
             var idValue = string.Empty;
             if (traceItem.TraceId != Guid.Empty)

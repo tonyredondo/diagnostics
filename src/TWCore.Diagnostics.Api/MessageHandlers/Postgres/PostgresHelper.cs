@@ -19,6 +19,23 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             NpgsqlConnection.GlobalTypeMapper.UseJsonNet();
         }
 
+
+        public static async Task<int> ExecuteNonQueryWithoutDBAsync(Action<NpgsqlCommand> prepareCommand, CancellationToken cancellationToken = default)
+        {
+            var response = 0;
+            var connectionString = new NpgsqlConnectionStringBuilder(Settings.ConnectionString);
+            connectionString.Database = null;
+            using (var connection = new NpgsqlConnection(connectionString.ToString()))
+            {
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                using (var command = connection.CreateCommand())
+                {
+                    prepareCommand(command);
+                    response = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }
+            }
+            return response;
+        }
         public static async Task<int> ExecuteNonQueryAsync(Action<NpgsqlCommand> prepareCommand, CancellationToken cancellationToken = default)
         {
             var response = 0;
@@ -73,6 +90,8 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             }
         }
 
+        public static Task<int> ExecuteNonQueryWithoutDBAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
+            => ExecuteNonQueryWithoutDBAsync(command => FillCommand(command, commandText, parameters), cancellationToken);
 
         public static Task<int> ExecuteNonQueryAsync(string commandText, IDictionary<string, object> parameters = null, CancellationToken cancellationToken = default)
             => ExecuteNonQueryAsync(command => FillCommand(command, commandText, parameters), cancellationToken);

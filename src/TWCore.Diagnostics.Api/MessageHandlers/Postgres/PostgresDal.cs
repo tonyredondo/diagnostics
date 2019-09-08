@@ -582,5 +582,18 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
         }
 
         #endregion
+
+        #region Create Database
+        public async Task CreateDatabaseAsync()
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.CreateDB.sql");
+            await PostgresHelper.ExecuteNonQueryWithoutDBAsync(query).ConfigureAwait(false);
+        }
+        public async Task EnsureTablesAndIndexesAsync()
+        {
+            var query = typeof(PostgresDal).Assembly.GetResourceString("Postgres.Sql.CreateTables.sql");
+            await PostgresHelper.ExecuteNonQueryAsync(query).ConfigureAwait(false);
+        }
+        #endregion
     }
 }
