@@ -5,7 +5,7 @@
     <Title>TWCore.Diagnostics.Api.Models</Title>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="TWCore" Version="3.0.0-beta4" />
-    <PackageReference Include="TWCore.Messaging" Version="3.0.0-beta4" />
+    <PackageReference Include="TWCore" Version="3.0.0-beta5" />
+    <PackageReference Include="TWCore.Messaging" Version="3.0.0-beta5" />
   </ItemGroup>
 </Project>
