@@ -784,9 +784,9 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.RavenDb
             return lstValues;
         }
 
-        public async Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
+        public Task<CounterValuesAggregate> GetCounterAggregationAsync(Guid counterId, DateTime fromDate, DateTime toDate, CounterValuesDataUnit dataUnit)
         {
-            return null;
+            return Task.FromResult<CounterValuesAggregate>(null);
         }
 
         #region Nested Types

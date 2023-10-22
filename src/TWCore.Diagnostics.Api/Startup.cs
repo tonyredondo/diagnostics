@@ -14,18 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TWCore.Diagnostics.Api.MessageHandlers;
 using TWCore.Web;
 using Microsoft.OpenApi.Models;
-using Anemonis.AspNetCore.RequestDecompression;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -46,12 +43,7 @@ namespace TWCore.Diagnostics.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.SetDefaultTWCoreValues();
-            services.AddRequestDecompression(o =>
-            {
-                o.Providers.Add<DeflateDecompressionProvider>();
-                o.Providers.Add<GzipDecompressionProvider>();
-                o.Providers.Add<BrotliDecompressionProvider>();
-            });
+            services.AddRequestDecompression();
 
             // Adds a default in-memory implementation of IDistributedCache.
             services.AddDistributedMemoryCache();
@@ -67,14 +59,9 @@ namespace TWCore.Diagnostics.Api
             {
                 options.AddPolicy("AllowAllOrigins", builder =>
                 {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowAllOrigins"));
-            });
-            
             
             services.AddSwaggerGen(c =>
             {
@@ -95,31 +82,28 @@ namespace TWCore.Diagnostics.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRequestDecompression();
+            app.UseResponseCompression();
             app.UseSession();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseResponseCompression();
-            
-            
+            app.UseCors("AllowAllOrigins");
+            app.UseStaticFiles();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "TWCore Diagnostics Api");
             });
-            
-            app.UseStaticFiles();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute("HomeIndex", "{*url}", defaults: new { controller = "Home", action = "Index" });
+            app.UseRouting();
+            app.UseEndpoints(routes =>
+            {
+                routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                routes.MapControllerRoute("HomeIndex", "{*url}", defaults: new { controller = "Home", action = "Index" });
             });
         }
     }

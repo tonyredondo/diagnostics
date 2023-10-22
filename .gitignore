@@ -122,3 +122,4 @@ cachedViews/*
 /src/TWCore.Diagnostics.Api/logs
 /src/TWCore.Diagnostics.Api/traces
 /src/TWCore.Diagnostics.Api/tracesdata
+artifacts/

@@ -19,7 +19,6 @@ namespace TWCore.Diagnostics.Api.MessageHandlers.Postgres
             NpgsqlConnection.GlobalTypeMapper.UseJsonNet();
         }
 
-
         public static async Task<int> ExecuteNonQueryWithoutDBAsync(Action<NpgsqlCommand> prepareCommand, CancellationToken cancellationToken = default)
         {
             var response = 0;
