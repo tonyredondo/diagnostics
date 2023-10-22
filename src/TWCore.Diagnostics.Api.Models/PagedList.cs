@@ -29,7 +29,7 @@ namespace TWCore.Diagnostics.Api.Models
         [XmlAttribute, DataMember]
         public int PageSize { get; set; }
         [XmlAttribute, DataMember]
-        public int TotalResults { get; set; }
+        public long TotalResults { get; set; }
         [XmlAttribute, DataMember]
         public int TotalPages
         {

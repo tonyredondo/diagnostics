@@ -38,12 +38,12 @@ namespace TWCore.Diagnostics.Api
                 enableMessaging = false;
 
             Core.RunOnInit(() => Core.Log.InfoBasic("Diagnostics.Messaging.Enabled is {0}", enableMessaging));
-            CreateDBOnStartUp().WaitAsync();
+            // CreateDBOnStartUp().WaitAsync();
 
             if (enableMessaging)
-                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticRawMessagingServiceAsync(), new DiagnosticBotService()), args);
+                Core.RunService(() => new ServiceList(WebService.CreateHost<Startup>(), new DiagnosticRawMessagingServiceAsync(), new DiagnosticBotService()), args);
             else
-                Core.RunService(() => new ServiceList(WebService.Create<Startup>(), new DiagnosticBotService()), args);
+                Core.RunService(() => new ServiceList(WebService.CreateHost<Startup>(), new DiagnosticBotService()), args);
         }
 
         private static async Task CreateDBOnStartUp()
